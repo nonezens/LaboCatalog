@@ -1,13 +1,14 @@
 <?php 
 include 'db.php'; 
 include 'header.php'; 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-// Check if the admin session is NOT set
+// 2. Check if the admin is logged in
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    // Redirect them to the login page
     header("Location: login.php");
-    exit(); // Stop running the rest of the code
+    exit(); 
 }
 if(isset($_POST['add_cat'])) {
     $cat_name = $_POST['cat_name'];
