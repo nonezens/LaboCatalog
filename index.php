@@ -96,7 +96,7 @@ $latest_exhibits = $conn->query("SELECT * FROM exhibits ORDER BY id DESC LIMIT 4
     </div>
 
     <footer style="background: var(--dark); color: white; text-align: center; padding: 40px;">
-        <p>&copy; 2026 Museum Labo Catalog. All Rights Reserved.</p>
+        <p>&copy; 2026 Museo De Labo Catalog. All Rights Reserved.</p>
     </footer>
 
 </body>

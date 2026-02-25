@@ -12,7 +12,8 @@ if (session_status() === PHP_SESSION_NONE) {
     <nav style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
         
         <div class="logo">
-            <a href="index.php">🏛️ Museum Labo</a>
+            <a href="index.php">🏛️ Museo De Labo</a>
+            <a href="index.php">(ᜋᜓᜐᜒᜂ ᜇᜒ ᜎᜊᜓ)</a>
         </div>
         
         <ul class="nav-list">
