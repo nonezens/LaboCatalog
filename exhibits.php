@@ -34,7 +34,8 @@ if ($cat_id) {
                 <div style="margin-top: 10px;">
                     <a href="view_exhibit.php?id=<?php echo $row['id']; ?>" style="display: inline-block; background: #c5a059; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; margin-right: 5px; font-weight: bold;">View Details</a>
                     <?php if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in']): ?>
-                        <a href="edit_exhibit.php?id=<?php echo $row['id']; ?>" style="display: inline-block; background: #555; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; font-weight: bold;">Edit</a>
+                        <a href="edit_exhibit.php?id=<?php echo $row['id']; ?>" style="display: inline-block; background: #555; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; margin-right: 5px; font-weight: bold;">Edit</a>
+                        <a href="delete_exhibit.php?id=<?php echo $row['id']; ?>" style="display: inline-block; background: #d32f2f; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; font-weight: bold;" onclick="return confirm('Are you sure you want to delete this artifact?');">Delete</a>
                     <?php endif; ?>
                 </div>
             </div>

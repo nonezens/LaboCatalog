@@ -130,6 +130,15 @@ $exhibit = $result->fetch_assoc();
         background: #b48a3d;
     }
 
+    .btn-delete {
+        background: #d32f2f;
+        color: white;
+    }
+
+    .btn-delete:hover {
+        background: #b71c1c;
+    }
+
     @media (max-width: 768px) {
         .exhibit-header {
             grid-template-columns: 1fr;
@@ -184,6 +193,7 @@ $exhibit = $result->fetch_assoc();
         <?php if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
         <?php if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in']): ?>
             <a href="edit_exhibit.php?id=<?php echo (int)$exhibit['id']; ?>" class="btn btn-edit">Edit Artifact</a>
+            <a href="delete_exhibit.php?id=<?php echo (int)$exhibit['id']; ?>" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this artifact? This action cannot be undone.');">Delete Artifact</a>
         <?php endif; ?>
     </div>
 </div>
