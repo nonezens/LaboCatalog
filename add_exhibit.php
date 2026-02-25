@@ -30,9 +30,9 @@ if(isset($_POST['submit'])) {
         $stmt->bind_param("sisssss", $title, $cat, $imgName, $desc, $donor, $year, $origin);
         
         if($stmt->execute()) {
-            echo "<div style='color:green; text-align:center;'>Artifact added successfully!</div>";
+            echo "<div class=\"message success\">Artifact added successfully!</div>";
         } else {
-            echo "Error: " . $conn->error;
+            echo "<div class=\"message error\">Error: ".htmlspecialchars($conn->error, ENT_QUOTES)."</div>";
         }
     }
 }
@@ -41,37 +41,63 @@ if(isset($_POST['submit'])) {
 $categories = $conn->query("SELECT * FROM categories");
 ?>
 
-<div style="max-width: 600px; margin: 20px auto; padding: 20px; border: 1px solid #ccc; font-family: sans-serif;">
+<div class="form-container">
     <h2>Register New Artifact</h2>
     <form action="add_exhibit.php" method="POST" enctype="multipart/form-data">
-        
-        <label>Artifact Name:</label>
-        <input type="text" name="title" style="width:100%; margin-bottom:10px;" required>
 
-        <label>Category:</label>
-        <select name="category_id" style="width:100%; margin-bottom:10px;" required>
-            <?php while($cat = $categories->fetch_assoc()): ?>
-                <option value="<?php echo $cat['id']; ?>"><?php echo $cat['name']; ?></option>
-            <?php endwhile; ?>
-        </select>
+        <div class="form-group">
+            <label class="form-label">Artifact Name</label>
+            <input class="form-input" type="text" name="title" required>
+        </div>
 
-        <label>Description / History:</label>
-        <textarea name="description" rows="4" style="width:100%; margin-bottom:10px;"></textarea>
+        <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-select" name="category_id" required>
+                <?php while($cat = $categories->fetch_assoc()): ?>
+                    <option value="<?php echo $cat['id']; ?>"><?php echo htmlspecialchars($cat['name'], ENT_QUOTES); ?></option>
+                <?php endwhile; ?>
+            </select>
+        </div>
 
-        <label>Year Created/Found (e.g., 500 BC):</label>
-        <input type="text" name="artifact_year" style="width:100%; margin-bottom:10px;">
+        <div class="form-group">
+            <label class="form-label">Description / History</label>
+            <textarea class="form-textarea" name="description" rows="4"></textarea>
+        </div>
 
-        <label>Place of Origin:</label>
-        <input type="text" name="origin" style="width:100%; margin-bottom:10px;" placeholder="e.g. Rome, Italy">
+        <div class="form-group">
+            <label class="form-label">Year Created/Found (e.g., 500 BC)</label>
+            <input class="form-input" type="text" name="artifact_year">
+        </div>
 
-        <label>Donated By:</label>
-        <input type="text" name="donated_by" style="width:100%; margin-bottom:10px;">
+        <div class="form-group">
+            <label class="form-label">Place of Origin</label>
+            <input class="form-input" type="text" name="origin" placeholder="e.g. Rome, Italy">
+        </div>
 
-        <label>Artifact Image:</label>
-        <input type="file" name="image" accept="image/*" style="width:100%; margin-bottom:20px;" required>
+        <div class="form-group">
+            <label class="form-label">Donated By</label>
+            <input class="form-input" type="text" name="donated_by">
+        </div>
 
-        <button type="submit" name="submit" style="width:100%; padding:10px; background:#2c3e50; color:white; border:none; cursor:pointer;">
-            Save to Collection
-        </button>
+        <div class="form-group">
+            <label class="form-label">Artifact Image</label>
+            <input class="form-file" id="exhibitImage" type="file" name="image" accept="image/*" required>
+            <img id="exhibitPreview" class="preview-img" src="#" alt="" style="display:none;" />
+        </div>
+
+        <button type="submit" name="submit" class="btn-primary">Save to Collection</button>
     </form>
 </div>
+
+<script>
+document.getElementById('exhibitImage').addEventListener('change', function(e){
+    const [file] = this.files;
+    const img = document.getElementById('exhibitPreview');
+    if(file){
+        img.src = URL.createObjectURL(file);
+        img.style.display = 'block';
+    } else {
+        img.style.display = 'none';
+    }
+});
+</script>

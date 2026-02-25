@@ -23,25 +23,40 @@ if(isset($_POST['add_cat'])) {
         $stmt->bind_param("ss", $cat_name, $imgName);
         
         if($stmt->execute()) {
-            echo "<p style='color:green; text-align:center;'>Category '$cat_name' added!</p>";
+            echo "<div class=\"message success\">Category '".htmlspecialchars($cat_name, ENT_QUOTES)."' added!</div>";
         } else {
-            echo "Error: " . $conn->error;
+            echo "<div class=\"message error\">Error: ".htmlspecialchars($conn->error, ENT_QUOTES)."</div>";
         }
     }
 }
 ?>
-
-<div style="max-width: 400px; margin: 40px auto; padding: 20px; border: 1px solid #ddd; font-family: sans-serif;">
+<div class="form-container">
     <h3>Add New Museum Category</h3>
     <form method="POST" enctype="multipart/form-data">
-        <label>Category Name:</label>
-        <input type="text" name="cat_name" style="width:100%; margin-bottom:15px; padding:8px;" required>
+        <div class="form-group">
+            <label class="form-label">Category Name</label>
+            <input class="form-input" type="text" name="cat_name" required>
+        </div>
 
-        <label>Category Cover Image:</label>
-        <input type="file" name="cat_image" style="width:100%; margin-bottom:15px;" required>
+        <div class="form-group">
+            <label class="form-label">Category Cover Image</label>
+            <input class="form-file" type="file" name="cat_image" accept="image/*" id="catImage" required>
+            <img id="catPreview" class="preview-img" src="#" alt="" style="display:none;" />
+        </div>
 
-        <button type="submit" name="add_cat" style="width:100%; padding:10px; background:#2c3e50; color:white; border:none; cursor:pointer;">
-            Create Category
-        </button>
+        <button type="submit" name="add_cat" class="btn-primary">Create Category</button>
     </form>
 </div>
+
+<script>
+document.getElementById('catImage').addEventListener('change', function(e){
+    const [file] = this.files;
+    const img = document.getElementById('catPreview');
+    if(file){
+        img.src = URL.createObjectURL(file);
+        img.style.display = 'block';
+    } else {
+        img.style.display = 'none';
+    }
+});
+</script>
