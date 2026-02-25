@@ -16,7 +16,7 @@ body {
 .site-header .logo { font-size: 1.25rem; font-weight:700; }
 .site-header .logo a { color: white; text-decoration: none; }
 .logo-link { display:flex; align-items:center; gap:8px; text-decoration:none; color:inherit; }
-.site-logo { height:86px; width:auto; border-radius:4px; display:block; }
+.site-logo { height:76px; width:auto; border-radius:4px; display:block; }
 .site-title { font-weight:700; color: white; font-size:2rem; line-height:1; }
 .site-title .native { display:block; font-weight:400; color: rgba(255,255,255,0.9); font-size:1rem; margin-top:0; }
 .nav-list { list-style: none; display:flex; gap: 18px; margin:0; padding:0; align-items:center; }
