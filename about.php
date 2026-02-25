@@ -70,14 +70,13 @@ include 'header.php';
         <div class="info-grid">
             <div class="info-box">
                 <h3>🕒 Visiting Hours</h3>
-                <p>Monday - Friday: 9:00 AM - 5:00 PM</p>
-                <p>Saturday: 10:00 AM - 4:00 PM</p>
-                <p>Sunday: Closed</p>
+                <p>Monday - Friday: 8:00 AM - 5:00 PM</p>
+                <p>Saturday & Sunday: Closed</p>
             </div>
 
             <div class="info-box">
                 <h3>📍 Contact Us</h3>
-                <p><strong>Address:</strong> 123 Heritage Lane, Labo, Philippines</p>
+                <p><strong>Address:</strong> Peoples Park, Labo, Camarines Norte, Philippines</p>
                 <p><strong>Email:</strong> info@labomuseum.ph</p>
                 <p><strong>Phone:</strong> +63 (054) 123-4567</p>
             </div>
@@ -86,7 +85,7 @@ include 'header.php';
         <div class="content-section" style="margin-top: 60px;">
             <h2>Find Us</h2>
             <div class="location-map">
-                <p style="color: #777;">[ Interactive Map Placeholder ]</p>
+                <p style="color: #777;">[ https://maps.app.goo.gl/mz9quW5tLAth5yZ46 ]</p>
             </div>
         </div>
     </div>
