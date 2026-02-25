@@ -32,6 +32,11 @@ if (session_status() === PHP_SESSION_NONE) {
                 <li>
                     <a href="add_category.php" class="accent">+ Add Category</a>
                 </li>
+                <?php if (isset($_GET['id']) && is_numeric($_GET['id'])): ?>
+                    <li>
+                        <a href="edit_exhibit.php?id=<?php echo (int)$_GET['id']; ?>" class="accent">✏️ Edit</a>
+                    </li>
+                <?php endif; ?>
                 <li>
                     <a href="logout.php" class="danger">Logout</a>
                 </li>
