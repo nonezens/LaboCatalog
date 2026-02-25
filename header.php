@@ -12,9 +12,10 @@ if (session_status() === PHP_SESSION_NONE) {
     <nav style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
         
         <div class="logo">
-            <img src="/uploads/TOURISM LOGO.png" alt="Logo">
-            <a href="index.php"> Museo De Labo</a>
-            <a href="index.php">(ᜋᜓᜐᜒᜂ ᜇᜒ ᜎᜊᜓ)</a>
+            <a href="index.php" class="logo-link">
+                <img src="uploads/tourism-logo.png" alt="Tourism Logo" class="site-logo">
+                <span class="site-title">Museo De Labo <small class="native">(ᜋᜓᜐᜒᜂ ᜇᜒ ᜎᜊᜓ)</small></span>
+            </a>
         </div>
         
         <ul class="nav-list">
