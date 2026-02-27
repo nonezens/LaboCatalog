@@ -15,7 +15,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
     /* Your Sticky Header */
     .site-header { 
-        background: #0e6411; 
+        background: #2c3e50; 
         color: white; 
         padding: 1rem 2rem; 
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -29,22 +29,21 @@ if (session_status() === PHP_SESSION_NONE) {
     
     .site-nav { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
     
-    /* --- NEW LOGO STYLES --- */
+    /* Logo Styles */
     .site-logo a { 
         color: white; 
         text-decoration: none; 
         font-size: 1.5rem; 
         font-weight: bold; 
         display: flex; 
-        align-items: center; /* Vertically centers the logo and text */
-        gap: 10px; /* Space between the logo and the text */
+        align-items: center; 
+        gap: 10px; 
     }
     .logo-img {
-        height: 66px; /* Adjust this number to make your logo bigger or smaller */
+        height: 40px; 
         width: auto;
         object-fit: contain;
     }
-    /* ----------------------- */
 
     .site-nav-links { list-style: none; display: flex; gap: 20px; margin: 0; padding: 0; align-items: center; }
     .site-nav-links li a { color: white; text-decoration: none; font-size: 1rem; transition: color 0.3s; }
@@ -57,8 +56,8 @@ if (session_status() === PHP_SESSION_NONE) {
         
         <div class="site-logo">
             <a href="index.php">
-                <img src="uploads/logo.png" alt="Museum Logo" class="logo-img">
-                Museo De Labo
+                <img src="logo.png" alt="Museum Logo" class="logo-img">
+                Museum Labo
             </a>
         </div>
         
@@ -69,14 +68,27 @@ if (session_status() === PHP_SESSION_NONE) {
             <li><a href="categories.php">Categories</a></li>
             
             <?php if(isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true): ?>
+                
                 <li class="admin-link">
                     <a href="admin_dashboard.php" style="color: #3498db; font-weight: bold;">⚙️ Dashboard</a>
                 </li>
                 <li>
                     <a href="logout.php" style="color: #e74c3c; font-weight: bold; margin-left: 10px;">Logout</a>
                 </li>
+            
+            <?php elseif(isset($_SESSION['guest_logged_in']) && $_SESSION['guest_logged_in'] === true): ?>
+                
+                <li class="admin-link" style="color: #bdc3c7; font-size: 0.95rem;">
+                    Welcome, <?php echo htmlspecialchars($_SESSION['guest_name']); ?>!
+                </li>
+                <li>
+                    <a href="logout.php" style="color: #e74c3c; font-weight: bold; margin-left: 10px;">Leave</a>
+                </li>
+            
             <?php else: ?>
-                <li class="admin-link"><a href="login.php" style="color: #95a5a6; font-size: 0.9em;">Admin Login</a></li>
+                
+                <li class="admin-link"><a href="login.php" style="color: #95a5a6; font-size: 0.9em;">Login / Access</a></li>
+            
             <?php endif; ?>
         </ul>
         

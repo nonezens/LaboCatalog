@@ -1,103 +1,123 @@
 <?php 
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 include 'db.php'; 
-include 'header.php'; 
 
-// 1. Fetch 3 Categories for the "Departments" section
-$categories = $conn->query("SELECT * FROM categories LIMIT 3");
+// 1. Check if the user is logged in (Guest or Admin)
+$is_logged_in = isset($_SESSION['guest_logged_in']) || isset($_SESSION['admin_logged_in']);
 
-// 2. Fetch the 4 most recently added artifacts
-$latest_exhibits = $conn->query("SELECT * FROM exhibits ORDER BY id DESC LIMIT 4");
+// 2. ONLY fetch the latest acquisitions if they are logged in!
+if ($is_logged_in) {
+    $recent_query = "SELECT * FROM exhibits ORDER BY id DESC LIMIT 4";
+    $recent_result = $conn->query($recent_query);
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Museum Home</title>
+    <title>Welcome | Museo de Labo</title>
     <style>
-        :root { --dark: #1a1a1a; --gold: #c5a059; --light: #f4f4f4; }
-        body { font-family: 'Georgia', serif; margin: 0; background: var(--light); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; }
         
         /* Hero Section */
-        .hero {
-            height: 80vh;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('uploads/background.jpg') no-repeat center center;
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            text-align: center;
-            padding: 20px;
+        .hero { 
+            background: linear-gradient(rgba(44, 62, 80, 0.9), rgba(26, 37, 47, 0.9)), url('hero-bg.jpg') center/cover; 
+            color: white; 
+            text-align: center; 
+            padding: 100px 20px; 
+            border-bottom: 5px solid #c5a059;
         }
+        .hero h1 { font-size: 3.5rem; margin: 0 0 15px 0; letter-spacing: 2px; }
+        .hero p { font-size: 1.2rem; color: #ecf0f1; max-width: 700px; margin: 0 auto 30px auto; line-height: 1.6; }
+        .hero-btn { display: inline-block; padding: 15px 35px; background: #c5a059; color: white; text-decoration: none; border-radius: 30px; font-size: 1.1rem; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4); }
+        .hero-btn:hover { background: #b48a3d; transform: translateY(-3px); }
 
-        .hero h1 { font-size: 4rem; margin: 0; color: var(--gold); }
-        .hero p { font-size: 1.5rem; max-width: 800px; margin: 20px 0; font-style: italic; }
+        /* Container & Sections */
+        .container { max-width: 1200px; margin: 0 auto; padding: 60px 20px; }
+        .section-title { text-align: center; color: #2c3e50; font-size: 2.2rem; margin-bottom: 40px; }
+        .section-title::after { content: ''; display: block; width: 80px; height: 3px; background: #c5a059; margin: 15px auto 0 auto; }
 
-        /* General Layout */
-        .container { max-width: 1200px; margin: auto; padding: 60px 20px; }
-        .section-title { text-align: center; font-size: 2.5rem; margin-bottom: 40px; border-bottom: 2px solid var(--gold); display: inline-block; width: auto; margin-left: 50%; transform: translateX(-50%); }
+        /* About Section */
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .about-text { font-size: 1.1rem; color: #555; line-height: 1.8; }
+        .about-text p { margin-bottom: 20px; }
+        .about-image { background: #eee; border-radius: 8px; height: 300px; display: flex; align-items: center; justify-content: center; color: #aaa; font-style: italic; border: 2px dashed #ccc; }
 
-        /* Grid Styling */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
-        .card { background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: 0.3s; position: relative; }
-        .card:hover { transform: translateY(-5px); }
-        .card img { width: 100%; height: 250px; object-fit: cover; }
-        .card-body { padding: 20px; text-align: center; }
-
-        .btn-gold { 
-            background: var(--gold); color: white; padding: 12px 30px; 
-            text-decoration: none; border-radius: 2px; font-weight: bold; transition: 0.3s;
-        }
-        .btn-gold:hover { background: #b48a3d; }
+        /* Latest Acquisitions Grid (Only for logged-in users) */
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-top: 20px; }
+        .card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.3s; border: 1px solid #eee; display: flex; flex-direction: column; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .card img { width: 100%; height: 220px; object-fit: cover; }
+        .card-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .card-title { margin: 0 0 10px 0; color: #2c3e50; font-size: 1.3rem; }
+        .card-meta { font-size: 0.9rem; color: #7f8c8d; margin-bottom: 15px; }
+        .btn-view { display: block; text-align: center; padding: 10px; background: #2c3e50; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; transition: 0.3s; margin-top: auto; }
+        .btn-view:hover { background: #c5a059; }
+        
+        /* Responsive */
+        @media (max-width: 768px) { .about-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-    <section class="hero">
-        <h1>THE GREAT ARCHIVE</h1>
-        <p>A window into the past, preserved for the future.</p>
-        <a href="exhibits.php" class="btn-gold">Explore Collection</a>
-    </section>
+    <?php include 'header.php'; ?>
 
-    <div class="container">
-        <h2 class="section-title">Departments</h2>
-        <div class="grid">
-            <?php while($cat = $categories->fetch_assoc()): ?>
-                <div class="card">
-                    <img src="uploads/<?php echo $cat['image_path']; ?>" alt="Category Image">
-                    <div class="card-body">
-                        <h3><?php echo $cat['name']; ?></h3>
-                        <a href="exhibits.php?cat=<?php echo $cat['id']; ?>" style="color: var(--gold); text-decoration: none;">View Department &rarr;</a>
-                    </div>
-                </div>
-            <?php endwhile; ?>
-        </div>
+    <div class="hero">
+        <h1>Welcome to Museo de Labo</h1>
+        <p>Preserving the rich history, culture, and heritage of Camarines Norte. Explore our digital catalog to uncover the stories of our ancestors and the treasures of our past.</p>
+        
+        <?php if (!$is_logged_in): ?>
+            <a href="login.php" class="hero-btn">Sign Guestbook to Explore</a>
+        <?php else: ?>
+            <a href="categories.php" class="hero-btn">Enter the Catalog</a>
+        <?php endif; ?>
     </div>
 
-    <div style="background: #fff; padding: 60px 0;">
-        <div class="container">
-            <h2 class="section-title">Latest Acquisitions</h2>
-            <div class="grid">
-                <?php while($item = $latest_exhibits->fetch_assoc()): ?>
-                    <div class="card" style="box-shadow: none; border: 1px solid #eee;">
-                        <img src="uploads/<?php echo $item['image_path']; ?>" alt="Artifact">
-                        <div class="card-body" style="text-align: left;">
-                            <span style="color: #888; font-size: 0.8rem; text-transform: uppercase;"><?php echo $item['artifact_year']; ?></span>
-                            <h4 style="margin: 5px 0;"><?php echo $item['title']; ?></h4>
-                            <p style="font-size: 0.9rem; color: #555;"><?php echo substr($item['description'], 0, 80); ?>...</p>
-                        </div>
-                    </div>
-                <?php endwhile; ?>
+    <div class="container">
+        <h2 class="section-title">About the Museum</h2>
+        <div class="about-grid">
+            <div class="about-text">
+                <p>Located in the heart of Camarines Norte, the <strong>Museo de Labo</strong> serves as the primary custodian of the municipality's historical artifacts, cultural relics, and artistic heritage.</p>
+                <p>Our mission is to educate, inspire, and connect both locals and tourists with the vibrant legacy of Labo. From the ancient indigenous roots to the Spanish colonial era and the rich mining history of the region, every piece in our collection tells a unique story.</p>
+                <p>Can't visit us in person? Our new digital catalog allows researchers, students, and history enthusiasts to browse our collections securely from anywhere in the world.</p>
+            </div>
+            <div class="about-image">
+                <img src="museum-exterior.jpg" alt="Museo de Labo Building" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;" onerror="this.style.display='none'; this.parentNode.innerHTML='[Insert Museum Photo Here]';">
             </div>
         </div>
     </div>
 
-    <footer style="background: var(--dark); color: white; text-align: center; padding: 40px;">
-        <p>&copy; 2026 Museum Labo Catalog. All Rights Reserved.</p>
-    </footer>
+    <?php if ($is_logged_in): ?>
+    <div class="container" style="padding-top: 0;">
+        <h2 class="section-title">Latest Acquisitions</h2>
+        <p style="text-align: center; color: #7f8c8d; margin-bottom: 30px;">Get a sneak peek at the newest historical pieces added to our archives.</p>
+        
+        <div class="gallery-grid">
+            <?php if($recent_result->num_rows > 0): ?>
+                <?php while($row = $recent_result->fetch_assoc()): ?>
+                    <div class="card">
+                        <img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
+                        <div class="card-body">
+                            <h3 class="card-title"><?php echo htmlspecialchars($row['title']); ?></h3>
+                            <div class="card-meta">
+                                <strong>Period:</strong> <?php echo $row['artifact_year'] ? htmlspecialchars($row['artifact_year']) : 'Unknown'; ?><br>
+                                <strong>Origin:</strong> <?php echo $row['origin'] ? htmlspecialchars($row['origin']) : 'Labo'; ?>
+                            </div>
+                            <a href="exhibit_detail.php?id=<?php echo $row['id']; ?>" class="btn-view">View Details</a>
+                        </div>
+                    </div>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <p style="grid-column: 1 / -1; text-align: center; font-size: 1.2rem; color: #7f8c8d; padding: 40px;">Check back soon for new artifacts!</p>
+            <?php endif; ?>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="exhibits.php" style="color: #c5a059; font-weight: bold; text-decoration: none; font-size: 1.1rem;">View All Artifacts &rarr;</a>
+        </div>
+    </div>
+    <?php endif; ?>
 
 </body>
 </html>
