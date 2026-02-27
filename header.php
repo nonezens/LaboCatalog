@@ -20,7 +20,7 @@ if (session_status() === PHP_SESSION_NONE) {
         
         <div class="site-logo">
             <a href="index.php">
-                <img src="/uploads/tourism-logo.png" alt="Museum Logo" class="logo-img">
+                <img src="uploads/tourism-logo.png" alt="Museum Logo" class="logo-img">
                 <span class="logo-text">
                     <span class="main-title">Museo De Labo</span>
                     <span class="tagline">ᜋᜓᜐᜒᜂ ᜇᜒ ᜎᜊᜓ</span>

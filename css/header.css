@@ -45,7 +45,7 @@ html, body {
 }
 
 .logo-img {
-    height: 40px;
+    height: 70px;
     width: auto;
     object-fit: contain;
 }
@@ -57,12 +57,12 @@ html, body {
 }
 
 .logo-text .main-title {
-    font-size: 1.2rem;
+    font-size: 1.75rem;
     font-weight: 800;
 }
 
 .logo-text .tagline {
-    font-size: 0.75rem;
+    font-size: 1rem;
     opacity: 0.9;
 }
 
