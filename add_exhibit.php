@@ -36,26 +36,7 @@ $categories = $conn->query("SELECT * FROM categories");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Artifact | Admin</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .admin-card { max-width: 800px; margin: 50px auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-        .admin-card h2 { text-align: center; color: #2c3e50; margin-top: 0; margin-bottom: 30px; font-size: 2rem; border-bottom: 2px solid #c5a059; display: inline-block; padding-bottom: 10px; margin-left: 50%; transform: translateX(-50%); }
-        
-        .form-row { display: flex; gap: 20px; margin-bottom: 20px; }
-        .form-col { flex: 1; }
-        
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #555; }
-        .form-control { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 1rem; transition: 0.3s; font-family: inherit; }
-        .form-control:focus { border-color: #c5a059; outline: none; box-shadow: 0 0 5px rgba(197, 160, 89, 0.3); }
-        textarea.form-control { resize: vertical; min-height: 120px; }
-        
-        .btn-submit { width: 100%; padding: 16px; background: #e67e22; color: white; border: none; border-radius: 6px; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 20px; }
-        .btn-submit:hover { background: #d35400; transform: translateY(-2px); }
-
-        .alert { padding: 15px; border-radius: 6px; margin-bottom: 20px; text-align: center; font-weight: bold; }
-        .success { background: #e8f8f5; color: #1abc9c; border: 1px solid #1abc9c; }
-        .error { background: #fdedec; color: #e74c3c; border: 1px solid #e74c3c; }
-    </style>
+    <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
 

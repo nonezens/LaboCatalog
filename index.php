@@ -19,63 +19,7 @@ if ($is_logged_in) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome | Museo de Labo</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .hero-section {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            text-align: center;
-            padding: 120px 20px;
-        }
-
-        .hero-section h1 {
-            font-size: 3.5rem;
-            margin: 0 0 20px 0;
-            letter-spacing: 1px;
-            font-weight: 800;
-        }
-
-        .hero-section p {
-            font-size: 1.3rem;
-            color: rgba(255, 255, 255, 0.85);
-            max-width: 700px;
-            margin: 0 auto 30px auto;
-            line-height: 1.6;
-        }
-
-        .about-section { margin-bottom: 60px; }
-        .about-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            align-items: center;
-            background: white;
-            padding: 50px;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-        }
-
-        .about-text { font-size: 1.1rem; color: #555; line-height: 1.8; }
-        .about-text p { margin-bottom: 20px; }
-        .about-text strong { color: var(--primary); }
-
-        .about-image {
-            background: linear-gradient(135deg, rgba(19, 113, 55, 0.1), rgba(197, 160, 89, 0.1));
-            border-radius: 8px;
-            height: 320px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #aaa;
-            font-style: italic;
-            border: 2px solid var(--gold);
-        }
-
-        @media (max-width: 768px) {
-            .hero-section h1 { font-size: 2.5rem; }
-            .hero-section { padding: 80px 20px; }
-            .about-grid { grid-template-columns: 1fr; padding: 30px; gap: 30px; }
-        }
-    </style>
+    <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
     <?php include 'header.php'; ?>
@@ -84,9 +28,9 @@ if ($is_logged_in) {
         <h1>THE GREAT ARCHIVE</h1>
         <p>Discover the rich heritage of Labo, Camarines Norte through artifacts and digital collections.</p>
         <?php if (!$is_logged_in): ?>
-            <a href="login.php" class="btn-view" style="background: var(--gold); color: white; padding: 15px 35px; display: inline-block; border-radius: 30px; margin-top: 10px; border: 2px solid var(--gold);">Sign Guestbook to Explore</a>
+            <a href="login.php" class="hero-cta">Sign Guestbook to Explore</a>
         <?php else: ?>
-            <a href="exhibits.php" class="btn-view" style="background: var(--gold); color: white; padding: 15px 35px; display: inline-block; border-radius: 30px; margin-top: 10px; border: 2px solid var(--gold);">Enter the Catalog</a>
+            <a href="exhibits.php" class="hero-cta">Enter the Catalog</a>
         <?php endif; ?>
     </section>
 

@@ -1,6 +1,5 @@
 <?php 
 include 'db.php'; 
-include 'header.php'; 
 ?>
 
 <!DOCTYPE html>
@@ -10,113 +9,7 @@ include 'header.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us | Museo de Labo</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .about-hero {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 80px 20px;
-            text-align: center;
-        }
-
-        .about-hero h1 {
-            font-size: 3rem;
-            margin: 0;
-            color: var(--gold);
-            font-weight: 800;
-        }
-
-        .about-hero p {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.85);
-            max-width: 600px;
-            margin: 15px auto 0;
-        }
-
-        .content-section {
-            margin-bottom: 50px;
-        }
-
-        .content-section h2 {
-            color: var(--dark);
-            border-bottom: 3px solid var(--gold);
-            display: inline-block;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            font-size: 2rem;
-        }
-
-        .content-section p {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: #555;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-
-        .info-box {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            border-top: 4px solid var(--gold);
-            transition: 0.3s;
-        }
-
-        .info-box:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow);
-        }
-
-        .info-box h3 {
-            color: var(--primary);
-            margin-top: 0;
-            font-size: 1.4rem;
-        }
-
-        .info-box p {
-            margin: 10px 0;
-            font-size: 1rem;
-            color: #555;
-        }
-
-        .info-box strong {
-            color: var(--dark);
-            font-weight: 700;
-        }
-
-        .location-map {
-            width: 100%;
-            height: 400px;
-            background: linear-gradient(135deg, rgba(19, 113, 55, 0.1), rgba(197, 160, 89, 0.1));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 30px;
-            border-radius: 8px;
-            border: 2px solid var(--border);
-            font-size: 3rem;
-            color: #ccc;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-            flex-wrap: wrap;
-        }
-
-        @media (max-width: 768px) {
-            .about-hero h1 { font-size: 2.2rem; }
-            .about-hero { padding: 60px 20px; }
-            .info-grid { grid-template-columns: 1fr; }
-            .location-map { height: 300px; }
-        }
-    </style>
+    <link rel="stylesheet" href="css/about.css">
 </head>
 <body>
     <?php include 'header.php'; ?>
@@ -143,17 +36,16 @@ include 'header.php';
         <div class="info-grid">
             <div class="info-box">
                 <h3>⏰ Visiting Hours</h3>
-                <p><strong>Monday - Friday:</strong> 9:00 AM - 5:00 PM</p>
-                <p><strong>Saturday:</strong> 10:00 AM - 4:00 PM</p>
-                <p><strong>Sunday:</strong> Closed</p>
+                <p><strong>Monday - Friday:</strong> 8:00 AM - 5:00 PM</p>
+                <p><strong>Saturday & Sunday:</strong> Closed</p>
                 <p style="color: #7f8c8d; font-size: 0.9rem; margin-top: 15px;">* Extended hours available by appointment</p>
             </div>
 
             <div class="info-box">
                 <h3>📍 Contact Information</h3>
-                <p><span style="color: var(--primary);">Address:</span> Labo Heritage Center, Labo, Camarines Norte</p>
-                <p><span style="color: var(--primary);">Email:</span> info@labomuseum.ph</p>
-                <p><span style="color: var(--primary);">Phone:</span> +63 (054) 123-4567</p>
+                <p><span style="color: var(--primary);">Address:</span> Museo De Labo People's Park, Labo, Camarines Norte</p>
+                <p><span style="color: var(--primary);">Email:</span> labotourism08@yahoo.com</p>
+                <p><span style="color: var(--primary);">Phone:</span> (054) 885-1074 / (+63) 928-661-2138</p>
                 <p style="color: #7f8c8d; font-size: 0.9rem; margin-top: 15px;">For group tours, contact us in advance</p>
             </div>
 
@@ -176,8 +68,8 @@ include 'header.php';
                 We welcome donations of artifacts, historical documents, photographs, and other materials that contribute to the preservation of Labo's cultural heritage. If you have items you'd like to share with the museum, please contact us.
             </p>
             <div class="action-buttons">
-                <a href="login.php" class="btn-secondary">Explore Digital Collection</a>
-                <a href="mailto:info@labomuseum.ph" class="btn-secondary">Donate an Artifact</a>
+                <a href="login.php">Explore Digital Collection</a>
+                <a href="mailto:info@labomuseum.ph">Donate an Artifact</a>
             </div>
         </div>
     </div>
