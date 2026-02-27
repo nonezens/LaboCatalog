@@ -21,7 +21,7 @@ if (isset($_POST['login'])) {
         $_SESSION['admin_username'] = $username;
         
         // Redirect to the add exhibit page
-        header("Location: add_exhibit.php");
+        header("Location: admin_dashboard.php");
         exit();
     } else {
         $error = "Invalid username or password!";

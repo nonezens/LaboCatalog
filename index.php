@@ -21,7 +21,7 @@ $latest_exhibits = $conn->query("SELECT * FROM exhibits ORDER BY id DESC LIMIT 4
         /* Hero Section */
         .hero {
             height: 80vh;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1566127444979-b3d2b654e3d7?q=80&w=2070&auto=format&fit=crop');
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('uploads/background.jpg') no-repeat center center;
             background-size: cover;
             background-position: center;
             display: flex;
