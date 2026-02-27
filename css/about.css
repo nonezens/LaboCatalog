@@ -118,6 +118,54 @@
     margin-top: 40px;
 }
 
+/* Navigation Button Styles */
+#navigationBtn {
+    transition: all 0.3s ease;
+}
+
+#navigationBtn:hover {
+    background: #d4941f !important;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(197, 160, 89, 0.4);
+}
+
+#navigationBtn:active {
+    transform: translateY(-1px);
+}
+
+/* Navigation Modal Styles */
+#navigationModal {
+    animation: modalFadeIn 0.3s ease;
+}
+
+#navigationModal button {
+    transition: all 0.3s ease;
+}
+
+#navigationModal button:active {
+    transform: scale(0.98);
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
 @media (max-width: 768px) {
     .about-hero h1 {
         font-size: 2.2rem;

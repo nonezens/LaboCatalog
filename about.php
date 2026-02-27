@@ -58,8 +58,45 @@ include 'db.php';
 
         <div class="content-section mt-40">
             <h2>Our Location</h2>
-            <div class="location-map">🗺️</div>
-            <p style="text-align: center; color: #7f8c8d; margin-top: 15px;">Interactive map coming soon. Visit us in person or explore our digital collection online.</p>
+            <div style="position: relative; margin-top: 20px;">
+                <iframe 
+                    src="https://www.google.com/maps?q=Labo+Museum,+Labo,+Camarines+Norte,+Philippines&t=m&z=15&output=embed&iwloc=near" 
+                    width="100%" 
+                    height="450" 
+                    style="border:0; border-radius: 8px;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button id="navigationBtn" style="display: inline-block; background: var(--gold); color: #333; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: background 0.3s; border: none; font-size: 1rem;">
+                    📍 Show the Way
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Modal -->
+        <div id="navigationModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000; align-items: center; justify-content: center;">
+            <div style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3); max-width: 500px; width: 90%; text-align: center;">
+                <h2 style="color: var(--dark); margin-top: 0; margin-bottom: 30px; font-size: 1.8rem;">Choose Your Route</h2>
+                <p style="color: #7f8c8d; margin-bottom: 30px; font-size: 1.05rem;">How would you like to navigate to Museo de Labo?</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                    <button id="carBtn" style="padding: 20px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                        <span style="font-size: 2rem;">🚗</span>
+                        <span>Car / Drive</span>
+                    </button>
+                    <button id="walkBtn" style="padding: 20px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                        <span style="font-size: 2rem;">🚶</span>
+                        <span>Walk</span>
+                    </button>
+                </div>
+
+                <button id="closeModalBtn" style="width: 100%; padding: 12px; background: #95a5a6; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s;">
+                    Cancel
+                </button>
+            </div>
         </div>
 
         <div class="content-section">
@@ -77,5 +114,84 @@ include 'db.php';
     <footer>
         <p>&copy; 2026 Museo De Labo Catalog. Preserving Our Cultural Heritage for Future Generations.</p>
     </footer>
+
+    <script>
+        // Museum location coordinates (Labo, Camarines Norte)
+        const museumLat = 14.1333;
+        const museumLng = 122.4500;
+        const museumName = "Museo De Labo People's Park";
+
+        const navigationBtn = document.getElementById('navigationBtn');
+        const navigationModal = document.getElementById('navigationModal');
+        const carBtn = document.getElementById('carBtn');
+        const walkBtn = document.getElementById('walkBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+
+        // Show modal when "Show the Way" is clicked
+        navigationBtn.addEventListener('click', function() {
+            navigationModal.style.display = 'flex';
+        });
+
+        // Close modal
+        closeModalBtn.addEventListener('click', function() {
+            navigationModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        navigationModal.addEventListener('click', function(e) {
+            if (e.target === navigationModal) {
+                navigationModal.style.display = 'none';
+            }
+        });
+
+        // Car navigation - opens Google Maps with driving directions
+        carBtn.addEventListener('click', function() {
+            const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${museumLat},${museumLng}&travelmode=driving`;
+            window.open(googleMapsUrl, '_blank');
+            navigationModal.style.display = 'none';
+        });
+
+        // Walk navigation - opens Google Maps with walking directions
+        walkBtn.addEventListener('click', function() {
+            const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${museumLat},${museumLng}&travelmode=walking`;
+            window.open(googleMapsUrl, '_blank');
+            navigationModal.style.display = 'none';
+        });
+
+        // Add hover effects
+        carBtn.addEventListener('mouseover', function() {
+            this.style.background = 'var(--gold)';
+            this.style.color = '#333';
+            this.style.transform = 'translateY(-3px)';
+        });
+
+        carBtn.addEventListener('mouseout', function() {
+            this.style.background = 'var(--primary)';
+            this.style.color = 'white';
+            this.style.transform = 'translateY(0)';
+        });
+
+        walkBtn.addEventListener('mouseover', function() {
+            this.style.background = 'var(--gold)';
+            this.style.color = '#333';
+            this.style.transform = 'translateY(-3px)';
+        });
+
+        walkBtn.addEventListener('mouseout', function() {
+            this.style.background = 'var(--primary)';
+            this.style.color = 'white';
+            this.style.transform = 'translateY(0)';
+        });
+
+        closeModalBtn.addEventListener('mouseover', function() {
+            this.style.background = '#7f8c8d';
+            this.style.transform = 'translateY(-2px)';
+        });
+
+        closeModalBtn.addEventListener('mouseout', function() {
+            this.style.background = '#95a5a6';
+            this.style.transform = 'translateY(0)';
+        });
+    </script>
 </body>
 </html>
