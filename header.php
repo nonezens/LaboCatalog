@@ -22,7 +22,6 @@ if (session_status() === PHP_SESSION_NONE) {
             <li><a href="index.php">Home</a></li>
             <li><a href="about.php">About</a></li>
             <li><a href="exhibits.php">Exhibits</a></li>
-            <li><a href="categories.php">Categories</a></li>
             
             <?php if(isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true): ?>
                 
@@ -48,5 +47,6 @@ if (session_status() === PHP_SESSION_NONE) {
             <?php endif; ?>
             
         </ul>
+
     </nav>
 </header>
