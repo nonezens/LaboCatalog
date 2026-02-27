@@ -65,54 +65,232 @@ if (isset($_POST['guest_login'])) {
 }
 ?>
 
-<div style="max-width: 800px; margin: 40px auto; display: flex; gap: 20px; flex-wrap: wrap; font-family: 'Segoe UI', Tahoma, sans-serif;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access the Collection | Museo de Labo</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .login-section {
+            background: white;
+            padding: 35px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .login-section h2 {
+            color: var(--dark);
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 12px;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        .login-section h3 {
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .login-form {
+            margin-bottom: 30px;
+        }
+
+        .login-form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .login-form-row.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-panel {
+            background: white;
+            padding: 35px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            align-self: flex-start;
+        }
+
+        .admin-panel h3 {
+            text-align: center;
+            color: var(--dark);
+            margin-top: 0;
+            font-size: 1.3rem;
+            color: var(--primary);
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 15px;
+        }
+
+        .alert-box {
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid;
+            animation: slideIn 0.3s ease;
+        }
+
+        .alert-box.success {
+            background: #e8f8f5;
+            color: #16a085;
+            border-color: #16a085;
+        }
+
+        .alert-box.error {
+            background: #fadbd8;
+            color: #c0392b;
+            border-color: #c0392b;
+        }
+
+        .success-text {
+            color: #27ae60 !important;
+        }
+
+        .login-subtitle {
+            font-size: 1rem;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            margin: 25px 0;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
     
-    <div style="flex: 2; min-width: 300px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+    <div class="login-section">
         
         <?php if ($msg): ?>
-            <div style="background: #f8f9fa; border-left: 4px solid <?php echo $msg_color; ?>; padding: 15px; margin-bottom: 20px; color: <?php echo $msg_color; ?>; font-weight: bold;">
-                <?php echo $msg; ?>
+            <div class="alert-box <?php echo ($msg_color === 'green') ? 'success' : 'error'; ?>">
+                <?php echo htmlspecialchars($msg); ?>
             </div>
         <?php endif; ?>
 
-        <h2 style="color: #2c3e50; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px;">Visitor Access</h2>
-        
-        <div style="background: #f4f7f6; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-            <h3 style="margin-top:0; color: #c5a059;">Already Approved? Log In Here</h3>
+        <h2>Visitor Access</h2>
+
+        <!-- Existing Visitor Login -->
+        <div class="login-form">
+            <h3>Already Approved?</h3>
+            <p class="login-subtitle">Sign in with your registered name and contact</p>
             <form method="POST">
-                <input type="text" name="login_name" placeholder="Full Name" style="width: 100%; padding: 10px; margin-bottom: 10px; box-sizing:border-box;" required>
-                <input type="text" name="login_contact" placeholder="Contact Number" style="width: 100%; padding: 10px; margin-bottom: 10px; box-sizing:border-box;" required>
-                <button type="submit" name="guest_login" style="width: 100%; padding: 12px; background: #c5a059; color: white; border: none; font-weight: bold; border-radius: 4px; cursor: pointer;">Enter Museum Catalog</button>
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <input type="text" name="login_name" class="form-input" placeholder="Full Name" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <input type="text" name="login_contact" class="form-input" placeholder="Contact Number" required>
+                </div>
+                <button type="submit" name="guest_login" class="btn-primary">Enter Museum Catalog</button>
             </form>
         </div>
 
-        <h3 style="color: #2c3e50;">New Visitor? Request Access</h3>
-        <form method="POST" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <input type="text" name="guest_name" placeholder="Full Name" required style="padding: 10px; border: 1px solid #ddd; border-radius:4px; grid-column: 1 / -1;">
-            
-            <select name="gender" required style="padding: 10px; border: 1px solid #ddd; border-radius:4px;">
-                <option value="">Select Gender</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option>
-            </select>
-            
-            <input type="text" name="nationality" placeholder="Nationality" required style="padding: 10px; border: 1px solid #ddd; border-radius:4px;">
-            <input type="text" name="residence" placeholder="Place of Residence" required style="padding: 10px; border: 1px solid #ddd; border-radius:4px; grid-column: 1 / -1;">
-            
-            <input type="number" name="num_days" placeholder="No. of Days Visiting" required style="padding: 10px; border: 1px solid #ddd; border-radius:4px;">
-            <input type="text" name="contact_no" placeholder="Contact Number" required style="padding: 10px; border: 1px solid #ddd; border-radius:4px;">
-            
-            <input type="text" name="purpose" placeholder="Purpose of Visit (e.g., Tourism, Research)" required style="padding: 10px; border: 1px solid #ddd; border-radius:4px; grid-column: 1 / -1;">
-            
-            <button type="submit" name="request_access" style="grid-column: 1 / -1; padding: 12px; background: #2c3e50; color: white; border: none; font-weight: bold; border-radius: 4px; cursor: pointer;">Submit Request</button>
-        </form>
+        <div class="divider"></div>
+
+        <!-- New Visitor Request -->
+        <div class="login-form">
+            <h3>New Visitor?</h3>
+            <p class="login-subtitle">Request access to browse our digital collection</p>
+            <form method="POST">
+                <div class="login-form-row full">
+                    <div class="form-group">
+                        <input type="text" name="guest_name" class="form-input" placeholder="Full Name" required>
+                    </div>
+                </div>
+
+                <div class="login-form-row">
+                    <div class="form-group">
+                        <select name="gender" class="form-input" required>
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="nationality" class="form-input" placeholder="Nationality" required>
+                    </div>
+                </div>
+
+                <div class="login-form-row full">
+                    <div class="form-group">
+                        <input type="text" name="residence" class="form-input" placeholder="Place of Residence" required>
+                    </div>
+                </div>
+
+                <div class="login-form-row">
+                    <div class="form-group">
+                        <input type="number" name="num_days" class="form-input" placeholder="No. of Days Visiting" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="contact_no" class="form-input" placeholder="Contact Number" required>
+                    </div>
+                </div>
+
+                <div class="login-form-row full">
+                    <div class="form-group">
+                        <input type="text" name="purpose" class="form-input" placeholder="Purpose (e.g., Tourism, Research)" required>
+                    </div>
+                </div>
+                
+                <button type="submit" name="request_access" class="btn-primary">Submit Request</button>
+            </form>
+        </div>
     </div>
 
-    <div style="flex: 1; min-width: 250px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); align-self: flex-start;">
-        <h3 style="color: #95a5a6; margin-top: 0; text-align: center;">Admin Portal</h3>
+    <div class="admin-panel">
+        <h3>Admin Portal</h3>
+        <p style="text-align: center; color: #7f8c8d; font-size: 0.95rem; margin-bottom: 20px;">Authorized museum staff only</p>
+        
         <form method="POST">
-            <input type="text" name="username" placeholder="Admin Username" style="width: 100%; padding: 10px; margin-bottom: 15px; box-sizing:border-box;" required>
-            <input type="password" name="password" placeholder="Password" style="width: 100%; padding: 10px; margin-bottom: 20px; box-sizing:border-box;" required>
-            <button type="submit" name="admin_login" style="width: 100%; padding: 12px; background: #7f8c8d; color: white; border: none; font-weight: bold; border-radius: 4px; cursor: pointer;">Login</button>
+            <div class="form-group" style="margin-bottom: 12px;">
+                <input type="text" name="username" class="form-input" placeholder="Admin Username" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <input type="password" name="password" class="form-input" placeholder="Password" required>
+            </div>
+            <button type="submit" name="admin_login" class="btn-primary" style="background: var(--primary);">Login to Dashboard</button>
         </form>
     </div>
 
 </div>
+<footer>
+    <p>&copy; 2026 Museo De Labo Catalog. Preserving Our Cultural Heritage for Future Generations.</p>
+</footer>
+
+</body>
+</html>

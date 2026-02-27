@@ -33,57 +33,68 @@ if ($is_logged_in) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exhibits | Museum Labo Catalog</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; }
-        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-        .page-title { text-align: center; color: #2c3e50; font-size: 2.5rem; margin-bottom: 20px; }
-        
-        /* Search Bar Styles */
-        .search-container { max-width: 600px; margin: 0 auto 40px auto; display: flex; gap: 10px; }
-        .search-wrapper { position: relative; flex: 1; }
-        .search-input { width: 100%; box-sizing: border-box; padding: 12px 20px; border: 1px solid #ddd; border-radius: 30px; font-size: 1rem; outline: none; transition: 0.3s; }
-        .search-input:focus { border-color: #c5a059; box-shadow: 0 0 8px rgba(197, 160, 89, 0.3); }
-        .btn-search { padding: 12px 25px; background: #2c3e50; color: white; border: none; border-radius: 30px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn-search:hover { background: #1a252f; }
-        .btn-clear { padding: 12px 20px; color: #7f8c8d; text-decoration: none; font-weight: bold; }
+        .not-logged-in {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            text-align: center;
+            padding: 100px 20px;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
 
-        /* Gallery Styles */
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
-        .card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.3s, opacity 0.3s; border: 1px solid #eee; display: flex; flex-direction: column; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-        .card img { width: 100%; height: 220px; object-fit: cover; }
-        .card-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
-        .card-title { margin: 0 0 10px 0; color: #2c3e50; font-size: 1.4rem; }
-        .card-meta { font-size: 0.9rem; color: #7f8c8d; margin-bottom: 15px; }
-        .card-desc { font-size: 0.95rem; color: #555; line-height: 1.5; margin-bottom: 20px; flex-grow: 1; }
-        .btn-view { display: block; text-align: center; padding: 10px; background: #c5a059; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; transition: 0.3s; }
-        .btn-view:hover { background: #b48a3d; }
-        
-        #noResultsMessage { grid-column: 1 / -1; text-align: center; font-size: 1.2rem; color: #7f8c8d; padding: 40px; display: none; }
+        .not-logged-in h2 {
+            font-size: 2.5rem;
+            margin: 0 0 20px 0;
+            color: var(--gold);
+        }
+
+        .not-logged-in p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .not-logged-in a {
+            background: var(--gold);
+            color: white;
+            padding: 15px 35px;
+            text-decoration: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: inline-block;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4);
+        }
+
+        .not-logged-in a:hover {
+            background: var(--gold-hover);
+            transform: translateY(-3px);
+        }
     </style>
 </head>
 <body>
-
     <?php include 'header.php'; ?>
 
     <?php if (!$is_logged_in): ?>
         
-        <div style="background: linear-gradient(135deg, #2c3e50, #1a252f); color: white; text-align: center; padding: 80px 20px; min-height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-            <h3 style="margin: 0 0 15px 0; font-size: 2.5rem; letter-spacing: 1px;">Experience History in Person</h3>
-            <p style="margin: 0 0 40px 0; font-size: 1.2rem; color: #ecf0f1; max-width: 600px; line-height: 1.6;">
-                Discover the rich heritage of Camarines Norte. Visit the real artifacts at the <strong style="color: #c5a059;">Museo de Labo</strong> in Labo!
-            </p>
-            
-            <p style="color: #95a5a6; font-size: 1rem; margin-bottom: 15px;">Want to browse the digital collection?</p>
-            <a href="login.php" style="padding: 15px 35px; background: #c5a059; color: white; text-decoration: none; border-radius: 30px; font-size: 1.1rem; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4);">
-                Sign the Guestbook to Enter
-            </a>
-        </div>
+        <section class="not-logged-in">
+            <h2>📚 Explore Our Artifacts</h2>
+            <p>Discover the rich historical collection of Museo de Labo. Sign in to browse our digital catalog and learn about the cultural heritage of Labo, Camarines Norte.</p>
+            <a href="login.php">Sign the Guestbook to Enter →</a>
+        </section>
 
     <?php else: ?>
 
-        <div class="container">
+        <div class="container" style="padding-top: 50px; padding-bottom: 50px;">
             <h1 class="page-title">Museum Collection</h1>
 
             <form action="exhibits.php" method="GET" class="search-container" id="searchForm">
@@ -105,7 +116,7 @@ if ($is_logged_in) {
                         $searchable_text = strtolower($row['title'] . " " . $row['artifact_year'] . " " . $row['origin'] . " " . $row['donated_by'] . " " . $row['description']);
                     ?>
                         <div class="card" data-search="<?php echo htmlspecialchars($searchable_text); ?>">
-                            <img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
+                            <img src="uploads/<?php echo htmlspecialchars($row['image_path']); ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
                             <div class="card-body">
                                 <h3 class="card-title"><?php echo htmlspecialchars($row['title']); ?></h3>
                                 <div class="card-meta">
@@ -113,15 +124,15 @@ if ($is_logged_in) {
                                     <strong>Origin:</strong> <?php echo $row['origin'] ? htmlspecialchars($row['origin']) : 'Unknown'; ?>
                                 </div>
                                 <p class="card-desc"><?php echo htmlspecialchars(substr($row['description'], 0, 100)); ?>...</p>
-                                <a href="exhibit_detail.php?id=<?php echo $row['id']; ?>" class="btn-view">View Full Details</a>
+                                <a href="exhibit_detail.php?id=<?php echo $row['id']; ?>" class="btn-view">View Details →</a>
                             </div>
                         </div>
                     <?php endwhile; ?>
                 <?php else: ?>
-                    <p style="grid-column: 1 / -1; text-align: center; font-size: 1.2rem; color: #7f8c8d; padding: 40px;">No artifacts found in the database.</p>
+                    <p style="grid-column: 1 / -1; text-align: center; font-size: 1.2rem; color: #7f8c8d; padding: 40px;">No artifacts found in the database. Please check back soon!</p>
                 <?php endif; ?>
                 
-                <p id="noResultsMessage">No artifacts match your live search.</p>
+                <p id="noResultsMessage">No artifacts match your search. Try different keywords.</p>
             </div>
         </div>
 
@@ -148,13 +159,12 @@ if ($is_logged_in) {
                     noResultsMsg.style.display = 'block';
                 }
             }
-
-            document.getElementById('searchForm').addEventListener('submit', function(e) {
-                e.preventDefault(); 
-            });
         </script>
 
     <?php endif; ?>
 
+    <footer>
+        <p>&copy; 2026 Museo De Labo Catalog. Preserving Our Cultural Heritage for Future Generations.</p>
+    </footer>
 </body>
 </html>

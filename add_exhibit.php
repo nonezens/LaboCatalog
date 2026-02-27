@@ -33,9 +33,10 @@ $categories = $conn->query("SELECT * FROM categories");
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add Artifact | Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Artifact | Admin</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .admin-card { max-width: 800px; margin: 50px auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
         .admin-card h2 { text-align: center; color: #2c3e50; margin-top: 0; margin-bottom: 30px; font-size: 2rem; border-bottom: 2px solid #c5a059; display: inline-block; padding-bottom: 10px; margin-left: 50%; transform: translateX(-50%); }
         
