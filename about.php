@@ -70,16 +70,15 @@ include 'header.php';
         <div class="info-grid">
             <div class="info-box">
                 <h3>🕒 Visiting Hours</h3>
-                <p>Monday - Friday: 9:00 AM - 5:00 PM</p>
-                <p>Saturday: 10:00 AM - 4:00 PM</p>
-                <p>Sunday: Closed</p>
+                <p>Monday - Friday: 8:00 AM - 5:00 PM</p>
+                <p>Saturday & Sunday: Closed</p>
             </div>
 
             <div class="info-box">
                 <h3>📍 Contact Us</h3>
                 <p><strong>Address:</strong> Peoples Park, Labo, Camarines Norte, Philippines</p>
-                <p><strong>Email:</strong> info@labomuseum.ph</p>
-                <p><strong>Phone:</strong> +63 (054) 123-4567</p>
+                <p><strong>Email:</strong> josecarlosblagatuz@gmail.com / labotourism08@yahoo.com</p>
+                <p><strong>Phone:</strong> (054) 885-1074 / 0928-661-2138</p>
             </div>
         </div>
 
