@@ -575,3 +575,163 @@ footer p {
   margin: 20px auto;
 }
 
+/* ============ ANIMATIONS ============ */
+
+/* Logo / Header */
+.site-logo, .logo-img {
+  transform-origin: center left;
+  animation: logoEnter 700ms cubic-bezier(.2,.9,.3,1) both;
+}
+
+@keyframes logoEnter {
+  from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Subtle floating for the logo image on hover */
+.logo-link:hover .logo-img { animation: logoFloat 2.8s ease-in-out infinite; }
+@keyframes logoFloat {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
+}
+
+/* Hero entrance */
+.page-hero h1, .hero h1 {
+  opacity: 0;
+  transform: translateY(12px) scale(0.98);
+  animation: heroIn 700ms ease-out 120ms forwards;
+}
+
+@keyframes heroIn {
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.page-hero p, .hero p {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: heroTextIn 700ms ease-out 280ms forwards;
+}
+@keyframes heroTextIn { to { opacity: 1; transform: translateY(0); } }
+
+/* Cards: fade up with slight stagger */
+.gallery-grid .card {
+  opacity: 0;
+  transform: translateY(12px) scale(0.995);
+  animation: cardFadeUp 560ms cubic-bezier(.2,.8,.2,1) forwards;
+}
+
+@keyframes cardFadeUp {
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Stagger rules for first 8 items */
+.gallery-grid .card:nth-child(1) { animation-delay: 120ms; }
+.gallery-grid .card:nth-child(2) { animation-delay: 200ms; }
+.gallery-grid .card:nth-child(3) { animation-delay: 280ms; }
+.gallery-grid .card:nth-child(4) { animation-delay: 360ms; }
+.gallery-grid .card:nth-child(5) { animation-delay: 440ms; }
+.gallery-grid .card:nth-child(6) { animation-delay: 520ms; }
+.gallery-grid .card:nth-child(7) { animation-delay: 600ms; }
+.gallery-grid .card:nth-child(8) { animation-delay: 680ms; }
+
+/* Subtle entrance for page titles */
+.page-title { opacity: 0; transform: translateY(8px); animation: titleIn 520ms ease-out 80ms forwards; }
+@keyframes titleIn { to { opacity: 1; transform: translateY(0); } }
+
+/* Morph overlay used for page transitions */
+.morph-overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 28px;
+  height: 28px;
+  background: var(--gold);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%) scale(0.01);
+  opacity: 0.95;
+  transition: transform 420ms cubic-bezier(.2,.9,.3,1), opacity 200ms ease;
+}
+.morph-overlay.expand {
+  transform: translate(-50%, -50%) scale(80);
+  opacity: 1;
+}
+
+/* File-modal (notebook-like) */
+.file-modal {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10,10,10,0.28);
+  z-index: 10050;
+}
+.file-sheet {
+  width: 80%;
+  height: 80%;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  overflow: hidden;
+  position: absolute;
+  transition: all 420ms cubic-bezier(.2,.9,.3,1);
+  transform-origin: center center;
+}
+.file-sheet.sheet-open {
+  left: 10%;
+  top: 6%;
+  width: 80%;
+  height: 88%;
+  border-radius: 12px;
+}
+.file-sheet.sheet-close {
+  opacity: 0; transform: scale(0.98) translateY(6px); transition: all 240ms ease-in;
+}
+.file-toolbar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; background: linear-gradient(90deg, rgba(0,0,0,0.02), rgba(0,0,0,0.03));
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  z-index: 2; position: relative;
+}
+.file-toolbar .title { font-weight: 700; color: var(--dark); font-size: 1rem; }
+.file-toolbar .actions { margin-left: auto; display: flex; gap: 8px; }
+.file-toolbar .actions button { padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.06); background: white; cursor: pointer; font-weight: 600; }
+
+/* Page enter / exit helpers */
+body:not(.page-loaded) .site-header,
+body:not(.page-loaded) .page-hero,
+body:not(.page-loaded) .container,
+body:not(.page-loaded) .gallery-grid {
+  opacity: 0; transform: translateY(6px) scale(0.998); transition: all 420ms cubic-bezier(.2,.9,.3,1);
+}
+
+body.page-exit .site-header,
+body.page-exit .page-hero,
+body.page-exit .container,
+body.page-exit .gallery-grid {
+  opacity: 0; transform: translateY(-8px) scale(0.996); transition: all 320ms ease-in;
+}
+
+/* Small floating affordance for FAB-style open-file buttons */
+.open-file {
+  display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,0.9); box-shadow: var(--shadow-sm); transition: transform 220ms ease, box-shadow 220ms ease;
+}
+.open-file:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.12); }
+.file-close {
+  position: absolute; right: 12px; top: 10px;
+  background: transparent; border: none; font-size: 20px; cursor: pointer; z-index: 2;
+}
+.file-iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .morph-overlay, .file-sheet, .logo-link, .card, .page-title, .page-hero h1, .page-hero p {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
