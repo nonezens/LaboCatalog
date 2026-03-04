@@ -1,35 +1,41 @@
 // Header scroll behavior
 document.addEventListener('DOMContentLoaded', function() {
-    let lastScrollTop = 0;
     const header = document.getElementById('siteHeader');
+    if (!header) return;
 
-    if (header) {
-        window.addEventListener('scroll', function() {
-            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    let lastScrollTop = 0;
+    let ticking = false;
 
-            // Check scroll direction
-            if (scrollTop > lastScrollTop && scrollTop > 100) {
-                // Scrolling DOWN - hide header
-                header.style.transform = 'translateY(-100%)';
-            } else {
-                // Scrolling UP or near top - show header
-                header.style.transform = 'translateY(0)';
-            }
+    function handleScroll() {
+        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-            // Change color based on scroll position
-            if (scrollTop > 100) {
-                // Darker gradient when scrolled down
-                header.style.background = 'linear-gradient(135deg, rgba(13, 74, 13, 0.95) 0%, rgba(5, 59, 5, 0.95) 100%)';
-                header.style.boxShadow = '0 6px 20px rgba(0,0,0,0.4)';
-            } else {
-                // Original color at top
-                header.style.background = 'var(--primary, #137137)';
-                header.style.boxShadow = '0 4px 10px rgba(0,0,0,0.2)';
-            }
+        // Hide/show header
+        if (scrollTop > lastScrollTop && scrollTop > 100) {
+            header.classList.add('header-hidden');
+        } else {
+            header.classList.remove('header-hidden');
+        }
 
-            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-        });
+        // Change header style when scrolled
+        if (scrollTop > 100) {
+            header.classList.add('header-scrolled');
+        } else {
+            header.classList.remove('header-scrolled');
+        }
+
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        ticking = false;
     }
+
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            window.requestAnimationFrame(function() {
+                handleScroll();
+                ticking = true;
+            });
+            ticking = true;
+        }
+    });
 });
 
 // Morphing page transition and 'open file' modal behavior
@@ -42,49 +48,112 @@ document.addEventListener('DOMContentLoaded', function() {
         return ov;
     }
 
-    // Handle morphing navigation for same-origin links (add graceful fallback)
-    document.body.addEventListener('click', function(e) {
-        const a = e.target.closest('a');
-        if (!a) return;
-        const href = a.getAttribute('href');
-        // only handle internal links (no target, not mailto/tel, and same origin)
-        if (!href || href.startsWith('mailto:') || href.startsWith('tel:')) return;
-        if (href.startsWith('http') && !href.startsWith(window.location.origin)) return;
-
-        // If link has data-no-morph or a target, skip custom morph
-        if (a.hasAttribute('data-no-morph') || a.target) return;
-
-        e.preventDefault();
-
-        // Add page-exit class to animate header and content out
+    function playMorphAnimation(cx, cy, callback) {
         document.body.classList.add('page-exit');
-
-        const rect = a.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-
         const overlay = createOverlay();
         overlay.style.left = cx + 'px';
         overlay.style.top = cy + 'px';
 
-        // trigger expand
         requestAnimationFrame(() => {
             overlay.classList.add('expand');
         });
 
-        // navigate after animation (but guard if transitionend doesn't fire)
         let handled = false;
-        function doNav() {
-            if (handled) return; handled = true;
-            window.location.href = href;
+        function onDone() {
+            if (handled) return;
+            handled = true;
+            if (callback) callback();
         }
 
-        overlay.addEventListener('transitionend', function handler() {
-            overlay.removeEventListener('transitionend', handler);
-            doNav();
+        overlay.addEventListener('transitionend', onDone);
+        setTimeout(onDone, 900); // Fallback
+    }
+
+    function playBookAnimation(callback) {
+        document.body.classList.add('page-exit');
+
+        const overlay = document.createElement('div');
+        overlay.className = 'book-transition-overlay';
+
+        const book = document.createElement('div');
+        book.className = 'book';
+
+        const cover = document.createElement('div');
+        cover.className = 'book-page cover';
+        cover.innerHTML = '<span>Opening Artifact...</span>';
+
+        const innerPage = document.createElement('div');
+        innerPage.className = 'book-page inner-page';
+
+        book.appendChild(cover);
+        book.appendChild(innerPage);
+        overlay.appendChild(book);
+        document.body.appendChild(overlay);
+
+        requestAnimationFrame(() => {
+            overlay.classList.add('visible');
+            setTimeout(() => {
+                overlay.classList.add('book-open');
+            }, 50);
         });
-        // fallback: navigate after 900ms in case transitionend doesn't fire
-        setTimeout(doNav, 900);
+
+        let handled = false;
+        function onDone() {
+            if (handled) return;
+            handled = true;
+            if (callback) callback();
+        }
+
+        cover.addEventListener('transitionend', onDone);
+        setTimeout(onDone, 1200); // Fallback
+    }
+
+    // Handle morphing navigation for same-origin links
+    document.body.addEventListener('click', function(e) {
+        const a = e.target.closest('a');
+        if (!a) return;
+
+        const href = a.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || (href.startsWith('http') && !href.startsWith(window.location.origin))) {
+            return;
+        }
+
+        if (a.hasAttribute('data-no-morph') || a.target) return;
+
+        e.preventDefault();
+
+        if (a.classList.contains('book-link')) {
+            playBookAnimation(() => {
+                window.location.href = href;
+            });
+        } else {
+            const rect = a.getBoundingClientRect();
+            playMorphAnimation(rect.left + rect.width / 2, rect.top + rect.height / 2, () => {
+                window.location.href = href;
+            });
+        }
+    });
+
+    // Handle morphing for form submissions
+    document.body.addEventListener('submit', function(e) {
+        const form = e.target.closest('.morph-form');
+        if (!form) return;
+
+        e.preventDefault();
+        
+        // Find the submit button to animate from its position
+        const submitButton = form.querySelector('button[type="submit"]');
+        let rect;
+        if (submitButton) {
+            rect = submitButton.getBoundingClientRect();
+        } else {
+            // Fallback to form's position
+            rect = form.getBoundingClientRect();
+        }
+
+        playMorphAnimation(rect.left + rect.width / 2, rect.top + rect.height / 2, () => {
+            form.submit();
+        });
     });
 
     // 'Open file' buttons/links: animate into a notebook-style modal with an iframe

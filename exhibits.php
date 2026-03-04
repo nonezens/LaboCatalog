@@ -196,7 +196,7 @@ if ($is_logged_in) {
                                     <?php endif; ?>
                                 </div>
                                 <p class="card-desc"><?php echo htmlspecialchars(substr($row['description'], 0, 100)); ?>...</p>
-                                <a href="exhibit_detail.php?id=<?php echo $row['id']; ?>" class="btn-view">View Details →</a>
+                                <a href="exhibit_detail.php?id=<?php echo $row['id']; ?>" class="btn-view book-link">View Details →</a>
                             </div>
                         </div>
                     <?php endwhile; ?>

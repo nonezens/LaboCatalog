@@ -54,7 +54,7 @@ if(isset($_POST['add_cat'])) {
     
     <?php echo $message; ?>
 
-    <form method="POST" enctype="multipart/form-data">
+    <form method="POST" enctype="multipart/form-data" class="morph-form">
         <div class="form-group">
             <label>Department Name</label>
             <input type="text" name="cat_name" class="form-control" placeholder="e.g., Ancient Egypt" required>

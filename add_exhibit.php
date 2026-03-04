@@ -45,7 +45,7 @@ $categories = $conn->query("SELECT * FROM categories");
     
     <?php echo $message; ?>
 
-    <form method="POST" enctype="multipart/form-data">
+    <form method="POST" enctype="multipart/form-data" class="morph-form">
         
         <div class="form-row">
             <div class="form-col">

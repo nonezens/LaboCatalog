@@ -54,7 +54,7 @@ $total_guests = $guest_result->num_rows;
         
         /* Action Buttons */
         .action-btn { padding: 8px 12px; color: white; text-decoration: none; border-radius: 4px; font-size: 0.85rem; transition: 0.3s; display: inline-block; text-align: center; }
-        .action-btn:hover { opacity: 0.8; }
+        .action-btn:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
         .btn-edit { background: #f39c12; margin-right: 5px; }
         .btn-delete { background: #e74c3c; }
         .btn-approve { background: #2ecc71; margin-bottom: 5px; display: block; }
@@ -89,7 +89,7 @@ $total_guests = $guest_result->num_rows;
         </div>
         
         <h3 class="table-title">👥 Visitor Log & Access Requests</h3>
-        <div class="table-container">
+        <div class="table-container admin-fade-in">
             <table>
                 <tr>
                     <th>Date Registered</th>
@@ -142,7 +142,7 @@ $total_guests = $guest_result->num_rows;
         </div>
 
         <h3 class="table-title">🖼️ Manage Artifacts</h3>
-        <div class="table-container">
+        <div class="table-container admin-fade-in">
             <table>
                 <tr>
                     <th>ID</th>
@@ -171,7 +171,7 @@ $total_guests = $guest_result->num_rows;
         </div>
 
         <h3 class="table-title">📁 Manage Departments (Categories)</h3>
-        <div class="table-container">
+        <div class="table-container admin-fade-in">
             <table>
                 <tr>
                     <th>ID</th>

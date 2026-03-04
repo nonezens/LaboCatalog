@@ -58,7 +58,7 @@ if(isset($_POST['update_cat'])) {
 <div class="admin-card">
     <h2>Edit Department</h2>
     
-    <form method="POST" enctype="multipart/form-data">
+    <form method="POST" enctype="multipart/form-data" class="morph-form">
         <label style="font-weight: bold; color: #555;">Department Name</label>
         <input type="text" name="cat_name" class="form-control" value="<?php echo htmlspecialchars($category['name']); ?>" required>
 
