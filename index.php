@@ -42,7 +42,14 @@ if ($is_logged_in) {
         .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         .about-text { font-size: 1.1rem; color: #555; line-height: 1.8; }
         .about-text p { margin-bottom: 20px; }
-        .about-image { background: #eee; border-radius: 8px; height: 300px; display: flex; align-items: center; justify-content: center; color: #aaa; font-style: italic; border: 2px dashed #ccc; }
+        .about-image { background: #eee; border-radius: 8px; height: 100%; min-height: 350px; display: flex; align-items: center; justify-content: center; color: #aaa; font-style: italic; border: 2px dashed #ccc; }
+
+        /* Visitor Info Guide */
+        .visitor-info { margin-top: 25px; padding-top: 25px; border-top: 1px solid #eee; }
+        .visitor-info h4 { margin-top: 0; color: #c5a059; font-size: 1.2rem; margin-bottom: 15px; }
+        .visitor-info ul { list-style-type: none; padding: 0; margin: 0; }
+        .visitor-info li { margin-bottom: 10px; display: flex; align-items: flex-start; gap: 10px; }
+        .visitor-info li strong { color: #2c3e50; }
 
         /* Latest Acquisitions Grid (Only for logged-in users) */
         .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-top: 20px; }
@@ -65,10 +72,10 @@ if ($is_logged_in) {
 
     <div class="hero">
         <h1>Welcome to Museo de Labo</h1>
-        <p>Preserving the rich history, culture, and heritage of Camarines Norte. Explore our digital catalog to uncover the stories of our ancestors and the treasures of our past.</p>
+        <p>Preserving the rich history, culture, and heritage of Camarines Norte. Step through our doors to uncover the stories of our ancestors and the treasures of our past.</p>
         
         <?php if (!$is_logged_in): ?>
-            <a href="login.php" class="hero-btn">Sign Guestbook to Explore</a>
+            <a href="login.php" class="hero-btn">Request Access to Digital Catalog</a>
         <?php else: ?>
             <a href="categories.php" class="hero-btn">Enter the Catalog</a>
         <?php endif; ?>
@@ -79,11 +86,21 @@ if ($is_logged_in) {
         <div class="about-grid">
             <div class="about-text">
                 <p>Located in the heart of Camarines Norte, the <strong>Museo de Labo</strong> serves as the primary custodian of the municipality's historical artifacts, cultural relics, and artistic heritage.</p>
-                <p>Our mission is to educate, inspire, and connect both locals and tourists with the vibrant legacy of Labo. From the ancient indigenous roots to the Spanish colonial era and the rich mining history of the region, every piece in our collection tells a unique story.</p>
-                <p>Can't visit us in person? Our new digital catalog allows researchers, students, and history enthusiasts to browse our collections securely from anywhere in the world.</p>
+                <p>Our mission is to educate, inspire, and connect both locals and tourists with the vibrant legacy of Labo. From ancient indigenous roots to the Spanish colonial era and the rich mining history of the region, every piece in our collection tells a unique story.</p>
+                <p>Step through our doors and immerse yourself in history. We warmly invite students, researchers, and history enthusiasts to walk our halls and experience the rich heritage of Camarines Norte firsthand. Plan your visit today, join one of our guided tours, and let our curated exhibits transport you through time!</p>
+                
+                <div class="visitor-info">
+                    <h4>Plan Your Visit</h4>
+                    <ul>
+                        <li><span>📍</span> <span><strong>Location:</strong> Municipal Hall Compound, Labo, Camarines Norte</span></li>
+                        <li><span>🕒</span> <span><strong>Hours:</strong> Monday to Friday, 8:00 AM - 5:00 PM</span></li>
+                        <li><span>🎟️</span> <span><strong>Admission:</strong> Free (Please sign our visitor logbook upon arrival)</span></li>
+                    </ul>
+                </div>
+
             </div>
             <div class="about-image">
-                <img src="museum-exterior.jpg" alt="Museo de Labo Building" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;" onerror="this.style.display='none'; this.parentNode.innerHTML='[Insert Museum Photo Here]';">
+                <img src="uploads/background.jpg" alt="Museo de Labo Building" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;" onerror="this.style.display='none'; this.parentNode.innerHTML='[Insert Museum Photo Here]';">
             </div>
         </div>
     </div>
