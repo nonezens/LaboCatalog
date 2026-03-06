@@ -89,7 +89,7 @@
 </style>
 
 <div class="admin-layout">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <aside class="sidebar">
         <h3>Admin Menu</h3>
         <ul class="sidebar-menu">

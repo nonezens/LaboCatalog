@@ -16,6 +16,7 @@ if ($is_logged_in) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome | Museo de Labo</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; }
@@ -62,8 +63,15 @@ if ($is_logged_in) {
         .btn-view { display: block; text-align: center; padding: 10px; background: #2c3e50; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; transition: 0.3s; margin-top: auto; }
         .btn-view:hover { background: #c5a059; }
         
-        /* Responsive */
-        @media (max-width: 768px) { .about-grid { grid-template-columns: 1fr; } }
+        /* --- RESPONSIVE HOMEPAGE HOMEPAGE --- */
+        @media (max-width: 768px) { 
+            .about-grid { grid-template-columns: 1fr; } 
+            .hero { padding: 60px 20px; }
+            .hero h1 { font-size: 2.2rem; }
+            .hero p { font-size: 1rem; }
+            .section-title { font-size: 1.8rem; }
+            .visitor-info ul { flex-direction: column; }
+        }
     </style>
 </head>
 <body>

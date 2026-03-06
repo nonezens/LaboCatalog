@@ -43,6 +43,7 @@ if(isset($_POST['update_cat'])) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Category | Admin</title>
     <style>
         body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; margin: 0; }

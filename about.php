@@ -7,6 +7,7 @@ include 'header.php';
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us | Museum Labo Catalog</title>
     <style>
         :root { --dark: #1a1a1a; --gold: #c5a059; --bg: #fdfdfd; }

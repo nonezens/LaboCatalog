@@ -12,6 +12,7 @@ $total_guests = $conn->query("SELECT id FROM guests")->num_rows;
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
 </head>
 <body style="background: #f4f7f6; margin: 0; font-family: sans-serif;">

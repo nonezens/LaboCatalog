@@ -9,6 +9,7 @@ $cat_result = $conn->query("SELECT * FROM categories ORDER BY id DESC");
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Departments</title>
 </head>
 <body style="background: #f4f7f6; margin: 0; font-family: sans-serif;">

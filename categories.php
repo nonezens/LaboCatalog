@@ -24,6 +24,7 @@ if ($is_logged_in) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Departments | Museum Labo Catalog</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; }
@@ -50,6 +51,24 @@ if ($is_logged_in) {
         .btn-view:hover { background: #c5a059; }
 
         #noResultsMessage { grid-column: 1 / -1; text-align: center; font-size: 1.2rem; color: #7f8c8d; padding: 40px; display: none; }
+        /* --- RESPONSIVE CATALOG & SEARCH --- */
+        @media (max-width: 768px) {
+            .search-container { 
+                flex-direction: column; /* Stack search bar and buttons on phones */
+                gap: 15px; 
+            }
+            .btn-search, .btn-clear { 
+                width: 100%; 
+                text-align: center; 
+                box-sizing: border-box;
+            }
+            .page-title { 
+                font-size: 2rem; /* Smaller title for mobile */
+            }
+            .gallery-grid, .cat-grid {
+                grid-template-columns: 1fr; /* Force 1 column on very small phones */
+            }
+        }
     </style>
 </head>
 <body>

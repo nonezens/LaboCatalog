@@ -72,6 +72,7 @@ if (isset($_POST['guest_login'])) {
 ?>
 
 <div style="max-width: 800px; margin: 40px auto; display: flex; gap: 20px; flex-wrap: wrap; font-family: 'Segoe UI', Tahoma, sans-serif;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <div style="flex: 2; min-width: 300px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
         

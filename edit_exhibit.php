@@ -41,6 +41,7 @@ $categories = $conn->query("SELECT * FROM categories");
 ?>
 
 <div style="max-width: 800px; margin: 40px auto; padding: 20px; background: white; border-radius: 8px; font-family: sans-serif; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <h2>Update Artifact</h2>
     <form method="POST" enctype="multipart/form-data">
         

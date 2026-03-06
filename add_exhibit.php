@@ -1,116 +1,143 @@
-<?php 
+<?php
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
-if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header("Location: login.php"); exit(); 
-}
-
+if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit(); }
 include 'db.php'; 
-include 'header.php'; 
 
-$message = "";
-if(isset($_POST['submit'])) {
-    $title = $_POST['title']; $cat = $_POST['category_id']; $desc = $_POST['description'];
-    $donor = $_POST['donated_by']; $year = $_POST['artifact_year']; $origin = $_POST['origin'];
+$msg = "";
+$msg_color = "red";
+
+// Fetch categories for the dropdown menu
+$cat_query = "SELECT * FROM categories ORDER BY name ASC";
+$cat_result = $conn->query($cat_query);
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_exhibit'])) {
+    $title = trim($_POST['title']);
+    $category_id = $_POST['category_id'];
+    $artifact_year = trim($_POST['artifact_year']);
+    $origin = trim($_POST['origin']);
+    $donated_by = trim($_POST['donated_by']);
+    $description = trim($_POST['description']);
     
-    $imgName = $_FILES['image']['name'];
-    $tmpName = $_FILES['image']['tmp_name'];
+    // Image Upload Logic
+    $image_path = "";
+    if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+        $target_dir = "uploads/";
+        if (!is_dir($target_dir)) { mkdir($target_dir, 0777, true); }
+        $image_path = time() . '_' . basename($_FILES["image"]["name"]);
+        move_uploaded_file($_FILES["image"]["tmp_name"], $target_dir . $image_path);
+    }
 
-    if(move_uploaded_file($tmpName, "uploads/" . $imgName)) {
-        $stmt = $conn->prepare("INSERT INTO exhibits (title, category_id, image_path, description, donated_by, artifact_year, origin) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sisssss", $title, $cat, $imgName, $desc, $donor, $year, $origin);
-        if($stmt->execute()) {
-            $message = "<div class='alert success'>Artifact safely added to the museum vault!</div>";
+    if (!empty($title) && !empty($description) && !empty($image_path)) {
+        $stmt = $conn->prepare("INSERT INTO exhibits (title, category_id, description, image_path, artifact_year, origin, donated_by) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sisssss", $title, $category_id, $description, $image_path, $artifact_year, $origin, $donated_by);
+        
+        if ($stmt->execute()) {
+            $msg = "Artifact added successfully!";
+            $msg_color = "green";
         } else {
-            $message = "<div class='alert error'>Error: " . $conn->error . "</div>";
+            $msg = "Error adding artifact.";
         }
+    } else {
+        $msg = "Please fill in all required fields and upload an image.";
     }
 }
-
-$categories = $conn->query("SELECT * FROM categories");
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add Artifact | Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Add Artifact | Admin</title>
     <style>
-        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .admin-card { max-width: 800px; margin: 50px auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-        .admin-card h2 { text-align: center; color: #2c3e50; margin-top: 0; margin-bottom: 30px; font-size: 2rem; border-bottom: 2px solid #c5a059; display: inline-block; padding-bottom: 10px; margin-left: 50%; transform: translateX(-50%); }
+        .form-container { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); max-width: 800px; margin: 0 auto; }
         
-        .form-row { display: flex; gap: 20px; margin-bottom: 20px; }
-        .form-col { flex: 1; }
+        /* CSS Grid for form layout */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full-width { grid-column: 1 / -1; }
         
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #555; }
-        .form-control { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 1rem; transition: 0.3s; font-family: inherit; }
-        .form-control:focus { border-color: #c5a059; outline: none; box-shadow: 0 0 5px rgba(197, 160, 89, 0.3); }
+        .form-group { margin-bottom: 0; } /* Gap handled by grid */
+        .form-label { display: block; font-weight: bold; color: #2c3e50; margin-bottom: 8px; font-size: 0.95rem; }
+        .form-control { width: 100%; padding: 12px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; font-size: 1rem; transition: border-color 0.3s; }
+        .form-control:focus { border-color: #2980b9; outline: none; }
         textarea.form-control { resize: vertical; min-height: 120px; }
         
-        .btn-submit { width: 100%; padding: 16px; background: #e67e22; color: white; border: none; border-radius: 6px; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 20px; }
-        .btn-submit:hover { background: #d35400; transform: translateY(-2px); }
-
-        .alert { padding: 15px; border-radius: 6px; margin-bottom: 20px; text-align: center; font-weight: bold; }
-        .success { background: #e8f8f5; color: #1abc9c; border: 1px solid #1abc9c; }
-        .error { background: #fdedec; color: #e74c3c; border: 1px solid #e74c3c; }
+        .btn-submit { width: 100%; padding: 15px; background: #2980b9; color: white; border: none; font-weight: bold; border-radius: 4px; font-size: 1.1rem; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-submit:hover { background: #1c5980; transform: translateY(-2px); }
+        
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; /* Stacks everything on cellphones! */ gap: 15px; }
+            .form-container { padding: 20px; border-radius: 0; box-shadow: none; border-top: 2px solid #2980b9; }
+        }
     </style>
 </head>
-<body>
+<body style="background: #f4f7f6; margin: 0; font-family: 'Segoe UI', Tahoma, sans-serif;">
 
-<div class="admin-card">
-    <h2>Add New Artifact</h2>
-    
-    <?php echo $message; ?>
+    <?php include 'header.php'; ?>
+    <?php include 'admin_sidebar.php'; ?>
 
-    <form method="POST" enctype="multipart/form-data">
-        
-        <div class="form-row">
-            <div class="form-col">
-                <label>Artifact Title</label>
-                <input type="text" name="title" class="form-control" required>
-            </div>
-            <div class="form-col">
-                <label>Museum Department</label>
-                <select name="category_id" class="form-control" required>
-                    <option value="">-- Select Department --</option>
-                    <?php while($cat = $categories->fetch_assoc()): ?>
-                        <option value="<?php echo $cat['id']; ?>"><?php echo $cat['name']; ?></option>
-                    <?php endwhile; ?>
-                </select>
-            </div>
+        <div style="margin-bottom: 20px;">
+            <h2 style="color: #2c3e50; margin-top: 0; font-size: 2rem;">➕ Add New Artifact</h2>
+            <p style="color: #7f8c8d;">Document a new piece of history for the museum catalog.</p>
         </div>
 
-        <div class="form-row">
-            <div class="form-col">
-                <label>Period / Year</label>
-                <input type="text" name="artifact_year" class="form-control" placeholder="e.g., 500 BC">
-            </div>
-            <div class="form-col">
-                <label>Place of Origin</label>
-                <input type="text" name="origin" class="form-control" placeholder="e.g., Rome, Italy">
-            </div>
+        <div class="form-container">
+            <?php if ($msg): ?>
+                <div style="background: #f8f9fa; border-left: 4px solid <?php echo $msg_color; ?>; padding: 15px; margin-bottom: 25px; color: <?php echo $msg_color; ?>; font-weight: bold;">
+                    <?php echo $msg; ?>
+                </div>
+            <?php endif; ?>
+
+            <form method="POST" enctype="multipart/form-data" class="form-grid">
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Artifact Title *</label>
+                    <input type="text" name="title" class="form-control" placeholder="e.g., Pre-Colonial Gold Necklace" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Department / Category</label>
+                    <select name="category_id" class="form-control" style="background: white;" required>
+                        <option value="">Select a Department</option>
+                        <?php while($cat = $cat_result->fetch_assoc()): ?>
+                            <option value="<?php echo $cat['id']; ?>"><?php echo htmlspecialchars($cat['name']); ?></option>
+                        <?php endwhile; ?>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">High-Res Image *</label>
+                    <input type="file" name="image" class="form-control" accept="image/*" required style="padding: 9px; background: #f9f9f9;">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Historical Period / Year</label>
+                    <input type="text" name="artifact_year" class="form-control" placeholder="e.g., 18th Century">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Origin / Discovery Location</label>
+                    <input type="text" name="origin" class="form-control" placeholder="e.g., Labo River">
+                </div>
+
+                <div class="form-group full-width">
+                    <label class="form-label">Donated / Contributed By</label>
+                    <input type="text" name="donated_by" class="form-control" placeholder="Leave blank if from the main museum collection">
+                </div>
+
+                <div class="form-group full-width">
+                    <label class="form-label">Full Historical Description *</label>
+                    <textarea name="description" class="form-control" placeholder="Write the history and significance of this artifact here..." required></textarea>
+                </div>
+
+                <div class="full-width">
+                    <button type="submit" name="add_exhibit" class="btn-submit">Save Artifact to Database</button>
+                </div>
+
+            </form>
         </div>
 
-        <div class="form-group">
-            <label>Historical Description</label>
-            <textarea name="description" class="form-control" placeholder="Enter the history and details of the artifact..."></textarea>
-        </div>
-
-        <div class="form-row">
-            <div class="form-col">
-                <label>Donated By / Source</label>
-                <input type="text" name="donated_by" class="form-control" placeholder="e.g., The Smith Family">
-            </div>
-            <div class="form-col">
-                <label>Artifact Image</label>
-                <input type="file" name="image" class="form-control" accept="image/*" required>
-            </div>
-        </div>
-
-        <button type="submit" name="submit" class="btn-submit">💾 Save to Collection</button>
-    </form>
+    </main>
 </div>
-
 </body>
 </html>

@@ -40,6 +40,7 @@ $exhibit = $result->fetch_assoc();
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $exhibit['title']; ?> | Museum Labo Catalog</title>
     <style>
         .detail-container { max-width: 1000px; margin: 40px auto; padding: 20px; font-family: 'Georgia', serif; }
