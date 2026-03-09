@@ -29,8 +29,26 @@ if (session_status() === PHP_SESSION_NONE) {
         flex-wrap: wrap; /* Allows the menu to drop down to the next row on mobile */
     }
     
-    .site-logo a { color: white; text-decoration: none; font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+    .site-logo a { color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; }
     .logo-img { height: 40px; width: auto; object-fit: contain; }
+
+    .logo-text-container {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+    }
+
+    .logo-text {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .baybayin-text {
+        font-size: 0.8rem;
+        font-weight: normal;
+        letter-spacing: 0.5px;
+        color: #bdc3c7;
+    }
 
     /* --- THE HAMBURGER ICON (Hidden on Desktop) --- */
     .hamburger {
@@ -88,7 +106,10 @@ if (session_status() === PHP_SESSION_NONE) {
         <div class="site-logo">
             <a href="index.php">
                 <img src="uploads/logo.png" alt="Museum Logo" class="logo-img" onerror="this.style.display='none';">
-                Museo De Labo
+                <div class="logo-text-container">
+                    <span class="logo-text">Museo De Labo</span>
+                    <span class="baybayin-text">ᜋᜓᜐᜒᜂ ᜇᜒ ᜎᜊᜓ</span>
+                </div>
             </a>
         </div>
         

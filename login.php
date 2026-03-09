@@ -1,7 +1,6 @@
 <?php
 session_start();
 include 'db.php';
-include 'header.php';
 
 $msg = "";
 $msg_color = "red";
@@ -70,6 +69,8 @@ if (isset($_POST['guest_login'])) {
     }
 }
 ?>
+
+<?php include 'header.php'; ?>
 
 <div style="max-width: 800px; margin: 40px auto; display: flex; gap: 20px; flex-wrap: wrap; font-family: 'Segoe UI', Tahoma, sans-serif;">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
