@@ -30,8 +30,8 @@ $total_guests = $conn->query("SELECT id FROM guests")->num_rows;
             </div>
         </div>
         <div class="action-buttons">
-            <a href="add_exhibit.php" class="btn-add bg-exhibit">➕ Add Exhibit</a>
-            <a href="add_category.php" class="btn-add bg-category">➕ Add Category</a>
+            <a href="manage_artifacts.php" class="btn-add bg-exhibit">➕ Add Exhibit</a>
+            <a href="manage_departments.php" class="btn-add bg-category">➕ Add Category</a>
         </div>
     </div>
     

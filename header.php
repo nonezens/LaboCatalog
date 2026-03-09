@@ -30,7 +30,7 @@ if (session_status() === PHP_SESSION_NONE) {
     }
     
     .site-logo a { color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; }
-    .logo-img { height: 40px; width: auto; object-fit: contain; }
+    .logo-img { height: 55px; width: auto; object-fit: contain; }
 
     .logo-text-container {
         display: flex;

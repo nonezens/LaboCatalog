@@ -40,44 +40,171 @@ if(isset($_POST['update'])) {
 $categories = $conn->query("SELECT * FROM categories");
 ?>
 
-<div style="max-width: 800px; margin: 40px auto; padding: 20px; background: white; border-radius: 8px; font-family: sans-serif; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+<style>
+    body { background-color: #f4f7f6; }
+    .edit-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 12px;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    .edit-container h2 {
+        text-align: center;
+        color: #2c3e50;
+        margin-top: 0;
+        margin-bottom: 30px;
+        font-size: 2rem;
+    }
+    .edit-form {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 40px;
+    }
+    .image-column { text-align: center; }
+    .image-preview-container {
+        width: 100%;
+        height: 250px;
+        background: #f0f0f0;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 15px;
+        border: 2px dashed #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .image-preview {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        display: block;
+    }
+    .file-input-label {
+        display: block;
+        padding: 10px 15px;
+        background-color: #3498db;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-weight: bold;
+    }
+    .file-input-label:hover { background-color: #2980b9; }
+    #imageUpload { display: none; }
+    .form-column label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #555;
+    }
+    .form-column input[type="text"],
+    .form-column select,
+    .form-column textarea {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        transition: border-color 0.3s;
+    }
+    .form-column input[type="text"]:focus,
+    .form-column select:focus,
+    .form-column textarea:focus {
+        border-color: #f39c12;
+        outline: none;
+    }
+    .grid-fields {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+    .update-btn {
+        width: 100%;
+        padding: 15px;
+        background: #f39c12;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 10px;
+    }
+    .update-btn:hover { background: #e67e22; }
+
+    @media (max-width: 768px) {
+        .edit-form {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        .image-preview-container { height: 200px; }
+    }
+</style>
+
+<div class="edit-container">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <h2>Update Artifact</h2>
-    <form method="POST" enctype="multipart/form-data">
+    <h2>Update Artifact Details</h2>
+    <form method="POST" enctype="multipart/form-data" class="edit-form">
         
-        <label>Title</label><br>
-        <input type="text" name="title" value="<?php echo htmlspecialchars($exhibit['title']); ?>" style="width:100%; padding:10px; margin-bottom:15px;" required>
-
-        <label>Category</label><br>
-        <select name="category_id" style="width:100%; padding:10px; margin-bottom:15px;">
-            <?php while($cat = $categories->fetch_assoc()): ?>
-                <option value="<?php echo $cat['id']; ?>" <?php if($cat['id'] == $exhibit['category_id']) echo 'selected'; ?>>
-                    <?php echo $cat['name']; ?>
-                </option>
-            <?php endwhile; ?>
-        </select>
-
-        <label>Description</label><br>
-        <textarea name="description" rows="5" style="width:100%; padding:10px; margin-bottom:15px;"><?php echo htmlspecialchars($exhibit['description']); ?></textarea>
-
-        <div style="display:flex; gap:10px;">
-            <div style="flex:1;">
-                <label>Year</label>
-                <input type="text" name="artifact_year" value="<?php echo htmlspecialchars($exhibit['artifact_year']); ?>" style="width:100%; padding:10px; margin-bottom:15px;">
+        <div class="image-column">
+            <label>Artifact Image</label>
+            <div class="image-preview-container">
+                <img src="uploads/<?php echo htmlspecialchars($exhibit['image_path']); ?>" id="imagePreview" class="image-preview" alt="Current Image Preview">
             </div>
-            <div style="flex:1;">
-                <label>Origin</label>
-                <input type="text" name="origin" value="<?php echo htmlspecialchars($exhibit['origin']); ?>" style="width:100%; padding:10px; margin-bottom:15px;">
-            </div>
-            <div style="flex:1;">
-                <label>Donated By</label>
-                <input type="text" name="donated_by" value="<?php echo htmlspecialchars($exhibit['donated_by']); ?>" style="width:100%; padding:10px; margin-bottom:15px;">
-            </div>
+            <label for="imageUpload" class="file-input-label">Change Image</label>
+            <input type="file" name="image" id="imageUpload" accept="image/*">
+            <p style="font-size: 0.8rem; color: #777; margin-top: 10px;">Leave blank to keep current image.</p>
         </div>
 
-        <label>New Image (Leave blank to keep current image)</label><br>
-        <input type="file" name="image" style="width:100%; padding:10px; margin-bottom:20px;">
+        <div class="form-column">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($exhibit['title']); ?>" required>
 
-        <button type="submit" name="update" style="width:100%; padding:15px; background:#f39c12; color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">Update Artifact</button>
+            <label for="category_id">Department</label>
+            <select id="category_id" name="category_id">
+                <?php while($cat = $categories->fetch_assoc()): ?>
+                    <option value="<?php echo $cat['id']; ?>" <?php if($cat['id'] == $exhibit['category_id']) echo 'selected'; ?>>
+                        <?php echo htmlspecialchars($cat['name']); ?>
+                    </option>
+                <?php endwhile; ?>
+            </select>
+
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="6"><?php echo htmlspecialchars($exhibit['description']); ?></textarea>
+
+            <div class="grid-fields">
+                <div>
+                    <label for="artifact_year">Year</label>
+                    <input type="text" id="artifact_year" name="artifact_year" value="<?php echo htmlspecialchars($exhibit['artifact_year']); ?>">
+                </div>
+                <div>
+                    <label for="origin">Origin</label>
+                    <input type="text" id="origin" name="origin" value="<?php echo htmlspecialchars($exhibit['origin']); ?>">
+                </div>
+                <div>
+                    <label for="donated_by">Donated By</label>
+                    <input type="text" id="donated_by" name="donated_by" value="<?php echo htmlspecialchars($exhibit['donated_by']); ?>">
+                </div>
+            </div>
+
+            <button type="submit" name="update" class="update-btn">Update Artifact</button>
+        </div>
     </form>
 </div>
+
+<script>
+    document.getElementById('imageUpload').addEventListener('change', function(event) {
+        const [file] = event.target.files;
+        if (file) {
+            const preview = document.getElementById('imagePreview');
+            preview.src = URL.createObjectURL(file);
+            preview.onload = () => URL.revokeObjectURL(preview.src); // Free memory
+        }
+    });
+</script>

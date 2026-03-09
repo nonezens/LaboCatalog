@@ -97,12 +97,6 @@
             <li><a href="manage_visitors.php">👥 Visitor Log</a></li>
             <li><a href="manage_artifacts.php">🖼️ Manage Artifacts</a></li>
             <li><a href="manage_departments.php">📁 Manage Departments</a></li>
-            <li style="margin-top: 15px;">
-                <a href="add_exhibit.php" style="color: #2ecc71; border: 1px solid #2ecc71;">➕ Add Artifact</a>
-            </li>
-            <li>
-                <a href="add_category.php" style="color: #3498db; border: 1px solid #3498db;">➕ Add Department</a>
-            </li>
         </ul>
     </aside>
 
