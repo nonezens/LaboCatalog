@@ -6,7 +6,7 @@ include 'db.php';
 $msg = "";
 $msg_color = "red";
 
-// --- 1. ADMIN LOGIN ---
+// --- ADMIN LOGIN ---
 if (isset($_POST['admin_login'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
@@ -22,8 +22,8 @@ if (isset($_POST['admin_login'])) {
     }
 }
 
-// --- 2. GUEST REGISTRATION (Auto-Approved) ---
-if (isset($_POST['request_access'])) {
+// --- GUEST REGISTRATION (Sign Guestbook) ---
+if (isset($_POST['sign_guestbook'])) {
     $name = trim($_POST['guest_name']); 
     $gender = $_POST['gender']; 
     $residence = $_POST['residence'];
@@ -41,10 +41,11 @@ if (isset($_POST['request_access'])) {
     $col_exists = $conn->query("SHOW COLUMNS FROM guests LIKE 'access_id'")->num_rows > 0;
     
     if ($col_exists) {
-        // Generate unique Access ID
+        // Generate unique Access ID with timestamp for uniqueness
         $year = date("Y");
+        $timestamp = substr(time(), -6);
         $random_num = str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
-        $access_id = "LABO-{$year}-{$random_num}";
+        $access_id = "LABO-{$year}-{$timestamp}-{$random_num}";
         
         $stmt = $conn->prepare("INSERT INTO guests (guest_name, gender, residence, nationality, num_days, purpose, contact_no, access_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("ssssissss", $name, $gender, $residence, $nationality, $days, $purpose, $contact, $access_id, $status);
@@ -54,37 +55,12 @@ if (isset($_POST['request_access'])) {
     }
     
     if ($stmt->execute()) {
-        // Auto-login after registration
+        // Auto-login and redirect directly to categories
         $_SESSION['guest_logged_in'] = true;
         $_SESSION['guest_name'] = $name;
         header("Location: categories.php"); exit();
     } else {
-        $msg = "Error submitting request.";
-    }
-}
-
-// --- 3. GUEST LOGIN (Name Only!) ---
-if (isset($_POST['guest_login'])) {
-    $name = trim($_POST['login_name']);
-
-    // Check the database using ONLY the guest's name
-    $stmt = $conn->prepare("SELECT * FROM guests WHERE guest_name = ? ORDER BY id DESC LIMIT 1");
-    $stmt->bind_param("s", $name);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($row = $result->fetch_assoc()) {
-        if ($row['status'] == 'approved') {
-            $_SESSION['guest_logged_in'] = true;
-            $_SESSION['guest_name'] = $row['guest_name'];
-            header("Location: categories.php"); exit();
-        } else if ($row['status'] == 'pending') {
-            $msg = "Your request is still pending admin approval.";
-        } else {
-            $msg = "Your request to access the catalog was declined.";
-        }
-    } else {
-        $msg = "Record not found. Ensure your name matches exactly, or request access first.";
+        $msg = "Error signing guestbook.";
     }
 }
 ?>
@@ -99,44 +75,199 @@ if (isset($_POST['guest_login'])) {
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/login.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            padding-top: 80px; /* Space for fixed header */
+        }
+        
+        .login-wrapper {
+            display: flex;
+            gap: 40px;
+            max-width: 1200px;
+            width: 100%;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+        
+        .guestbook-container {
+            flex: 1;
+            min-width: 400px;
+            max-width: 600px;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .admin-container {
+            width: 280px;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .guestbook-title {
+            text-align: center;
+            color: #2c3e50;
+            margin-top: 0;
+            font-size: 1.8em;
+        }
+        
+        .guestbook-subtitle {
+            text-align: center;
+            color: #c5a059;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .admin-title {
+            text-align: center;
+            color: #7f8c8d;
+            margin-top: 0;
+            font-size: 1.2em;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .form-full {
+            grid-column: 1 / -1;
+        }
+        
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #c5a059;
+        }
+        
+        .phone-wrapper {
+            display: flex;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .phone-prefix {
+            padding: 12px 15px;
+            background: #f5f5f5;
+            border-right: 1px solid #ddd;
+            font-weight: bold;
+            color: #666;
+        }
+        
+        .phone-input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            outline: none;
+        }
+        
+        .submit-btn {
+            grid-column: 1 / -1;
+            padding: 15px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background: #1a252f;
+            transform: translateY(-2px);
+        }
+        
+        .admin-btn {
+            width: 100%;
+            padding: 12px;
+            background: #7f8c8d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .admin-btn:hover {
+            background: #6c7a7d;
+        }
+        
+        .message {
+            background: #fee;
+            border-left: 4px solid red;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: red;
+            border-radius: 4px;
+        }
+        
+        @media (max-width: 900px) {
+            .login-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+            .guestbook-container {
+                min-width: 100%;
+            }
+            .admin-container {
+                width: 100%;
+                max-width: 400px;
+            }
+        }
+    </style>
 </head>
 <body>
 
     <?php include 'header.php'; ?>
 
-    <div class="login-container">
+    <div class="login-wrapper">
         
-        <div class="login-visitor">
+        <!-- Guestbook Form - Centered and Main -->
+        <div class="guestbook-container">
             <?php if ($msg): ?>
-                <div class="login-message" style="border-left-color: <?php echo $msg_color; ?>;">
-                    <?php echo $msg; ?>
-                </div>
+                <div class="message"><?php echo $msg; ?></div>
             <?php endif; ?>
 
-            <h2 class="login-title">Visitor Access</h2>
+            <h2 class="guestbook-title">📖 Museo de Labo</h2>
+            <p class="guestbook-subtitle">Sign Guestbook to Access the Museum</p>
             
-            <div class="login-section">
-                <h3 class="login-subtitle">Already Approved? Log In Here</h3>
-                <form method="POST">
-                    <input type="text" name="login_name" placeholder="Enter your Full Name" class="login-input-full" style="width: 100%; padding: 10px; margin-bottom: 15px; box-sizing:border-box; border: 1px solid #ddd; border-radius: 4px;" required>
-
-                    <button type="submit" name="guest_login" class="login-btn-secondary" style="width: 100%;">Enter Museum Catalog</button>
-                </form>
-            </div>
-
-            <h3 class="login-title" style="margin-top: 30px;">New Visitor? Sign Guestbook</h3>
-            <form method="POST" class="login-form-grid">
+            <form method="POST" class="form-grid">
+                <div class="form-full">
+                    <input type="text" name="guest_name" placeholder="Full Name" required class="form-input">
+                </div>
                 
-                <input type="text" name="guest_name" placeholder="Full Name" required class="login-input-full" style="padding: 10px; border: 1px solid #ddd; border-radius:4px;">
-                
-                <select name="gender" required style="padding: 10px; border: 1px solid #ddd; border-radius:4px; background: white;" class="login-select">
+                <select name="gender" required class="form-select">
                     <option value="">Select Gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
                 </select>
                 
-                <select name="nationality" required style="padding: 10px; border: 1px solid #ddd; border-radius:4px; background: white;" class="login-select">
+                <select name="nationality" required class="form-select">
                     <option value="">Select Nationality</option>
                     <option value="Filipino">Filipino</option>
                     <option value="American">American</option>
@@ -147,34 +278,39 @@ if (isset($_POST['guest_login'])) {
                     <option value="Other">Other</option>
                 </select>
                 
-                <select name="residence" required class="login-input-full" style="padding: 10px; border: 1px solid #ddd; border-radius:4px;">
-                    <option value="">Select Place of Residence</option>
-                    <option value="Labo, Camarines Norte">Labo, Camarines Norte</option>
-                    <option value="Daet, Camarines Norte">Daet, Camarines Norte</option>
-                    <option value="Other Municipality (Camarines Norte)">Other Municipality (Camarines Norte)</option>
-                    <option value="Outside Camarines Norte (Philippines)">Outside Camarines Norte (Philippines)</option>
-                    <option value="Outside Philippines">Outside Philippines</option>
-                </select>
+                <div class="form-full">
+                    <select name="residence" required class="form-select">
+                        <option value="">Place of Residence (Address)</option>
+                        <option value="Labo, Camarines Norte">Labo, Camarines Norte</option>
+                        <option value="Daet, Camarines Norte">Daet, Camarines Norte</option>
+                        <option value="Other Municipality (Camarines Norte)">Other Municipality (Camarines Norte)</option>
+                        <option value="Outside Camarines Norte (Philippines)">Outside Camarines Norte (Philippines)</option>
+                        <option value="Outside Philippines">Outside Philippines</option>
+                    </select>
+                </div>
                 
-                <input type="number" name="num_days" placeholder="No. of Days Visiting" min="1" required style="padding: 10px; border: 1px solid #ddd; border-radius:4px;" class="login-input">
+                <input type="number" name="num_days" placeholder="No. of Days Visiting" min="1" required class="form-input">
                 
                 <div class="phone-wrapper">
                     <span class="phone-prefix">+63</span>
-                    <input type="tel" name="contact_no" placeholder="912 345 6789" required class="phone-input" pattern="[0-9]{10}" title="Please enter a valid 10-digit mobile number">
+                    <input type="tel" name="contact_no" placeholder="912 345 6789" required class="phone-input" pattern="[0-9]{10}">
                 </div>
                 
-                <input type="text" name="purpose" placeholder="Purpose of Visit (e.g., Tourism, Research)" required class="login-input-full" style="padding: 10px; border: 1px solid #ddd; border-radius:4px;">
+                <div class="form-full">
+                    <input type="text" name="purpose" placeholder="Purpose of Visit (e.g., Tourism, Research)" required class="form-input">
+                </div>
                 
-                <button type="submit" name="request_access" class="login-btn">Sign Guestbook & Access Catalog</button>
+                <button type="submit" name="sign_guestbook" class="submit-btn">✍️ Sign Guestbook & Enter Museum</button>
             </form>
         </div>
 
-        <div class="login-admin">
-            <h3 class="admin-title">Admin Portal</h3>
+        <!-- Admin Portal - Side Panel -->
+        <div class="admin-container">
+            <h3 class="admin-title">🔐 Admin Portal</h3>
             <form method="POST">
-                <input type="text" name="username" placeholder="Admin Username" style="width: 100%; padding: 10px; margin-bottom: 15px; box-sizing:border-box; border: 1px solid #ddd; border-radius: 4px;" required>
-                <input type="password" name="password" placeholder="Password" style="width: 100%; padding: 10px; margin-bottom: 20px; box-sizing:border-box; border: 1px solid #ddd; border-radius: 4px;" required>
-                <button type="submit" name="admin_login" style="width: 100%; padding: 12px; background: #7f8c8d; color: white; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.3s;">Login</button>
+                <input type="text" name="username" placeholder="Admin Username" required class="form-input" style="margin-bottom: 15px;">
+                <input type="password" name="password" placeholder="Password" required class="form-input" style="margin-bottom: 20px;">
+                <button type="submit" name="admin_login" class="admin-btn">Login</button>
             </form>
         </div>
 

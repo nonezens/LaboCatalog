@@ -4,7 +4,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 include 'db.php'; 
-include 'header.php'; 
+
+// Check if the user is logged in
+$is_logged_in = isset($_SESSION['admin_logged_in']) || isset($_SESSION['guest_logged_in']);
 
 // 1. Check if an ID was passed in the URL
 if (!isset($_GET['id']) || empty($_GET['id'])) {
@@ -49,6 +51,16 @@ $exhibit = $result->fetch_assoc();
 </head>
 <body>
 
+<?php include 'header.php'; ?>
+
+<?php if (!$is_logged_in): ?>
+    <div class="container" style="text-align: center; padding: 100px 20px;">
+        <h2 style="color: #2c3e50; margin-bottom: 20px;">🔒 Restricted Access</h2>
+        <p style="color: #666; font-size: 1.1em; margin-bottom: 30px;">You need to sign the guestbook to view full artifact details.</p>
+        <a href="login.php" class="hero-btn">✍️ Sign Guestbook to Access</a>
+    </div>
+<?php else: ?>
+
 <div class="detail-container">
     <div class="detail-grid">
         
@@ -77,6 +89,8 @@ $exhibit = $result->fetch_assoc();
 
     </div>
 </div>
+
+<?php endif; ?>
 
 <!-- The Modal -->
 <div id="imageModal" class="image-modal">

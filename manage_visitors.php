@@ -43,9 +43,55 @@ $guest_result = $conn->query($query);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Visitors | Admin</title>
     
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/manage.css">
+    
+    <style>
+        .qr-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .qr-modal.active {
+            display: flex;
+        }
+        .qr-modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .qr-modal-close {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        .qr-modal-close:hover {
+            color: #333;
+        }
+        #admin-qrcode {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+    </style>
 </head>
 <body class="admin-body">
 
@@ -128,6 +174,11 @@ $guest_result = $conn->query($query);
                     <?php else: ?>
                         <span style="color: #95a5a6; font-style: italic; font-size: 0.9rem; display: block; margin-bottom: 5px;">Processed</span>
                     <?php endif; ?>
+                    
+                    <?php if(!empty($guest['access_id'])): ?>
+                        <button type="button" class="action-btn" style="background: #9b59b6; display: block; margin-bottom: 5px;" onclick="showQR('<?php echo htmlspecialchars($guest['access_id']); ?>', '<?php echo htmlspecialchars($guest['guest_name']); ?>')">📱 View QR</button>
+                    <?php endif; ?>
+                    
                     <a href="delete_guest.php?id=<?php echo $guest['id']; ?>" class="action-btn btn-delete" style="display: block;" onclick="return confirm('Delete this record?');">🗑️ Delete</a>
                 </td>
             </tr>
@@ -139,6 +190,49 @@ $guest_result = $conn->query($query);
 
     </main>
 </div>
+
+<!-- QR Code Modal -->
+<div id="qrModal" class="qr-modal">
+    <div class="qr-modal-content">
+        <span class="qr-modal-close" onclick="closeQR()">&times;</span>
+        <h3 id="qr-guest-name" style="margin-top: 0; color: #2c3e50;"></h3>
+        <p style="color: #666;">Access ID:</p>
+        <div id="admin-qrcode"></div>
+        <p id="qr-access-id" style="font-weight: bold; font-size: 1.1em; color: #2c3e50;"></p>
+    </div>
+</div>
+
+<script>
+function showQR(accessId, guestName) {
+    document.getElementById('qrModal').classList.add('active');
+    document.getElementById('qr-guest-name').textContent = guestName;
+    document.getElementById('qr-access-id').textContent = accessId;
+    
+    // Clear previous QR code
+    document.getElementById('admin-qrcode').innerHTML = '';
+    
+    // Generate new QR code
+    new QRCode(document.getElementById("admin-qrcode"), {
+        text: accessId,
+        width: 180,
+        height: 180,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+    });
+}
+
+function closeQR() {
+    document.getElementById('qrModal').classList.remove('active');
+}
+
+// Close modal when clicking outside
+document.getElementById('qrModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeQR();
+    }
+});
+</script>
 
 </body>
 </html>

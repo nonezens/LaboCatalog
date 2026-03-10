@@ -32,7 +32,7 @@ if ($is_logged_in) {
         <p>Preserving the rich history, culture, and heritage of Camarines Norte. Step through our doors to uncover the stories of our ancestors and the treasures of our past.</p>
         
         <?php if (!$is_logged_in): ?>
-            <a href="login.php" class="hero-btn">Request Access to Digital Catalog</a>
+            <a href="login.php" class="hero-btn">✍️ Sign Guestbook to Access</a>
         <?php else: ?>
             <a href="categories.php" class="hero-btn">Enter the Catalog</a>
         <?php endif; ?>
