@@ -2,10 +2,34 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// Get current page for active state
+$current_page = basename($_SERVER['PHP_SELF'], '.php');
 ?>
 
 <style>
     html, body { margin: 0 !important; padding: 0 !important; width: 100%; }
+
+    /* Morphing Page Transition */
+    .morph-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #2c3e50;
+        z-index: 99999;
+        pointer-events: none;
+        opacity: 0;
+        transform: scale(0.8, 0.8);
+        transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 50%;
+    }
+    
+    .morph-overlay.active {
+        opacity: 1;
+        transform: scale(2, 2);
+    }
 
     .site-header { 
         background: #2c3e50; 
@@ -26,7 +50,7 @@ if (session_status() === PHP_SESSION_NONE) {
         align-items: center; 
         max-width: 1200px; 
         margin: 0 auto; 
-        flex-wrap: wrap; /* Allows the menu to drop down to the next row on mobile */
+        flex-wrap: wrap;
     }
     
     .site-logo a { color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; }
@@ -50,7 +74,7 @@ if (session_status() === PHP_SESSION_NONE) {
         color: #bdc3c7;
     }
 
-    /* --- THE HAMBURGER ICON (Hidden on Desktop) --- */
+    /* --- Hamburger Menu --- */
     .hamburger {
         display: none;
         flex-direction: column;
@@ -66,18 +90,31 @@ if (session_status() === PHP_SESSION_NONE) {
     }
 
     .site-nav-links { list-style: none; display: flex; gap: 20px; margin: 0; padding: 0; align-items: center; }
-    .site-nav-links li a { color: white; text-decoration: none; font-size: 1rem; transition: color 0.3s; }
-    .site-nav-links li a:hover { color: #c5a059; }
+    
+    .site-nav-links li a { 
+        color: white; 
+        text-decoration: none; 
+        font-size: 1rem; 
+        transition: color 0.3s;
+        padding: 8px 12px;
+        border-radius: 4px;
+    }
+    
+    .site-nav-links li a:hover { 
+        color: #c5a059; 
+    }
+    
+    .site-nav-links li a.active-page {
+        color: #c5a059;
+        background: rgba(197, 160, 89, 0.15);
+    }
+
     .admin-link { border-left: 1px solid #7f8c8d; padding-left: 20px; }
 
-    /* --- RESPONSIVE MOBILE VIEW --- */
+    /* --- Mobile Responsive --- */
     @media (max-width: 768px) {
         .site-header { padding: 1rem; }
-        
-        /* Show the hamburger icon */
         .hamburger { display: flex; }
-
-        /* Hide the navigation links by default on mobile */
         .site-nav-links { 
             display: none; 
             width: 100%; 
@@ -86,25 +123,24 @@ if (session_status() === PHP_SESSION_NONE) {
             padding-top: 20px; 
             gap: 15px;
         }
-
-        /* This class is added by JavaScript when the hamburger is tapped */
         .site-nav-links.active {
             display: flex;
         }
-
         .admin-link { border-left: none; padding-left: 0; }
 
-        /* Fancy Animation: Turn the Hamburger into an "X" when open */
         .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
         .hamburger.open span:nth-child(2) { opacity: 0; }
         .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(7px, -7px); }
     }
 </style>
 
+<!-- Morphing Page Transition -->
+<div class="morph-overlay" id="morphOverlay"></div>
+
 <header class="site-header">
     <nav class="site-nav">
         <div class="site-logo">
-            <a href="index.php">
+            <a href="index.php" class="nav-link">
                 <img src="uploads/logo.png" alt="Museum Logo" class="logo-img" onerror="this.style.display='none';">
                 <div class="logo-text-container">
                     <span class="logo-text">Museo De Labo</span>
@@ -120,9 +156,11 @@ if (session_status() === PHP_SESSION_NONE) {
         </div>
         
         <ul class="site-nav-links" id="nav-links">
-            <li><a href="index.php">Home</a></li>
-            <li><a href="categories.php">Departments</a></li>
-            <li><a href="exhibits.php">All Artifacts</a></li>
+            <li><a href="index.php" class="nav-link <?php echo $current_page == 'index' ? 'active-page' : ''; ?>">Home</a></li>
+            <li><a href="about.php" class="nav-link <?php echo $current_page == 'about' ? 'active-page' : ''; ?>">About</a></li>
+            <li><a href="categories.php" class="nav-link <?php echo $current_page == 'categories' ? 'active-page' : ''; ?>">Departments</a></li>
+            <li><a href="exhibits.php" class="nav-link <?php echo $current_page == 'exhibits' ? 'active-page' : ''; ?>">All Artifacts</a></li>
+            <li><a href="news.php" class="nav-link <?php echo $current_page == 'news' ? 'active-page' : ''; ?>">News & Events</a></li>
             
             <?php if(isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true): ?>
                 <li class="admin-link"><a href="admin_dashboard.php" style="color: #3498db; font-weight: bold;">⚙️ Dashboard</a></li>
@@ -141,12 +179,72 @@ if (session_status() === PHP_SESSION_NONE) {
     document.addEventListener("DOMContentLoaded", function() {
         const hamburger = document.getElementById("hamburger-menu");
         const navLinks = document.getElementById("nav-links");
+        const morphOverlay = document.getElementById("morphOverlay");
 
+        // Hamburger menu toggle
         hamburger.addEventListener("click", function() {
-            // Toggle the menu visibility
             navLinks.classList.toggle("active");
-            // Toggle the animation to turn the burger into an X
             hamburger.classList.toggle("open");
+        });
+
+        // Morphing Page Transition
+        const navLinksAll = document.querySelectorAll('.nav-link, .site-logo a');
+        
+        navLinksAll.forEach(link => {
+            link.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href && !href.startsWith('#') && !href.startsWith('javascript')) {
+                    e.preventDefault();
+                    
+                    // Get click position for morph origin
+                    const rect = this.getBoundingClientRect();
+                    const x = rect.left + rect.width / 2;
+                    const y = rect.top + rect.height / 2;
+                    
+                    // Set transform origin to click position
+                    const xPercent = (x / window.innerWidth) * 100;
+                    const yPercent = (y / window.innerHeight) * 100;
+                    morphOverlay.style.transformOrigin = xPercent + '% ' + yPercent + '%';
+                    
+                    // Trigger morph in
+                    morphOverlay.classList.add('active');
+                    
+                    setTimeout(() => {
+                        window.location.href = href;
+                    }, 400);
+                }
+            });
+        });
+
+        // Hash URL handling
+        if (window.location.hash) {
+            const hash = window.location.hash.substring(1);
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active-page');
+                if (link.getAttribute('href') && link.getAttribute('href').includes(hash + '.php')) {
+                    link.classList.add('active-page');
+                }
+            });
+        }
+
+        // Update active state on nav click
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active-page'));
+                this.classList.add('active-page');
+            });
+        });
+
+        // Handle browser back/forward
+        window.addEventListener('popstate', function() {
+            const hash = window.location.hash.substring(1);
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active-page');
+                if (link.getAttribute('href') && link.getAttribute('href').includes(hash + '.php')) {
+                    link.classList.add('active-page');
+                }
+            });
         });
     });
 </script>
+

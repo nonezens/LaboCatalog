@@ -106,6 +106,7 @@ CREATE TABLE `guests` (
   `num_days` int(11) NOT NULL,
   `purpose` varchar(255) NOT NULL,
   `contact_no` varchar(50) NOT NULL,
+  `access_id` varchar(50) DEFAULT NULL,
   `status` enum('pending','approved','rejected') DEFAULT 'pending',
   `visit_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

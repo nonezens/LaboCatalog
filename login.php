@@ -22,7 +22,7 @@ if (isset($_POST['admin_login'])) {
     }
 }
 
-// --- 2. GUEST REGISTRATION (Request Access) ---
+// --- 2. GUEST REGISTRATION (Auto-Approved) ---
 if (isset($_POST['request_access'])) {
     $name = trim($_POST['guest_name']); 
     $gender = $_POST['gender']; 
@@ -34,12 +34,30 @@ if (isset($_POST['request_access'])) {
     // Automatically prepend +63 to the typed number
     $contact = "+63" . ltrim(trim($_POST['contact_no']), '0');
 
-    $stmt = $conn->prepare("INSERT INTO guests (guest_name, gender, residence, nationality, num_days, purpose, contact_no) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssiss", $name, $gender, $residence, $nationality, $days, $purpose, $contact);
+    // Auto-approve (status = 'approved')
+    $status = "approved";
+
+    // Check if access_id column exists
+    $col_exists = $conn->query("SHOW COLUMNS FROM guests LIKE 'access_id'")->num_rows > 0;
+    
+    if ($col_exists) {
+        // Generate unique Access ID
+        $year = date("Y");
+        $random_num = str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+        $access_id = "LABO-{$year}-{$random_num}";
+        
+        $stmt = $conn->prepare("INSERT INTO guests (guest_name, gender, residence, nationality, num_days, purpose, contact_no, access_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssissss", $name, $gender, $residence, $nationality, $days, $purpose, $contact, $access_id, $status);
+    } else {
+        $stmt = $conn->prepare("INSERT INTO guests (guest_name, gender, residence, nationality, num_days, purpose, contact_no, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssisss", $name, $gender, $residence, $nationality, $days, $purpose, $contact, $status);
+    }
     
     if ($stmt->execute()) {
-        $msg = "Request submitted! Please wait for Admin approval to log in.";
-        $msg_color = "green";
+        // Auto-login after registration
+        $_SESSION['guest_logged_in'] = true;
+        $_SESSION['guest_name'] = $name;
+        header("Location: categories.php"); exit();
     } else {
         $msg = "Error submitting request.";
     }
@@ -95,7 +113,7 @@ if (isset($_POST['guest_login'])) {
             </form>
         </div>
 
-        <h3 style="color: #2c3e50;">New Visitor? Request Access</h3>
+        <h3 style="color: #2c3e50;">New Visitor? Sign Guestbook</h3>
         <form method="POST" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
             
             <input type="text" name="guest_name" placeholder="Full Name" required style="padding: 10px; border: 1px solid #ddd; border-radius:4px; grid-column: 1 / -1;">
@@ -136,7 +154,7 @@ if (isset($_POST['guest_login'])) {
             
             <input type="text" name="purpose" placeholder="Purpose of Visit (e.g., Tourism, Research)" required style="padding: 10px; border: 1px solid #ddd; border-radius:4px; grid-column: 1 / -1;">
             
-            <button type="submit" name="request_access" style="grid-column: 1 / -1; padding: 12px; background: #2c3e50; color: white; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.3s;">Submit Request</button>
+            <button type="submit" name="request_access" style="grid-column: 1 / -1; padding: 12px; background: #2c3e50; color: white; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.3s;">Sign Guestbook & Access Catalog</button>
         </form>
     </div>
 
@@ -150,3 +168,4 @@ if (isset($_POST['guest_login'])) {
     </div>
 
 </div>
+

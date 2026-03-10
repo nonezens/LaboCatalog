@@ -3,16 +3,33 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit(); }
 include 'db.php'; 
 
-// Check if a specific month was selected in the filter
+// Check filters
 $selected_month = isset($_GET['filter_month']) ? $_GET['filter_month'] : '';
+$filter_gender = isset($_GET['filter_gender']) ? $_GET['filter_gender'] : '';
+$filter_recent = isset($_GET['filter_recent']) ? $_GET['filter_recent'] : '';
 
-// Build the query
+// Build the query with multiple filters
 $query = "SELECT * FROM guests";
+$conditions = [];
 
-// If a month is selected (Format: YYYY-MM), filter the results!
 if ($selected_month != '') {
-    // We use DATE_FORMAT to match the YYYY-MM string
-    $query .= " WHERE DATE_FORMAT(visit_date, '%Y-%m') = '" . $conn->real_escape_string($selected_month) . "'";
+    $conditions[] = "DATE_FORMAT(visit_date, '%Y-%m') = '" . $conn->real_escape_string($selected_month) . "'";
+}
+
+if ($filter_gender != '') {
+    $conditions[] = "gender = '" . $conn->real_escape_string($filter_gender) . "'";
+}
+
+if ($filter_recent == 'today') {
+    $conditions[] = "DATE(visit_date) = CURDATE()";
+} elseif ($filter_recent == 'week') {
+    $conditions[] = "visit_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
+} elseif ($filter_recent == 'month') {
+    $conditions[] = "visit_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+}
+
+if (count($conditions) > 0) {
+    $query .= " WHERE " . implode(" AND ", $conditions);
 }
 
 $query .= " ORDER BY visit_date DESC";
@@ -31,20 +48,47 @@ $guest_result = $conn->query($query);
     <?php include 'header.php'; ?>
     <?php include 'admin_sidebar.php'; ?>
 
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
         <h3 class="table-title" style="margin: 0;">👥 Visitor Log & Access Requests</h3>
         
-        <div style="display: flex; gap: 15px; align-items: center;">
-            <form method="GET" style="display: flex; gap: 10px; align-items: center; background: white; padding: 10px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                <label style="font-size: 0.9rem; font-weight: bold; color: #2c3e50;">Filter by Month:</label>
-                <input type="month" name="filter_month" value="<?php echo htmlspecialchars($selected_month); ?>" style="padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
+        <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <!-- Filters -->
+            <form method="GET" style="display: flex; gap: 10px; align-items: center; background: white; padding: 10px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-wrap: wrap;">
+                <!-- Month Filter -->
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <label style="font-size: 0.85rem; font-weight: bold; color: #2c3e50;">Month:</label>
+                    <input type="month" name="filter_month" value="<?php echo htmlspecialchars($selected_month); ?>" style="padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                
+                <!-- Gender Filter -->
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <label style="font-size: 0.85rem; font-weight: bold; color: #2c3e50;">Gender:</label>
+                    <select name="filter_gender" style="padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="">All</option>
+                        <option value="Male" <?php echo $filter_gender == 'Male' ? 'selected' : ''; ?>>Male</option>
+                        <option value="Female" <?php echo $filter_gender == 'Female' ? 'selected' : ''; ?>>Female</option>
+                        <option value="Other" <?php echo $filter_gender == 'Other' ? 'selected' : ''; ?>>Other</option>
+                    </select>
+                </div>
+                
+                <!-- Recent Filter -->
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <label style="font-size: 0.85rem; font-weight: bold; color: #2c3e50;">Recent:</label>
+                    <select name="filter_recent" style="padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="">All Time</option>
+                        <option value="today" <?php echo $filter_recent == 'today' ? 'selected' : ''; ?>>Today</option>
+                        <option value="week" <?php echo $filter_recent == 'week' ? 'selected' : ''; ?>>This Week</option>
+                        <option value="month" <?php echo $filter_recent == 'month' ? 'selected' : ''; ?>>This Month</option>
+                    </select>
+                </div>
+                
                 <button type="submit" class="action-btn" style="background: #2980b9;">🔍 Filter</button>
-                <?php if($selected_month != ''): ?>
+                <?php if($selected_month != '' || $filter_gender != '' || $filter_recent != ''): ?>
                     <a href="manage_visitors.php" class="action-btn" style="background: #95a5a6;">Clear</a>
                 <?php endif; ?>
             </form>
             
-            <a href="export_visitors.php?filter_month=<?php echo urlencode($selected_month); ?>" class="action-btn" style="background: #27ae60; padding: 12px 15px; font-size: 0.95rem;">📥 Download Excel</a>
+            <a href="export_visitors.php?filter_month=<?php echo urlencode($selected_month); ?>&filter_gender=<?php echo urlencode($filter_gender); ?>&filter_recent=<?php echo urlencode($filter_recent); ?>" class="action-btn" style="background: #27ae60; padding: 12px 15px; font-size: 0.95rem;">📥 Download Excel</a>
         </div>
     </div>
 

@@ -29,49 +29,125 @@ if ($is_logged_in) {
             background-position: center;
         }
         
-        /* Hero Section */
+        /* Hero Section with Animations */
         .hero { 
-            background: linear-gradient(rgba(44, 62, 80, 0.8), rgba(26, 37, 47, 0.8)); /* Dark overlay to show body bg through */
+            background: linear-gradient(rgba(44, 62, 80, 0.8), rgba(26, 37, 47, 0.8));
             color: white; 
             text-align: center; 
             padding: 100px 20px; 
             border-bottom: 5px solid #c5a059;
+            opacity: 0;
+            transform: translateY(-30px);
+            animation: heroFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
+        
+        @keyframes heroFadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         .hero h1 { 
             font-size: 3.5rem; 
             margin: 0 0 15px 0; 
             letter-spacing: 2px;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.5); /* Improved readability */
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            opacity: 0;
+            transform: translateX(-50px);
+            animation: slideInLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation-delay: 0.3s;
         }
+        
         .hero p { 
             font-size: 1.2rem; 
             color: #ecf0f1; 
             max-width: 700px; 
             margin: 0 auto 30px auto; 
             line-height: 1.6; 
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.5); /* Improved readability */
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+            opacity: 0;
+            transform: translateX(50px);
+            animation: slideInRight 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation-delay: 0.5s;
         }
-        .hero-btn { display: inline-block; padding: 15px 35px; background: #c5a059; color: white; text-decoration: none; border-radius: 30px; font-size: 1.1rem; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4); }
-        .hero-btn:hover { background: #b48a3d; transform: translateY(-3px); }
+        
+        @keyframes slideInLeft {
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes slideInRight {
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .hero-btn { 
+            display: inline-block; 
+            padding: 15px 35px; 
+            background: #c5a059; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 30px; 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            transition: 0.3s; 
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4);
+            opacity: 0;
+            transform: scale(0.8);
+            animation: popIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation-delay: 0.7s;
+        }
+        
+        @keyframes popIn {
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .hero-btn:hover { background: #b48a3d; transform: translateY(-3px) scale(1.05); }
 
         /* Container & Sections */
         .container { max-width: 1200px; margin: 0 auto; padding: 60px 20px; }
-        .section-title { text-align: center; color: #2c3e50; font-size: 2.2rem; margin-bottom: 40px; }
-        .section-title::after { content: ''; display: block; width: 80px; height: 3px; background: #c5a059; margin: 15px auto 0 auto; }
+        .section-title { 
+            text-align: center; 
+            color: #2c3e50; 
+            font-size: 2.2rem; 
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .section-title.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .section-title::after { 
+            content: ''; 
+            display: block; 
+            width: 80px; 
+            height: 3px; 
+            background: #c5a059; 
+            margin: 15px auto 0 auto; 
+        }
 
         /* About Section */
         .about-grid { 
             display: grid; 
-            grid-template-columns: 1fr; /* Single column as image is removed */
+            grid-template-columns: 1fr; 
             gap: 20px; 
-            text-align: center; /* Center the text now that it's the only element */
+            text-align: center; 
         }
         .about-text { 
             font-size: 1.1rem; 
-            color: #333; /* Darker color for readability */
+            color: #333;
             line-height: 1.7; 
-            text-shadow: 1px 1px 3px rgba(255,255,255,0.7); /* White shadow for readability */
+            text-shadow: 1px 1px 3px rgba(255,255,255,0.7);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        
+        .about-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
         .about-text p { margin-bottom: 20px; }
         .about-text p:first-of-type {
             font-size: 1.2rem;
@@ -81,7 +157,7 @@ if ($is_logged_in) {
              color: #b48a3d;
              font-weight: 600;
         }
-        .about-image { display: none; } /* Image container is hidden */
+        .about-image { display: none; }
 
         /* Visitor Info Guide */
         .visitor-info { margin-top: 25px; padding-top: 25px; border-top: 1px solid #eee; }
@@ -90,7 +166,7 @@ if ($is_logged_in) {
         .visitor-info li { margin-bottom: 10px; display: flex; align-items: flex-start; gap: 10px; }
         .visitor-info li strong { color: #2c3e50; }
 
-        /* Latest Acquisitions Grid (Only for logged-in users) */
+        /* Latest Acquisitions Grid */
         .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-top: 20px; }
         .card-link { text-decoration: none; color: inherit; display: flex; }
         .card { 
@@ -103,18 +179,34 @@ if ($is_logged_in) {
             display: flex; 
             flex-direction: column; 
             width: 100%;
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
         }
+        
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        
         .card-link:hover .card { 
             transform: translateY(-5px); 
             box-shadow: 0 8px 25px rgba(0,0,0,0.1);
             border-color: #c5a059;
         }
-        .card img { width: 100%; height: 220px; object-fit: cover; }
+        .card img { width: 100%; height: 220px; object-fit: cover; transition: transform 0.4s ease; }
+        .card-link:hover .card img { transform: scale(1.1); }
         .card-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
-        .card-title { margin: 0 0 10px 0; color: #2c3e50; font-size: 1.3rem; }
+        .card-title { margin: 0 0 10px 0; color: #2c3e50; font-size: 1.3rem; transition: color 0.3s; }
+        .card-link:hover .card-title { color: #c5a059; }
         .card-meta { font-size: 0.9rem; color: #7f8c8d; margin-bottom: 15px; }
         
-        /* --- RESPONSIVE HOMEPAGE HOMEPAGE --- */
+        /* Staggered animation delays for cards */
+        .gallery-grid .card-link:nth-child(1) .card { transition-delay: 0.1s; }
+        .gallery-grid .card-link:nth-child(2) .card { transition-delay: 0.2s; }
+        .gallery-grid .card-link:nth-child(3) .card { transition-delay: 0.3s; }
+        .gallery-grid .card-link:nth-child(4) .card { transition-delay: 0.4s; }
+        
+        /* Responsive */
         @media (max-width: 768px) { 
             .about-grid { grid-template-columns: 1fr; } 
             .hero { padding: 60px 20px; }
@@ -141,9 +233,9 @@ if ($is_logged_in) {
     </div>
 
     <div class="container">
-        <h2 class="section-title">About the Museum</h2>
+        <h2 class="section-title" id="aboutTitle">About the Museum</h2>
         <div class="about-grid">
-            <div class="about-text">
+            <div class="about-text" id="aboutText">
                 <p>Located in the heart of Camarines Norte, the <strong>Museo de Labo</strong> serves as the primary custodian of the municipality's historical artifacts, cultural relics, and artistic heritage.</p>
                 <p>Our mission is to educate, inspire, and connect both locals and tourists with the vibrant legacy of Labo. From ancient indigenous roots to the Spanish colonial era and the rich mining history of the region, every piece in our collection tells a unique story.</p>
                 <p>Step through our doors and immerse yourself in history. We warmly invite students, researchers, and history enthusiasts to walk our halls and experience the rich heritage of Camarines Norte firsthand. Plan your visit today, join one of our guided tours, and let our curated exhibits transport you through time!</p>
@@ -166,7 +258,7 @@ if ($is_logged_in) {
 
     <?php if ($is_logged_in): ?>
     <div class="container" style="padding-top: 0;">
-        <h2 class="section-title">Latest Acquisitions</h2>
+        <h2 class="section-title" id="recentTitle">Latest Acquisitions</h2>
         <p style="text-align: center; color: #7f8c8d; margin-bottom: 30px;">Get a sneak peek at the newest historical pieces added to our archives.</p>
         
         <div class="gallery-grid">
@@ -196,5 +288,51 @@ if ($is_logged_in) {
     </div>
     <?php endif; ?>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set hash
+            history.replaceState(null, null, '#home');
+            
+            // Animate sections on scroll
+            const aboutTitle = document.getElementById('aboutTitle');
+            const aboutText = document.getElementById('aboutText');
+            const recentTitle = document.getElementById('recentTitle');
+            const cards = document.querySelectorAll('.card');
+            
+            const observerOptions = { root: null, rootMargin: '0px', threshold: 0.2 };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        if (entry.target.id === 'aboutTitle') {
+                            entry.target.classList.add('visible');
+                        } else if (entry.target.id === 'aboutText') {
+                            entry.target.classList.add('visible');
+                        } else if (entry.target.id === 'recentTitle') {
+                            entry.target.classList.add('visible');
+                        }
+                    }
+                });
+            }, observerOptions);
+            
+            if (aboutTitle) observer.observe(aboutTitle);
+            if (aboutText) observer.observe(aboutText);
+            if (recentTitle) observer.observe(recentTitle);
+            
+            // Animate cards when visible
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        cardObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            cards.forEach(card => cardObserver.observe(card));
+        });
+    </script>
+
 </body>
 </html>
+

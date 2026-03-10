@@ -38,16 +38,75 @@ if ($is_logged_in) {
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; }
         .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-        .page-title { text-align: center; color: #2c3e50; font-size: 2.5rem; margin-bottom: 20px; }
+        
+        /* Title with morphing animation */
+        .page-title { 
+            text-align: center; 
+            color: #2c3e50; 
+            font-size: 2.5rem; 
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(-30px) scale(0.8);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .page-title.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
         
         /* Search Bar Styles */
-        .search-container { max-width: 600px; margin: 0 auto 40px auto; display: flex; gap: 10px; }
+        .search-container { 
+            max-width: 600px; 
+            margin: 0 auto 40px auto; 
+            display: flex; 
+            gap: 10px;
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition-delay: 0.2s;
+        }
+        
+        .search-container.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
         .search-wrapper { position: relative; flex: 1; }
-        .search-input { width: 100%; box-sizing: border-box; padding: 12px 20px; border: 1px solid #ddd; border-radius: 30px; font-size: 1rem; outline: none; transition: 0.3s; }
-        .search-input:focus { border-color: #c5a059; box-shadow: 0 0 8px rgba(197, 160, 89, 0.3); }
-        .btn-search { padding: 12px 25px; background: #2c3e50; color: white; border: none; border-radius: 30px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn-search:hover { background: #1a252f; }
-        .btn-clear { padding: 12px 20px; color: #7f8c8d; text-decoration: none; font-weight: bold; }
+        .search-input { 
+            width: 100%; 
+            box-sizing: border-box; 
+            padding: 12px 20px; 
+            border: 1px solid #ddd; 
+            border-radius: 30px; 
+            font-size: 1rem; 
+            outline: none; 
+            transition: 0.3s; 
+        }
+        .search-input:focus { 
+            border-color: #c5a059; 
+            box-shadow: 0 0 8px rgba(197, 160, 89, 0.3);
+            transform: scale(1.02);
+        }
+        .btn-search { 
+            padding: 12px 25px; 
+            background: #2c3e50; 
+            color: white; 
+            border: none; 
+            border-radius: 30px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: 0.3s; 
+        }
+        .btn-search:hover { background: #1a252f; transform: scale(1.05); }
+        .btn-clear { 
+            padding: 12px 20px; 
+            color: #7f8c8d; 
+            text-decoration: none; 
+            font-weight: bold; 
+            transition: 0.3s;
+        }
+        .btn-clear:hover { color: #2c3e50; transform: translateX(5px); }
 
         /* Gallery Styles */
         .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
@@ -64,21 +123,50 @@ if ($is_logged_in) {
             width: 100%;
         }
         .card-link:hover .card { 
-            transform: translateY(-5px); 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transform: translateY(-5px) scale(1.02); 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
             border-color: #c5a059;
         }
-        .card img { width: 100%; height: 220px; object-fit: cover; }
+        .card img { width: 100%; height: 220px; object-fit: cover; transition: transform 0.4s ease; }
+        .card-link:hover .card img { transform: scale(1.1); }
         .card-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
-        .card-title { margin: 0 0 10px 0; color: #2c3e50; font-size: 1.4rem; }
+        .card-title { margin: 0 0 10px 0; color: #2c3e50; font-size: 1.4rem; transition: color 0.3s; }
+        .card-link:hover .card-title { color: #c5a059; }
         .card-meta { font-size: 0.9rem; color: #7f8c8d; margin-bottom: 15px; }
         .card-desc { font-size: 0.95rem; color: #555; line-height: 1.5; margin-bottom: 20px; flex-grow: 1; }
         
+        /* --- Flying/Scroll Animations with Morphing --- */
+        .card-link {
+            opacity: 0;
+            transform: translateY(60px) scale(0.8) rotateX(-15deg);
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-link.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1) rotateX(0);
+        }
+        
+        .card-link:nth-child(1) { transition-delay: 0.1s; }
+        .card-link:nth-child(2) { transition-delay: 0.15s; }
+        .card-link:nth-child(3) { transition-delay: 0.2s; }
+        .card-link:nth-child(4) { transition-delay: 0.25s; }
+        .card-link:nth-child(5) { transition-delay: 0.3s; }
+        .card-link:nth-child(6) { transition-delay: 0.35s; }
+        .card-link:nth-child(7) { transition-delay: 0.4s; }
+        .card-link:nth-child(8) { transition-delay: 0.45s; }
+        .card-link:nth-child(9) { transition-delay: 0.5s; }
+        .card-link:nth-child(10) { transition-delay: 0.55s; }
+        .card-link:nth-child(11) { transition-delay: 0.6s; }
+        .card-link:nth-child(12) { transition-delay: 0.65s; }
+        
         #noResultsMessage { grid-column: 1 / -1; text-align: center; font-size: 1.2rem; color: #7f8c8d; padding: 40px; display: none; }
-        /* --- RESPONSIVE CATALOG & SEARCH --- */
+        
+        /* --- RESPONSIVE --- */
         @media (max-width: 768px) {
             .search-container { 
-                flex-direction: column; /* Stack search bar and buttons on phones */
+                flex-direction: column;
                 gap: 15px; 
             }
             .btn-search, .btn-clear { 
@@ -86,12 +174,8 @@ if ($is_logged_in) {
                 text-align: center; 
                 box-sizing: border-box;
             }
-            .page-title { 
-                font-size: 2rem; /* Smaller title for mobile */
-            }
-            .gallery-grid, .cat-grid {
-                grid-template-columns: 1fr; /* Force 1 column on very small phones */
-            }
+            .page-title { font-size: 2rem; }
+            .gallery-grid, .cat-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -101,22 +185,66 @@ if ($is_logged_in) {
 
     <?php if (!$is_logged_in): ?>
         
-        <div style="background: linear-gradient(135deg, #2c3e50, #1a252f); color: white; text-align: center; padding: 80px 20px; min-height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-            <h3 style="margin: 0 0 15px 0; font-size: 2.5rem; letter-spacing: 1px;">Experience History in Person</h3>
-            <p style="margin: 0 0 40px 0; font-size: 1.2rem; color: #ecf0f1; max-width: 600px; line-height: 1.6;">
-                Discover the rich heritage of Camarines Norte. Visit the real artifacts at the <strong style="color: #c5a059;">Museo de Labo</strong> in Labo!
-            </p>
+        <!-- VISITOR VIEW: Show images only without details -->
+        <div class="container">
+            <h1 class="page-title" id="pageTitle">Museum Collection Preview</h1>
+            <p style="text-align: center; color: #7f8c8d; margin-bottom: 40px;" id="pageSubtitle">Sign the guestbook to view full details</p>
             
-            <p style="color: #95a5a6; font-size: 1rem; margin-bottom: 15px;">Want to browse the digital collection?</p>
-            <a href="login.php" style="padding: 15px 35px; background: #c5a059; color: white; text-decoration: none; border-radius: 30px; font-size: 1.1rem; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4);">
-                Sign the Guestbook to Enter
-            </a>
+            <div class="gallery-grid" id="galleryGrid">
+                <?php
+                $preview_result = $conn->query("SELECT id, title, image_path FROM exhibits ORDER BY id DESC");
+                if($preview_result && $preview_result->num_rows > 0):
+                    $count = 0;
+                    while($row = $preview_result->fetch_assoc()):
+                        $count++;
+                ?>
+                    <div class="card-link" data-search="<?php echo strtolower($row['title']); ?>" style="transition-delay: <?php echo 0.1 + ($count * 0.05); ?>s;">
+                        <div class="card">
+                            <img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>" style="cursor: pointer;" onclick="alert('Please sign the guestbook to view full details!')">
+                            <div class="card-body">
+                                <h3 class="card-title"><?php echo htmlspecialchars($row['title']); ?></h3>
+                                <p class="card-desc" style="color: #c5a059; font-weight: bold;">🔒 Login to view details</p>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endwhile; endif; ?>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px; opacity: 0; transform: translateY(20px); transition: all 0.5s ease; transition-delay: 0.8s;" id="loginCTA">
+                <a href="login.php" class="btn-add bg-exhibit" style="display: inline-block; text-decoration: none; padding: 15px 40px; font-size: 1.1rem;">📝 Sign Guestbook to Access</a>
+            </div>
         </div>
+
+        <script>
+            // Animations for visitor preview
+            document.addEventListener('DOMContentLoaded', function() {
+                // Title animation
+                setTimeout(() => document.getElementById('pageTitle').classList.add('visible'), 100);
+                setTimeout(() => document.getElementById('pageSubtitle').classList.add('visible'), 200);
+                setTimeout(() => document.getElementById('loginCTA').classList.add('visible'), 600);
+                
+                // Card animations
+                const cardLinks = document.querySelectorAll('.card-link');
+                const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, observerOptions);
+                cardLinks.forEach(link => observer.observe(link));
+                
+                // Set hash
+                history.replaceState(null, null, '#artifacts');
+            });
+        </script>
 
     <?php else: ?>
 
         <div class="container">
-            <h1 class="page-title">Museum Collection</h1>
+            <h1 class="page-title" id="pageTitle">Museum Collection</h1>
 
             <form action="exhibits.php" method="GET" class="search-container" id="searchForm">
                 <?php if($cat_id): ?>
@@ -133,10 +261,11 @@ if ($is_logged_in) {
 
             <div class="gallery-grid" id="galleryGrid">
                 <?php if(isset($result) && $result->num_rows > 0): ?>
-                    <?php while($row = $result->fetch_assoc()): 
+                    <?php $count = 0; while($row = $result->fetch_assoc()): 
+                        $count++;
                         $searchable_text = strtolower($row['title'] . " " . $row['artifact_year'] . " " . $row['origin'] . " " . $row['donated_by'] . " " . $row['description']);
                     ?>
-                        <a href="exhibit_detail.php?id=<?php echo $row['id']; ?>" class="card-link" data-search="<?php echo htmlspecialchars($searchable_text); ?>">
+                        <a href="exhibit_detail.php?id=<?php echo $row['id']; ?>" class="card-link" data-search="<?php echo htmlspecialchars($searchable_text); ?>" style="transition-delay: <?php echo 0.1 + ($count * 0.05); ?>s;">
                             <div class="card">
                                 <img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
                                 <div class="card-body">
@@ -159,6 +288,28 @@ if ($is_logged_in) {
         </div>
 
         <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Title animation
+                setTimeout(() => document.getElementById('pageTitle').classList.add('visible'), 100);
+                setTimeout(() => document.getElementById('searchForm').classList.add('visible'), 200);
+                
+                // Set hash
+                history.replaceState(null, null, '#artifacts');
+                
+                // Card scroll animations
+                const cardLinks = document.querySelectorAll('.card-link');
+                const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, observerOptions);
+                cardLinks.forEach(link => observer.observe(link));
+            });
+
             function liveFilter() {
                 let query = document.getElementById('searchInput').value.toLowerCase();
                 let cardLinks = document.querySelectorAll('.card-link');
@@ -168,6 +319,9 @@ if ($is_logged_in) {
                     let searchableText = link.getAttribute('data-search');
                     if (searchableText.includes(query)) {
                         link.style.display = 'flex';
+                        link.classList.remove('visible');
+                        void link.offsetWidth;
+                        link.classList.add('visible');
                         hasVisibleCards = true;
                     } else {
                         link.style.display = 'none';
@@ -175,11 +329,7 @@ if ($is_logged_in) {
                 });
 
                 let noResultsMsg = document.getElementById('noResultsMessage');
-                if (hasVisibleCards) {
-                    noResultsMsg.style.display = 'none';
-                } else {
-                    noResultsMsg.style.display = 'block';
-                }
+                noResultsMsg.style.display = hasVisibleCards ? 'none' : 'block';
             }
 
             document.getElementById('searchForm').addEventListener('submit', function(e) {
@@ -191,3 +341,4 @@ if ($is_logged_in) {
 
 </body>
 </html>
+
