@@ -4,6 +4,7 @@ if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit(
 
 include 'db.php'; 
 include 'header.php';
+include 'functions.php';
 
 // Fetch the existing category data
 if (!isset($_GET['id'])) { header("Location: admin_dashboard.php"); exit(); }
@@ -33,6 +34,7 @@ if(isset($_POST['update_cat'])) {
     }
     
     if($update_stmt->execute()) {
+        log_activity($conn, $_SESSION['admin_id'], "Edited category: " . $name);
         header("Location: admin_dashboard.php"); 
         exit();
     }

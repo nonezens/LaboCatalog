@@ -2,6 +2,7 @@
 ob_start();
 session_start();
 include 'db.php';
+include 'functions.php';
 
 $msg = "";
 $msg_color = "red";
@@ -11,12 +12,20 @@ if (isset($_POST['admin_login'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $stmt = $conn->prepare("SELECT * FROM admins WHERE username = ? AND password = ?");
-    $stmt->bind_param("ss", $username, $password);
+    $stmt = $conn->prepare("SELECT id, password FROM admins WHERE username = ?");
+    $stmt->bind_param("s", $username);
     $stmt->execute();
-    if ($stmt->get_result()->num_rows > 0) {
-        $_SESSION['admin_logged_in'] = true;
-        header("Location: admin_dashboard.php"); exit();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        if (password_verify($password, $row['password'])) {
+            $_SESSION['admin_logged_in'] = true;
+            $_SESSION['admin_id'] = $row['id'];
+            log_activity($conn, $row['id'], "Admin logged in");
+            header("Location: admin_dashboard.php");
+            exit();
+        } else {
+            $msg = "Invalid admin credentials!";
+        }
     } else {
         $msg = "Invalid admin credentials!";
     }
@@ -24,11 +33,11 @@ if (isset($_POST['admin_login'])) {
 
 // --- 2. GUEST REGISTRATION (Request Access) ---
 if (isset($_POST['request_access'])) {
-    $name = trim($_POST['guest_name']); 
-    $gender = $_POST['gender']; 
+    $name = trim($_POST['guest_name']);
+    $gender = $_POST['gender'];
     $residence = $_POST['residence'];
-    $nationality = $_POST['nationality']; 
-    $days = $_POST['num_days']; 
+    $nationality = $_POST['nationality'];
+    $days = $_POST['num_days'];
     $purpose = $_POST['purpose'];
     
     // Automatically prepend +63 to the typed number
@@ -38,6 +47,8 @@ if (isset($_POST['request_access'])) {
     $stmt->bind_param("ssssiss", $name, $gender, $residence, $nationality, $days, $purpose, $contact);
     
     if ($stmt->execute()) {
+        $guest_id = $stmt->insert_id;
+        log_activity($conn, $guest_id, "Guest requested access");
         $msg = "Request submitted! Please wait for Admin approval to log in.";
         $msg_color = "green";
     } else {
@@ -59,7 +70,10 @@ if (isset($_POST['guest_login'])) {
         if ($row['status'] == 'approved') {
             $_SESSION['guest_logged_in'] = true;
             $_SESSION['guest_name'] = $row['guest_name'];
-            header("Location: categories.php"); exit();
+            $_SESSION['guest_id'] = $row['id'];
+            log_activity($conn, $row['id'], "Guest logged in");
+            header("Location: categories.php");
+            exit();
         } else if ($row['status'] == 'pending') {
             $msg = "Your request is still pending admin approval.";
         } else {
@@ -140,6 +154,11 @@ if (isset($_POST['guest_login'])) {
         </form>
     </div>
 
+        <p style="text-align: center; margin-top: 20px;">
+            Don't have an account? <a href="register.php" style="color: #3498db; text-decoration: none; font-weight: bold;">Register here</a>
+        </p>
+    </div>
+
     <div style="flex: 1; min-width: 250px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); align-self: flex-start;">
         <h3 style="color: #95a5a6; margin-top: 0; text-align: center;">Admin Portal</h3>
         <form method="POST">
@@ -147,6 +166,9 @@ if (isset($_POST['guest_login'])) {
             <input type="password" name="password" placeholder="Password" style="width: 100%; padding: 10px; margin-bottom: 20px; box-sizing:border-box; border: 1px solid #ddd; border-radius: 4px;" required>
             <button type="submit" name="admin_login" style="width: 100%; padding: 12px; background: #7f8c8d; color: white; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.3s;">Login</button>
         </form>
+        <p style="text-align: center; margin-top: 10px;">
+            <a href="forgot_password.php" style="color: #95a5a6; font-size: 0.9em; text-decoration: none;">Forgot Password?</a>
+        </p>
     </div>
 
 </div>

@@ -5,12 +5,13 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 }
 
 include 'db.php';
+include 'functions.php';
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
 
     // 1. Find the image name so we can delete the actual file
-    $stmt = $conn->prepare("SELECT image_path FROM exhibits WHERE id = ?");
+    $stmt = $conn->prepare("SELECT image_path, title FROM exhibits WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -25,7 +26,9 @@ if (isset($_GET['id'])) {
         // 2. Delete the record from the database
         $del_stmt = $conn->prepare("DELETE FROM exhibits WHERE id = ?");
         $del_stmt->bind_param("i", $id);
-        $del_stmt->execute();
+        if ($del_stmt->execute()) {
+            log_activity($conn, $_SESSION['admin_id'], "Deleted artifact: " . $row['title']);
+        }
     }
 }
 

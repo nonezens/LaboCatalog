@@ -97,7 +97,16 @@
             <li><a href="manage_visitors.php">👥 Visitor Log</a></li>
             <li><a href="manage_artifacts.php">🖼️ Manage Artifacts</a></li>
             <li><a href="manage_departments.php">📁 Manage Departments</a></li>
+            <li><a href="manage_users.php">👤 Manage Users</a></li>
+            <li><a href="manage_comments.php">💬 Manage Comments</a></li>
+            <li><a href="view_logs.php">📜 View Logs</a></li>
+            <li><a href="edit_about.php">📝 Edit About Page</a></li>
+            <li><a href="backup.php">💾 Backup Database</a></li>
+            <li><a href="restore.php">🔧 Restore Database</a></li>
+            <li><a href="statistics.php">📈 Statistics</a></li>
+            <li><a href="languages.php">🌐 Languages</a></li>
         </ul>
     </aside>
 
     <main class="main-content">
+

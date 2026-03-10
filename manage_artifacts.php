@@ -2,6 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit(); }
 include 'db.php'; 
+include 'functions.php';
 
 // --- Begin logic from add_exhibit.php ---
 $msg = "";
@@ -29,6 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_exhibit'])) {
         $stmt->bind_param("sisssss", $title, $category_id, $description, $image_path, $artifact_year, $origin, $donated_by);
         
         if ($stmt->execute()) {
+            $exhibit_id = $stmt->insert_id;
+            log_activity($conn, $_SESSION['admin_id'], "Added artifact with ID: " . $exhibit_id);
             $msg = "Artifact added successfully!";
             $msg_color = "green";
         } else {
@@ -52,7 +55,12 @@ if ($cat_result) {
 }
 
 // Fetch exhibits for the main table
-$query = "SELECT exhibits.*, categories.name AS cat_name FROM exhibits LEFT JOIN categories ON exhibits.category_id = categories.id ORDER BY exhibits.id DESC";
+$search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
+$query = "SELECT exhibits.*, categories.name AS cat_name FROM exhibits LEFT JOIN categories ON exhibits.category_id = categories.id";
+if (!empty($search_query)) {
+    $query .= " WHERE exhibits.title LIKE '%" . $conn->real_escape_string($search_query) . "%' OR exhibits.description LIKE '%" . $conn->real_escape_string($search_query) . "%'";
+}
+$query .= " ORDER BY exhibits.id DESC";
 $result = $conn->query($query);
 ?>
 <!DOCTYPE html>
@@ -191,7 +199,7 @@ $result = $conn->query($query);
 
     <div class="table-container">
         <div class="filter-container">
-            <input type="text" id="search" placeholder="Search by title, description...">
+            <input type="text" id="search" placeholder="Search by title, description..." value="<?php echo htmlspecialchars($search_query); ?>">
             <select id="category">
                 <option value="">All Departments</option>
                 <?php foreach($categories as $cat): ?>

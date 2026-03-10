@@ -2,7 +2,9 @@
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit(); }
 
-include 'db.php'; include 'header.php';
+include 'db.php'; 
+include 'header.php';
+include 'functions.php';
 
 // Fetch existing data
 if (!isset($_GET['id'])) { header("Location: admin_dashboard.php"); exit(); }
@@ -33,6 +35,7 @@ if(isset($_POST['update'])) {
     }
     
     if($update_stmt->execute()) {
+        log_activity($conn, $_SESSION['admin_id'], "Edited artifact with ID: " . $id);
         header("Location: admin_dashboard.php"); exit();
     }
 }

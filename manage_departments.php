@@ -2,6 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit(); }
 include 'db.php'; 
+include 'functions.php';
 
 // --- Begin logic from add_category.php ---
 $msg = "";
@@ -23,6 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_category'])) {
         $stmt->bind_param("ss", $name, $image_path);
         
         if ($stmt->execute()) {
+            $category_id = $stmt->insert_id;
+            log_activity($conn, $_SESSION['admin_id'], "Added category: " . $name);
             $msg = "Department added successfully!";
             $msg_color = "green";
         } else {

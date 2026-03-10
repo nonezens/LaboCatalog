@@ -3,6 +3,7 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit(); }
 
 include 'db.php';
+include 'functions.php';
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
@@ -32,7 +33,7 @@ if (isset($_GET['id'])) {
     // --- PHASE 2: DELETE THE CATEGORY ITSELF ---
     
     // 2A. Find and delete the category's physical cover image file
-    $cat_stmt = $conn->prepare("SELECT image_path FROM categories WHERE id = ?");
+    $cat_stmt = $conn->prepare("SELECT name, image_path FROM categories WHERE id = ?");
     $cat_stmt->bind_param("i", $id);
     $cat_stmt->execute();
     $cat_result = $cat_stmt->get_result();
@@ -46,7 +47,9 @@ if (isset($_GET['id'])) {
         // 2B. Finally, delete the category record
         $del_cat_stmt = $conn->prepare("DELETE FROM categories WHERE id = ?");
         $del_cat_stmt->bind_param("i", $id);
-        $del_cat_stmt->execute();
+        if ($del_cat_stmt->execute()) {
+            log_activity($conn, $_SESSION['admin_id'], "Deleted category: " . $cat_row['name']);
+        }
     }
 }
 

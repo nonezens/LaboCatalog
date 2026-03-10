@@ -4,6 +4,49 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 include 'db.php'; 
+
+// Handle like submission
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['like_exhibit'])) {
+    if (isset($_SESSION['user_id'])) {
+        $exhibit_id = $_POST['exhibit_id'];
+        $user_id = $_SESSION['user_id'];
+
+        // Check if the user has already liked the artifact
+        $check_stmt = $conn->prepare("SELECT id FROM likes WHERE exhibit_id = ? AND user_id = ?");
+        $check_stmt->bind_param("ii", $exhibit_id, $user_id);
+        $check_stmt->execute();
+        $check_result = $check_stmt->get_result();
+
+        if ($check_result->num_rows === 0) {
+            $stmt = $conn->prepare("INSERT INTO likes (exhibit_id, user_id) VALUES (?, ?)");
+            $stmt->bind_param("ii", $exhibit_id, $user_id);
+            $stmt->execute();
+        }
+        
+        header("Location: exhibit_detail.php?id=" . $exhibit_id);
+        exit();
+    } else {
+        // Redirect to login page if user is not logged in
+        header("Location: login.php");
+        exit();
+    }
+}
+
+// Handle comment submission
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_comment'])) {
+    $exhibit_id = $_POST['exhibit_id'];
+    $name = trim($_POST['name']);
+    $comment = trim($_POST['comment']);
+
+    if (!empty($name) && !empty($comment)) {
+        $stmt = $conn->prepare("INSERT INTO comments (exhibit_id, name, comment, status) VALUES (?, ?, ?, 'pending')");
+        $stmt->bind_param("iss", $exhibit_id, $name, $comment);
+        $stmt->execute();
+        header("Location: exhibit_detail.php?id=" . $exhibit_id);
+        exit();
+    }
+}
+
 include 'header.php'; 
 
 // 1. Check if an ID was passed in the URL
@@ -128,9 +171,75 @@ $exhibit = $result->fetch_assoc();
                 ?>
             </div>
 
+            <div class="actions" style="margin-top: 20px; display: flex; align-items: center; gap: 20px;">
+                <?php
+                $likes_query = "SELECT COUNT(*) AS total_likes FROM likes WHERE exhibit_id = ?";
+                $likes_stmt = $conn->prepare($likes_query);
+                $likes_stmt->bind_param("i", $id);
+                $likes_stmt->execute();
+                $likes_result = $likes_stmt->get_result();
+                $total_likes = $likes_result->fetch_assoc()['total_likes'];
+
+                $user_has_liked = false;
+                if (isset($_SESSION['user_id'])) {
+                    $user_id = $_SESSION['user_id'];
+                    $user_like_query = "SELECT id FROM likes WHERE exhibit_id = ? AND user_id = ?";
+                    $user_like_stmt = $conn->prepare($user_like_query);
+                    $user_like_stmt->bind_param("ii", $id, $user_id);
+                    $user_like_stmt->execute();
+                    $user_like_result = $user_like_stmt->get_result();
+                    if ($user_like_result->num_rows > 0) {
+                        $user_has_liked = true;
+                    }
+                }
+                ?>
+                <form action="exhibit_detail.php?id=<?php echo $id; ?>" method="POST">
+                    <input type="hidden" name="exhibit_id" value="<?php echo $id; ?>">
+                    <button type="submit" name="like_exhibit" style="padding: 10px 20px; background: <?php echo $user_has_liked ? '#ccc' : '#e74c3c'; ?>; color: white; border: none; border-radius: 4px;" <?php echo $user_has_liked ? 'disabled' : ''; ?>>
+                        <?php echo $user_has_liked ? '♥ Liked' : '♡ Like'; ?>
+                    </button>
+                </form>
+                <span><?php echo $total_likes; ?> Likes</span>
+            </div>
+
             <a href="exhibits.php" class="back-link">&larr; Back to Exhibits Gallery</a>
         </div>
 
+    </div>
+
+    <div class="comments-section" style="margin-top: 40px; border-top: 1px solid #ddd; padding-top: 40px;">
+        <h2>Comments</h2>
+        <form action="exhibit_detail.php?id=<?php echo $id; ?>" method="POST" style="margin-bottom: 20px;">
+            <input type="hidden" name="exhibit_id" value="<?php echo $id; ?>">
+            <div style="margin-bottom: 10px;">
+                <label for="name" style="display: block; margin-bottom: 5px; font-weight: bold;">Name:</label>
+                <input type="text" id="name" name="name" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label for="comment" style="display: block; margin-bottom: 5px; font-weight: bold;">Comment:</label>
+                <textarea id="comment" name="comment" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; min-height: 100px;"></textarea>
+            </div>
+            <button type="submit" name="add_comment" style="padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 4px;">Submit Comment</button>
+        </form>
+
+        <?php
+        $comments_query = "SELECT * FROM comments WHERE exhibit_id = ? AND status = 'approved' ORDER BY created_at DESC";
+        $comments_stmt = $conn->prepare($comments_query);
+        $comments_stmt->bind_param("i", $id);
+        $comments_stmt->execute();
+        $comments_result = $comments_stmt->get_result();
+        ?>
+
+        <?php if ($comments_result && $comments_result->num_rows > 0): ?>
+            <?php while ($comment = $comments_result->fetch_assoc()): ?>
+                <div class="comment" style="border-bottom: 1px solid #eee; padding: 15px 0;">
+                    <p><strong><?php echo htmlspecialchars($comment['name']); ?></strong> - <span style="font-size: 0.9em; color: #777;"><?php echo date("M d, Y", strtotime($comment['created_at'])); ?></span></p>
+                    <p><?php echo nl2br(htmlspecialchars($comment['comment'])); ?></p>
+                </div>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <p>No comments yet. Be the first to comment!</p>
+        <?php endif; ?>
     </div>
 </div>
 

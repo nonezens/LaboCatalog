@@ -122,7 +122,7 @@ if (session_status() === PHP_SESSION_NONE) {
         <ul class="site-nav-links" id="nav-links">
             <li><a href="index.php">Home</a></li>
             <li><a href="categories.php">Departments</a></li>
-            <li><a href="exhibits.php">All Artifacts</a></li>
+            <li><a href="artifacts.php">All Artifacts</a></li>
             
             <?php if(isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true): ?>
                 <li class="admin-link"><a href="admin_dashboard.php" style="color: #3498db; font-weight: bold;">⚙️ Dashboard</a></li>
