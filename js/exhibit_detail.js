@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 700);
     }
 
-    // Modal functionality
+    // Modal functionality with morphing animation
     const modal = document.getElementById("imageModal");
     const img = document.getElementById("exhibitImage");
     const modalImg = document.getElementById("modalImage");
@@ -61,30 +61,62 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (img && modal) {
         img.onclick = function() {
+            // Get the original image position for morphing effect
+            const rect = img.getBoundingClientRect();
+            
+            // Set initial morph position
+            modalImg.style.transformOrigin = `${rect.left + rect.width/2}px ${rect.top + rect.height/2}px`;
+            modalImg.style.transform = 'scale(0.1)';
+            
+            // Set the image source
+            modalImg.src = this.src;
+            
+            // Show modal with animation
             modal.classList.add('active');
-            if (modalImg) modalImg.src = this.src;
+            
+            // Animate the morph effect
+            requestAnimationFrame(function() {
+                modalImg.style.transformOrigin = 'center center';
+                modalImg.style.transform = 'scale(1)';
+            });
         }
     }
 
     if (closeBtn && modal) {
         closeBtn.onclick = function() {
-            modal.classList.remove('active');
+            closeModal();
         }
     }
 
     if (modal) {
         modal.onclick = function(event) {
             if (event.target === modal) {
-                modal.classList.remove('active');
+                closeModal();
             }
+        }
+    }
+    
+    // Close modal function with reverse morph animation
+    function closeModal() {
+        const modalImg = document.getElementById("modalImage");
+        const modal = document.getElementById("imageModal");
+        
+        if (modalImg && modal) {
+            // Reverse morph animation
+            modalImg.style.transform = 'scale(0.1)';
+            
+            setTimeout(function() {
+                modal.classList.remove('active');
+                modalImg.style.transform = 'scale(1)';
+            }, 200);
         }
     }
 
     // Escape key to close modal
     document.addEventListener('keydown', function(e) {
         const modal = document.getElementById("imageModal");
-        if (e.key === 'Escape' && modal) {
-            modal.classList.remove('active');
+        if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
+            closeModal();
         }
     });
 });

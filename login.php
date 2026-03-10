@@ -113,18 +113,7 @@ if (isset($_POST['guest_login'])) {
                 </div>
             <?php endif; ?>
 
-            <h2 class="login-title">Visitor Access</h2>
-            
-            <div class="login-section">
-                <h3 class="login-subtitle">Already Approved? Log In Here</h3>
-                <form method="POST">
-                    <input type="text" name="login_name" placeholder="Enter your Full Name" class="login-input-full" style="width: 100%; padding: 10px; margin-bottom: 15px; box-sizing:border-box; border: 1px solid #ddd; border-radius: 4px;" required>
-
-                    <button type="submit" name="guest_login" class="login-btn-secondary" style="width: 100%;">Enter Museum Catalog</button>
-                </form>
-            </div>
-
-            <h3 class="login-title" style="margin-top: 30px;">New Visitor? Sign Guestbook</h3>
+            <h3 class="login-title" style="margin-top: 0px;">New Visitor? Register Here</h3>
             <form method="POST" class="login-form-grid">
                 
                 <input type="text" name="guest_name" placeholder="Full Name" required class="login-input-full" style="padding: 10px; border: 1px solid #ddd; border-radius:4px;">
@@ -165,7 +154,7 @@ if (isset($_POST['guest_login'])) {
                 
                 <input type="text" name="purpose" placeholder="Purpose of Visit (e.g., Tourism, Research)" required class="login-input-full" style="padding: 10px; border: 1px solid #ddd; border-radius:4px;">
                 
-                <button type="submit" name="request_access" class="login-btn">Sign Guestbook & Access Catalog</button>
+<button type="submit" name="request_access" class="login-btn">Register & Access Catalog</button>
             </form>
         </div>
 

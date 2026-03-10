@@ -5,11 +5,9 @@ include 'db.php';
 // 1. Check if the user is logged in (Guest or Admin)
 $is_logged_in = isset($_SESSION['guest_logged_in']) || isset($_SESSION['admin_logged_in']);
 
-// 2. ONLY fetch the latest acquisitions if they are logged in!
-if ($is_logged_in) {
-    $recent_query = "SELECT * FROM exhibits ORDER BY id DESC LIMIT 4";
-    $recent_result = $conn->query($recent_query);
-}
+// 2. Fetch the latest acquisitions for ALL visitors (logged in or not)
+$recent_query = "SELECT * FROM exhibits ORDER BY id DESC LIMIT 4";
+$recent_result = $conn->query($recent_query);
 ?>
 
 <!DOCTYPE html>
@@ -51,7 +49,7 @@ if ($is_logged_in) {
                     <ul>
                         <li><span>📍</span> <span><strong>Location:</strong> <a href="https://www.google.com/maps/dir/?api=1&destination=Municipal+Hall+Compound, Labo, Camarines Norte" target="_blank" style="color: inherit; text-decoration: none;">Municipal Hall Compound, Labo, Camarines Norte</a></span></li>
                         <li><span>🕒</span> <span><strong>Hours:</strong> Monday to Friday, 8:00 AM - 5:00 PM</span></li>
-                        <li><span>🎟️</span> <span><strong>Admission:</strong> Free (Please sign our visitor logbook upon arrival)</span></li>
+<li><span>🎟️</span> <span><strong>Admission:</strong> Free (Digital catalog access via online registration)</span></li>
                     </ul>
                 </div>
 
@@ -62,7 +60,6 @@ if ($is_logged_in) {
         </div>
     </div>
 
-    <?php if ($is_logged_in): ?>
     <div class="container" style="padding-top: 0;">
         <h2 class="section-title" id="recentTitle">Latest Acquisitions</h2>
         <p style="text-align: center; color: #7f8c8d; margin-bottom: 30px;">Get a sneak peek at the newest historical pieces added to our archives.</p>
@@ -70,18 +67,30 @@ if ($is_logged_in) {
         <div class="gallery-grid">
             <?php if($recent_result->num_rows > 0): ?>
                 <?php while($row = $recent_result->fetch_assoc()): ?>
-                    <a href="exhibit_detail.php?id=<?php echo $row['id']; ?>" class="card-link">
-                        <div class="card">
-                            <img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
-                            <div class="card-body">
-                                <h3 class="card-title"><?php echo htmlspecialchars($row['title']); ?></h3>
-                                <div class="card-meta">
-                                    <strong>Period:</strong> <?php echo $row['artifact_year'] ? htmlspecialchars($row['artifact_year']) : 'Unknown'; ?><br>
-                                    <strong>Origin:</strong> <?php echo $row['origin'] ? htmlspecialchars($row['origin']) : 'Labo'; ?>
+                    <?php if ($is_logged_in): ?>
+                        <a href="exhibit_detail.php?id=<?php echo $row['id']; ?>" class="card-link">
+                            <div class="card">
+                                <img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
+                                <div class="card-body">
+                                    <h3 class="card-title"><?php echo htmlspecialchars($row['title']); ?></h3>
+                                    <div class="card-meta">
+                                        <strong>Period:</strong> <?php echo $row['artifact_year'] ? htmlspecialchars($row['artifact_year']) : 'Unknown'; ?><br>
+                                        <strong>Origin:</strong> <?php echo $row['origin'] ? htmlspecialchars($row['origin']) : 'Labo'; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    <?php else: ?>
+                        <div class="card-link" style="cursor: pointer;" onclick="alert('Please register to view full details!');">
+                            <div class="card">
+                                <img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
+                                <div class="card-body">
+                                    <h3 class="card-title"><?php echo htmlspecialchars($row['title']); ?></h3>
+                                    <p class="card-desc" style="color: #c5a059; font-weight: bold;">🔒 Login to view details</p>
                                 </div>
                             </div>
                         </div>
-                    </a>
+                    <?php endif; ?>
                 <?php endwhile; ?>
             <?php else: ?>
                 <p style="grid-column: 1 / -1; text-align: center; font-size: 1.2rem; color: #7f8c8d; padding: 40px;">Check back soon for new artifacts!</p>
@@ -89,10 +98,13 @@ if ($is_logged_in) {
         </div>
         
         <div style="text-align: center; margin-top: 40px;">
-            <a href="exhibits.php" style="color: #c5a059; font-weight: bold; text-decoration: none; font-size: 1.1rem;">View All Artifacts &rarr;</a>
+            <?php if (!$is_logged_in): ?>
+                <a href="login.php" style="color: #c5a059; font-weight: bold; text-decoration: none; font-size: 1.1rem;">Register to View All Artifacts &rarr;</a>
+            <?php else: ?>
+                <a href="exhibits.php" style="color: #c5a059; font-weight: bold; text-decoration: none; font-size: 1.1rem;">View All Artifacts &rarr;</a>
+            <?php endif; ?>
         </div>
     </div>
-    <?php endif; ?>
 
     <!-- JS -->
     <script src="js/index.js"></script>

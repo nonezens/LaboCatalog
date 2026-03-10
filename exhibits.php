@@ -49,7 +49,7 @@ if ($is_logged_in) {
         <!-- VISITOR VIEW: Show images only without details -->
         <div class="container">
             <h1 class="page-title" id="pageTitle">Museum Collection Preview</h1>
-            <p style="text-align: center; color: #7f8c8d; margin-bottom: 40px;" id="pageSubtitle">Sign the guestbook to view full details</p>
+<p style="text-align: center; color: #7f8c8d; margin-bottom: 40px;" id="pageSubtitle">Register to access full details</p>
             
             <div class="gallery-grid" id="galleryGrid">
                 <?php
@@ -61,7 +61,7 @@ if ($is_logged_in) {
                 ?>
                     <div class="card-link" data-search="<?php echo strtolower($row['title']); ?>" style="transition-delay: <?php echo 0.1 + ($count * 0.05); ?>s;">
                         <div class="card">
-                            <img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>" style="cursor: pointer;" onclick="alert('Please sign the guestbook to view full details!')">
+<img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>" style="cursor: pointer;" onclick="alert('Please register to view full details!')">
                             <div class="card-body">
                                 <h3 class="card-title"><?php echo htmlspecialchars($row['title']); ?></h3>
                                 <p class="card-desc" style="color: #c5a059; font-weight: bold;">🔒 Login to view details</p>
@@ -72,7 +72,7 @@ if ($is_logged_in) {
             </div>
             
             <div style="text-align: center; margin-top: 40px; opacity: 0; transform: translateY(20px); transition: all 0.5s ease; transition-delay: 0.8s;" id="loginCTA">
-                <a href="login.php" class="btn-add bg-exhibit" style="display: inline-block; text-decoration: none; padding: 15px 40px; font-size: 1.1rem;">📝 Sign Guestbook to Access</a>
+<a href="login.php" class="btn-add bg-exhibit" style="display: inline-block; text-decoration: none; padding: 15px 40px; font-size: 1.1rem;">📝 Register to Access</a>
             </div>
         </div>
 

@@ -60,20 +60,33 @@ function initArtifactFilters() {
     if (!searchInput || !artifactsTable) return;
 
     function fetchArtifacts() {
-        artifactsTable.innerHTML = '<table><tbody><tr><td colspan="5" style="text-align: center; padding: 20px;">Loading...</td></tr></tbody></table>';
+        // Add fade out animation
+        artifactsTable.style.transition = 'opacity 0.2s ease';
+        artifactsTable.style.opacity = '0';
         
-        let formData = new FormData();
-        formData.append('search', searchInput.value);
-        formData.append('category_id', categoryInput ? categoryInput.value : '');
-        formData.append('artifact_year', dateInput ? dateInput.value : '');
+        setTimeout(() => {
+            artifactsTable.innerHTML = '<table><tbody><tr><td colspan="5" style="text-align: center; padding: 20px;">Loading...</td></tr></tbody></table>';
+            
+            let formData = new FormData();
+            formData.append('search', searchInput.value);
+            formData.append('category_id', categoryInput ? categoryInput.value : '');
+            formData.append('artifact_year', dateInput ? dateInput.value : '');
 
-        fetch('fetch_artifacts.php', { method: 'POST', body: formData })
-        .then(response => response.text())
-        .then(data => { artifactsTable.innerHTML = data; })
-        .catch(error => {
-            console.error('Error:', error);
-            artifactsTable.innerHTML = '<table><tbody><tr><td colspan="5" style="text-align: center; padding: 20px; color: red;">An error occurred.</td></tr></tbody></table>';
-        });
+            fetch('fetch_artifacts.php', { method: 'POST', body: formData })
+            .then(response => response.text())
+            .then(data => { 
+                artifactsTable.innerHTML = data;
+                // Add fade in animation
+                artifactsTable.style.transition = 'opacity 0.3s ease';
+                artifactsTable.style.opacity = '1';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                artifactsTable.innerHTML = '<table><tbody><tr><td colspan="5" style="text-align: center; padding: 20px; color: red;">An error occurred.</td></tr></tbody></table>';
+                artifactsTable.style.transition = 'opacity 0.3s ease';
+                artifactsTable.style.opacity = '1';
+            });
+        }, 200);
     }
 
     function handleInput() {

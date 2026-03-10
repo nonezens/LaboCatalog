@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     cardLinks.forEach(link => observer.observe(link));
 });
 
-// Live filter function
+// Live filter function with animation
 function liveFilter() {
     let query = document.getElementById('searchInput').value.toLowerCase();
     let cardLinks = document.querySelectorAll('.card-link');
@@ -39,19 +39,40 @@ function liveFilter() {
     cardLinks.forEach(link => {
         let searchableText = link.getAttribute('data-search');
         if (searchableText && searchableText.includes(query)) {
+            // Add fade in animation
+            link.style.opacity = '0';
+            link.style.transform = 'scale(0.95)';
             link.style.display = 'flex';
-            link.classList.remove('visible');
-            void link.offsetWidth;
-            link.classList.add('visible');
+            
+            setTimeout(() => {
+                link.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                link.style.opacity = '1';
+                link.style.transform = 'scale(1)';
+            }, 50);
+            
             hasVisibleCards = true;
         } else {
-            link.style.display = 'none';
+            // Fade out animation
+            link.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+            link.style.opacity = '0';
+            link.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                link.style.display = 'none';
+                link.style.opacity = '1';
+                link.style.transform = 'scale(1)';
+            }, 200);
         }
     });
 
     let noResultsMsg = document.getElementById('noResultsMessage');
     if (noResultsMsg) {
-        noResultsMsg.style.display = hasVisibleCards ? 'none' : 'block';
+        noResultsMsg.style.opacity = '0';
+        setTimeout(() => {
+            noResultsMsg.style.display = hasVisibleCards ? 'none' : 'block';
+            noResultsMsg.style.transition = 'opacity 0.3s ease';
+            noResultsMsg.style.opacity = '1';
+        }, 100);
     }
 }
 

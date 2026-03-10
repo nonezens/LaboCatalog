@@ -82,7 +82,7 @@ echo '<Row>
 echo '<Row><Cell ss:MergeAcross="8"></Cell></Row>';
 
 // Column Headers
-$headers = array('No.', 'Date', 'Guest Name', 'Contact Number', 'Gender', 'Nationality', 'Residence', 'Purpose', 'Days', 'Status');
+$headers = array('No.', 'Date', 'Guest Name', 'Contact Number', 'Gender', 'Nationality', 'Residence', 'Purpose', 'Days');
 echo '<Row ss:StyleID="Header">';
 foreach ($headers as $header) {
     echo '<Cell><Data ss:Type="String">' . $header . '</Data></Cell>';
@@ -103,7 +103,6 @@ while ($row = $result->fetch_assoc()) {
     echo '<Cell><Data ss:Type="String">' . htmlspecialchars($row['residence']) . '</Data></Cell>';
     echo '<Cell><Data ss:Type="String">' . htmlspecialchars($row['purpose']) . '</Data></Cell>';
     echo '<Cell><Data ss:Type="Number">' . $row['num_days'] . '</Data></Cell>';
-    echo '<Cell><Data ss:Type="String">' . ucfirst($row['status']) . '</Data></Cell>';
     echo '</Row>';
     $no++;
 }

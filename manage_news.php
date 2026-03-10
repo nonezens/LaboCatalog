@@ -58,11 +58,11 @@ $result = $conn->query("SELECT * FROM news_events ORDER BY date_posted DESC");
     
     <!-- Add New News Button -->
     <div style="margin-bottom: 20px;">
-        <button onclick="document.getElementById('addForm').style.display='block'" class="btn-add bg-exhibit" style="cursor: pointer; border: none;">➕ Add New News/Event</button>
+        <button onclick="toggleAddForm()" class="btn-add bg-exhibit" style="cursor: pointer; border: none;">➕ Add New News/Event</button>
     </div>
     
     <!-- Add New News Form (Hidden by default) -->
-    <div id="addForm" style="display: none; background: white; padding: 25px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    <div id="addForm" class="form-toggle" style="display: none; opacity: 0; background: white; padding: 25px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
         <h4 style="margin-top: 0; color: #2c3e50;">Add New News/Event</h4>
         <form method="POST" enctype="multipart/form-data" style="display: grid; gap: 15px; max-width: 600px;">
             <div>
@@ -90,10 +90,30 @@ $result = $conn->query("SELECT * FROM news_events ORDER BY date_posted DESC");
             </div>
             <div style="display: flex; gap: 10px;">
                 <button type="submit" name="add_news" class="btn-add bg-exhibit" style="cursor: pointer; border: none;">💾 Save</button>
-                <button type="button" onclick="document.getElementById('addForm').style.display='none'" class="btn-add" style="background: #95a5a6; cursor: pointer; border: none;">❌ Cancel</button>
+                <button type="button" onclick="toggleAddForm()" class="btn-add" style="background: #95a5a6; cursor: pointer; border: none;">❌ Cancel</button>
             </div>
         </form>
     </div>
+
+    <script>
+    function toggleAddForm() {
+        var form = document.getElementById('addForm');
+        if (form.style.display === 'none' || form.style.display === '') {
+            form.style.display = 'block';
+            // Small delay to allow display:block to apply before opacity transition
+            setTimeout(function() {
+                form.style.opacity = '1';
+                form.style.transform = 'translateY(0)';
+            }, 10);
+        } else {
+            form.style.opacity = '0';
+            form.style.transform = 'translateY(-10px)';
+            setTimeout(function() {
+                form.style.display = 'none';
+            }, 300);
+        }
+    }
+    </script>
     
     <div class="table-container">
         <table>
