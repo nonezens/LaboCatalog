@@ -74,7 +74,7 @@ $result = $conn->query($query);
 
     <div class="page-header">
         <h3 class="table-title">🖼️ Manage Artifacts</h3>
-        <button id="toggle-form-btn">➕ Add New Artifact</button>
+        <button id="toggle-form-btn" class="toggle-form-btn">➕ Add New Artifact</button>
     </div>
 
     <div id="add-artifact-wrapper" class="form-container-wrapper <?php echo !empty($msg) ? 'form-visible' : ''; ?>">

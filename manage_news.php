@@ -58,7 +58,7 @@ $result = $conn->query("SELECT * FROM news_events ORDER BY date_posted DESC");
     
     <!-- Add New News Button -->
     <div style="margin-bottom: 20px;">
-        <button onclick="toggleAddForm()" class="btn-add bg-exhibit" style="cursor: pointer; border: none;">➕ Add New News/Event</button>
+        <button onclick="toggleAddForm()" id="toggle-add-news-btn" class="btn-add bg-exhibit" style="cursor: pointer; border: none;">➕ Add New News/Event</button>
     </div>
     
     <!-- Add New News Form (Hidden by default) -->

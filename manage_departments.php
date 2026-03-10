@@ -57,7 +57,7 @@ $cat_result = $conn->query("SELECT * FROM categories ORDER BY id DESC");
 
     <div class="page-header">
         <h3 class="table-title">📁 Manage Departments</h3>
-        <button id="toggle-form-btn">➕ Add New Department</button>
+        <button id="toggle-form-btn" class="toggle-form-btn">➕ Add New Department</button>
     </div>
 
     <div id="add-category-wrapper" class="form-container-wrapper <?php echo !empty($msg) ? 'form-visible' : ''; ?>">

@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Filter functionality for manage_artifacts.php
+// Filter functionality for manage_artifacts.php with enhanced animations
 function initArtifactFilters() {
     const searchInput = document.getElementById('search');
     const categoryInput = document.getElementById('category');
@@ -59,13 +59,22 @@ function initArtifactFilters() {
 
     if (!searchInput || !artifactsTable) return;
 
+    // Create typing indicator element
+    const typingIndicator = document.createElement('div');
+    typingIndicator.className = 'typing-indicator';
+    searchInput.parentElement.style.position = 'relative';
+    searchInput.parentElement.appendChild(typingIndicator);
+
     function fetchArtifacts() {
         // Add fade out animation
         artifactsTable.style.transition = 'opacity 0.2s ease';
         artifactsTable.style.opacity = '0';
         
+        // Hide typing indicator
+        typingIndicator.style.display = 'none';
+        
         setTimeout(() => {
-            artifactsTable.innerHTML = '<table><tbody><tr><td colspan="5" style="text-align: center; padding: 20px;">Loading...</td></tr></tbody></table>';
+            artifactsTable.innerHTML = '<table><tbody><tr><td colspan="5" style="text-align: center; padding: 20px;" class="table-loading">Loading...</td></tr></tbody></table>';
             
             let formData = new FormData();
             formData.append('search', searchInput.value);
@@ -75,8 +84,17 @@ function initArtifactFilters() {
             fetch('fetch_artifacts.php', { method: 'POST', body: formData })
             .then(response => response.text())
             .then(data => { 
+                // Add fade in animation with slide effect
                 artifactsTable.innerHTML = data;
-                // Add fade in animation
+                
+                // Add animation class to table rows
+                const rows = artifactsTable.querySelectorAll('tbody tr');
+                rows.forEach((row, index) => {
+                    row.classList.add('filter-result-enter');
+                    row.style.animationDelay = (index * 0.05) + 's';
+                });
+                
+                // Fade in
                 artifactsTable.style.transition = 'opacity 0.3s ease';
                 artifactsTable.style.opacity = '1';
             })
@@ -86,21 +104,77 @@ function initArtifactFilters() {
                 artifactsTable.style.transition = 'opacity 0.3s ease';
                 artifactsTable.style.opacity = '1';
             });
-        }, 200);
+        }, 300);
     }
 
     function handleInput() {
+        // Show typing indicator
+        typingIndicator.style.display = 'block';
+        
+        // Debounce the search
         clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(fetchArtifacts, 400);
+        debounceTimer = setTimeout(fetchArtifacts, 500);
     }
 
+    // Add event listeners with animations
     searchInput.addEventListener('keyup', handleInput);
-    if (categoryInput) categoryInput.addEventListener('change', fetchArtifacts);
+    searchInput.addEventListener('focus', function() {
+        this.parentElement.classList.add('input-focused');
+    });
+    searchInput.addEventListener('blur', function() {
+        this.parentElement.classList.remove('input-focused');
+    });
+    
+    if (categoryInput) {
+        categoryInput.addEventListener('change', function() {
+            // Add selection animation
+            this.style.animation = 'successPop 0.3s ease';
+            setTimeout(() => { this.style.animation = ''; }, 300);
+            fetchArtifacts();
+        });
+    }
     if (dateInput) dateInput.addEventListener('keyup', handleInput);
 }
 
 // Initialize filters when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     initArtifactFilters();
+});
+
+// Enhanced form toggle for manage_news.php and manage_departments.php
+function initFormToggle(buttonId, formId) {
+    const toggleBtn = document.getElementById(buttonId);
+    const form = document.getElementById(formId);
+    
+    if (toggleBtn && form) {
+        toggleBtn.addEventListener('click', function() {
+            if (form.style.display === 'none' || form.style.display === '') {
+                form.style.display = 'block';
+                // Add animation class
+                form.classList.add('form-add-animation');
+                // Small delay to allow display:block to apply before opacity transition
+                setTimeout(function() {
+                    form.style.opacity = '1';
+                    form.style.transform = 'translateY(0)';
+                }, 10);
+            } else {
+                form.style.opacity = '0';
+                form.style.transform = 'translateY(-10px)';
+                setTimeout(function() {
+                    form.style.display = 'none';
+                    form.classList.remove('form-add-animation');
+                }, 300);
+            }
+        });
+    }
+}
+
+// Initialize form toggles
+document.addEventListener('DOMContentLoaded', function() {
+    // For manage_news.php
+    initFormToggle('toggle-add-news-btn', 'addForm');
+    
+    // For manage_departments.php
+    initFormToggle('toggle-form-btn', 'add-category-wrapper');
 });
 
