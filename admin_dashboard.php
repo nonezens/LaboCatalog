@@ -8,14 +8,19 @@ $total_exhibits = $conn->query("SELECT id FROM exhibits")->num_rows;
 $total_categories = $conn->query("SELECT id FROM categories")->num_rows;
 $total_guests = $conn->query("SELECT id FROM guests")->num_rows;
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/manage.css">
 </head>
-<body style="background: #f4f7f6; margin: 0; font-family: sans-serif;">
+<body class="admin-body">
 
     <?php include 'header.php'; ?>
     <?php include 'admin_sidebar.php'; ?>
@@ -45,3 +50,4 @@ $total_guests = $conn->query("SELECT id FROM guests")->num_rows;
 
 </body>
 </html>
+

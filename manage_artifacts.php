@@ -55,94 +55,32 @@ if ($cat_result) {
 $query = "SELECT exhibits.*, categories.name AS cat_name FROM exhibits LEFT JOIN categories ON exhibits.category_id = categories.id ORDER BY exhibits.id DESC";
 $result = $conn->query($query);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Artifacts</title>
-    <style>
-        /* Styles from manage_artifacts.php */
-        .filter-container {
-            background: white;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            align-items: center;
-        }
-        .filter-container input, .filter-container select {
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        /* Styles from add_exhibit.php */
-        .form-container { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .full-width { grid-column: 1 / -1; }
-        .form-group { margin-bottom: 0; }
-        .form-label { display: block; font-weight: bold; color: #2c3e50; margin-bottom: 8px; font-size: 0.95rem; }
-        .form-control { width: 100%; padding: 12px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; font-size: 1rem; transition: border-color 0.3s; }
-        .form-control:focus { border-color: #2980b9; outline: none; }
-        textarea.form-control { resize: vertical; min-height: 120px; }
-        .btn-submit { width: 100%; padding: 15px; background: #2980b9; color: white; border: none; font-weight: bold; border-radius: 4px; font-size: 1.1rem; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        .btn-submit:hover { background: #1c5980; transform: translateY(-2px); }
-
-        /* New button for toggling form */
-        #toggle-form-btn {
-            background: #27ae60; color: white; border: none; padding: 12px 20px; font-size: 1rem; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.3s;
-        }
-        #toggle-form-btn:hover { background: #219150; }
-        
-        /* New styles for animation */
-        .form-container-wrapper {
-            overflow: hidden;
-            transition: max-height 0.7s ease-in-out, opacity 0.5s ease-in-out, margin-bottom 0.7s ease-in-out;
-            max-height: 0;
-            opacity: 0;
-            margin-bottom: 0;
-        }
-        .form-container-wrapper.form-visible {
-            max-height: 1500px; /* Adjust if form is taller */
-            opacity: 1;
-            margin-bottom: 30px; /* Original margin */
-        }
-
-        /* Styles for fading the table */
-        .table-container {
-            transition: opacity 0.5s ease-in-out;
-        }
-        .table-container.faded {
-            opacity: 0.3;
-            pointer-events: none; /* Prevents interaction with the faded table */
-        }
-
-        @media (max-width: 768px) {
-            .form-grid { grid-template-columns: 1fr; gap: 15px; }
-            .form-container { padding: 20px; }
-        }
-    </style>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/manage.css">
 </head>
-<body style="background: #f4f7f6; margin: 0; font-family: sans-serif;">
+<body class="admin-body">
 
     <?php include 'header.php'; ?>
     <?php include 'admin_sidebar.php'; ?>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h3 class="table-title" style="margin-bottom: 0;">🖼️ Manage Artifacts</h3>
+    <div class="page-header">
+        <h3 class="table-title">🖼️ Manage Artifacts</h3>
         <button id="toggle-form-btn">➕ Add New Artifact</button>
     </div>
 
     <div id="add-artifact-wrapper" class="form-container-wrapper <?php echo !empty($msg) ? 'form-visible' : ''; ?>">
         <div class="form-container">
              <?php if ($msg): ?>
-                <div style="background: #f8f9fa; border-left: 4px solid <?php echo $msg_color; ?>; padding: 15px; margin-bottom: 25px; color: <?php echo ($msg_color === 'red' ? '#c0392b' : '#27ae60'); ?>; font-weight: bold;">
+                <div class="message-box <?php echo $msg_color === 'green' ? 'success' : ''; ?>" style="border-left-color: <?php echo $msg_color === 'green' ? '#27ae60' : '#c0392b'; ?>; color: <?php echo $msg_color === 'green' ? '#27ae60' : '#c0392b'; ?>;">
                     <?php echo $msg; ?>
                 </div>
             <?php endif; ?>
@@ -164,7 +102,7 @@ $result = $conn->query($query);
                 <div class="form-group">
                     <label class="form-label">High-Res Image *</label>
                     <input type="file" name="image" id="image-input" class="form-control" accept="image/*" required style="padding: 9px;">
-                    <img id="image-preview" src="#" alt="Image Preview" style="display: none; max-width: 200px; margin-top: 10px; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
+                    <img id="image-preview" src="#" alt="Image Preview">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Historical Period / Year</label>
@@ -231,86 +169,9 @@ $result = $conn->query($query);
     </main>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Toggle form visibility
-    const toggleBtn = document.getElementById('toggle-form-btn');
-    const formWrapper = document.getElementById('add-artifact-wrapper');
-    const tableContainer = document.querySelector('.table-container');
-
-    // Set initial button text if form is already visible on page load (e.g., due to a PHP error message)
-    if (formWrapper.classList.contains('form-visible')) {
-        toggleBtn.textContent = '➖ Cancel';
-        if(tableContainer) tableContainer.classList.add('faded');
-    }
-
-    if(toggleBtn) {
-        toggleBtn.addEventListener('click', function() {
-            const isVisible = formWrapper.classList.toggle('form-visible');
-            if(tableContainer) tableContainer.classList.toggle('faded');
-            
-            this.textContent = isVisible ? '➖ Cancel' : '➕ Add New Artifact';
-            if (isVisible) {
-                // Smooth scroll to the form when it opens
-                formWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        });
-    }
-
-    // Image preview functionality
-    const imageInput = document.getElementById('image-input');
-    const imagePreview = document.getElementById('image-preview');
-
-    if(imageInput) {
-        imageInput.addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
-                }
-                reader.readAsDataURL(this.files[0]);
-            } else {
-                imagePreview.style.display = 'none';
-                imagePreview.src = '#';
-            }
-        });
-    }
-
-    // Existing filter functionality
-    const searchInput = document.getElementById('search');
-    const categoryInput = document.getElementById('category');
-    const dateInput = document.getElementById('date');
-    const artifactsTable = document.getElementById('artifacts-table');
-    let debounceTimer;
-
-    function fetchArtifacts() {
-        artifactsTable.innerHTML = '<table><tbody><tr><td colspan="5" style="text-align: center; padding: 20px;">Loading...</td></tr></tbody></table>';
-        
-        let formData = new FormData();
-        formData.append('search', searchInput.value);
-        formData.append('category_id', categoryInput.value);
-        formData.append('artifact_year', dateInput.value);
-
-        fetch('fetch_artifacts.php', { method: 'POST', body: formData })
-        .then(response => response.text())
-        .then(data => { artifactsTable.innerHTML = data; })
-        .catch(error => {
-            console.error('Error:', error);
-            artifactsTable.innerHTML = '<table><tbody><tr><td colspan="5" style="text-align: center; padding: 20px; color: red;">An error occurred.</td></tr></tbody></table>';
-        });
-    }
-
-    function handleInput() {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(fetchArtifacts, 400);
-    }
-
-    searchInput.addEventListener('keyup', handleInput);
-    categoryInput.addEventListener('change', fetchArtifacts);
-    dateInput.addEventListener('keyup', handleInput);
-});
-</script>
+<!-- JS -->
+<script src="js/manage.js"></script>
 
 </body>
 </html>
+

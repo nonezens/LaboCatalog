@@ -42,8 +42,12 @@ $guest_result = $conn->query($query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Visitors | Admin</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/manage.css">
 </head>
-<body style="background: #f4f7f6; margin: 0; font-family: sans-serif;">
+<body class="admin-body">
 
     <?php include 'header.php'; ?>
     <?php include 'admin_sidebar.php'; ?>
@@ -135,5 +139,7 @@ $guest_result = $conn->query($query);
 
     </main>
 </div>
+
 </body>
 </html>
+

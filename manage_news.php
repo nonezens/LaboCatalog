@@ -38,14 +38,19 @@ if (isset($_POST['add_news'])) {
 
 $result = $conn->query("SELECT * FROM news_events ORDER BY date_posted DESC");
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage News | Admin</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/manage.css">
 </head>
-<body style="background: #f4f7f6; margin: 0; font-family: sans-serif;">
+<body class="admin-body">
     <?php include 'header.php'; ?>
     <?php include 'admin_sidebar.php'; ?>
 
@@ -97,7 +102,7 @@ $result = $conn->query("SELECT * FROM news_events ORDER BY date_posted DESC");
             <tr>
                 <td style="font-size: 0.9rem; color: #777;"><?php echo date("M d, Y", strtotime($row['date_posted'])); ?></td>
                 <td>
-                    <span class="badge" style="background: <?php echo $row['type'] == 'event' ? '#8e44ad' : '#3498db'; ?>">
+                    <span class="badge" style="background: <?php echo $row['type'] == 'event' ? '#8e44ad' : '#3498db'; ?>;">
                         <?php echo strtoupper($row['type']); ?>
                     </span>
                 </td>
@@ -114,5 +119,7 @@ $result = $conn->query("SELECT * FROM news_events ORDER BY date_posted DESC");
     </div>
     </main>
 </div>
+
 </body>
 </html>
+

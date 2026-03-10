@@ -9,50 +9,10 @@ include 'header.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us | Museum Labo Catalog</title>
-    <style>
-        :root { --dark: #1a1a1a; --gold: #c5a059; --bg: #fdfdfd; }
-        body { font-family: 'Georgia', serif; line-height: 1.6; background-color: var(--bg); color: #333; margin: 0; }
-        
-        .container { max-width: 1000px; margin: auto; padding: 60px 20px; }
-        
-        /* Banner Style */
-        .about-hero {
-            background: #2c3e50;
-            color: white;
-            padding: 80px 20px;
-            text-align: center;
-        }
-        .about-hero h1 { font-size: 3rem; margin: 0; color: var(--gold); }
-
-        .content-section { margin-bottom: 50px; }
-        .content-section h2 { border-bottom: 2px solid var(--gold); display: inline-block; padding-bottom: 5px; margin-bottom: 20px; }
-        
-        /* Information Grid */
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            margin-top: 40px;
-        }
-        .info-box {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-        .info-box h3 { color: var(--gold); margin-top: 0; }
-
-        .location-map {
-            width: 100%;
-            height: 300px;
-            background: #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 20px;
-            border-radius: 8px;
-        }
-    </style>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/about.css">
 </head>
 <body>
 
@@ -64,7 +24,7 @@ include 'header.php';
     <div class="container">
         <div class="content-section">
             <h2>Mission & History</h2>
-            <p>Founded in 2026, the **Museum Labo Catalog** began as a digital initiative to document and preserve the rich cultural history of our region. Our mission is to provide an accessible platform where students, historians, and enthusiasts can explore artifacts that define our shared human experience.</p>
+            <p>Founded in 2026, the <strong>Museum Labo Catalog</strong> began as a digital initiative to document and preserve the rich cultural history of our region. Our mission is to provide an accessible platform where students, historians, and enthusiasts can explore artifacts that define our shared human experience.</p>
             <p>We believe that history should be interactive and inclusive. Through our digital exhibits, we bring the museum experience directly to your screen, ensuring that even the most fragile artifacts can be studied and appreciated without risk of damage.</p>
         </div>
 
@@ -92,9 +52,10 @@ include 'header.php';
         </div>
     </div>
 
-    <footer style="background: var(--dark); color: white; text-align: center; padding: 30px; margin-top: 40px;">
+    <footer>
         <p>&copy; 2026 Museum Labo Catalog</p>
     </footer>
 
 </body>
 </html>
+
