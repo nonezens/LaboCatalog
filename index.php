@@ -5,7 +5,12 @@ include 'db.php';
 // 1. Check if the user is logged in (Guest or Admin)
 $is_logged_in = isset($_SESSION['guest_logged_in']) || isset($_SESSION['admin_logged_in']);
 
-// 2. ONLY fetch the latest acquisitions if they are logged in!
+// 2. Fetch the single most recent News/Event to feature on the homepage
+$news_query = "SELECT * FROM news_events ORDER BY date_posted DESC LIMIT 1";
+$news_result = $conn->query($news_query);
+$featured_news = $news_result->num_rows > 0 ? $news_result->fetch_assoc() : null;
+
+// 3. ONLY fetch the latest acquisitions if they are logged in!
 if ($is_logged_in) {
     $recent_query = "SELECT * FROM exhibits ORDER BY id DESC LIMIT 4";
     $recent_result = $conn->query($recent_query);
@@ -16,8 +21,7 @@ if ($is_logged_in) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome | Museo de Labo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Welcome | Museo de Labo</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; }
         
@@ -38,6 +42,30 @@ if ($is_logged_in) {
         .container { max-width: 1200px; margin: 0 auto; padding: 60px 20px; }
         .section-title { text-align: center; color: #2c3e50; font-size: 2.2rem; margin-bottom: 40px; }
         .section-title::after { content: ''; display: block; width: 80px; height: 3px; background: #c5a059; margin: 15px auto 0 auto; }
+
+        /* --- NEW: Featured News Banner --- */
+        .featured-news-banner {
+            background: white;
+            border-left: 5px solid #3498db;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            margin: -40px auto 40px auto; /* Pulls it up slightly over the hero section boundary */
+            max-width: 1000px;
+            position: relative;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .featured-news-banner.event { border-left-color: #8e44ad; }
+        .featured-badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; color: white; margin-bottom: 10px; text-transform: uppercase; background: #3498db; }
+        .featured-news-banner.event .featured-badge { background: #8e44ad; }
+        .featured-content { flex-grow: 1; }
+        .featured-content h3 { margin: 0 0 10px 0; color: #2c3e50; font-size: 1.5rem; }
+        .featured-content p { margin: 0 0 15px 0; color: #555; line-height: 1.5; font-size: 1rem; }
+        .btn-read-more { color: #c5a059; font-weight: bold; text-decoration: none; transition: 0.3s; }
+        .btn-read-more:hover { color: #2c3e50; }
 
         /* About Section */
         .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
@@ -63,7 +91,7 @@ if ($is_logged_in) {
         .btn-view { display: block; text-align: center; padding: 10px; background: #2c3e50; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; transition: 0.3s; margin-top: auto; }
         .btn-view:hover { background: #c5a059; }
         
-        /* --- RESPONSIVE HOMEPAGE HOMEPAGE --- */
+        /* --- RESPONSIVE ADJUSTMENTS --- */
         @media (max-width: 768px) { 
             .about-grid { grid-template-columns: 1fr; } 
             .hero { padding: 60px 20px; }
@@ -71,6 +99,7 @@ if ($is_logged_in) {
             .hero p { font-size: 1rem; }
             .section-title { font-size: 1.8rem; }
             .visitor-info ul { flex-direction: column; }
+            .featured-news-banner { flex-direction: column; align-items: flex-start; margin-top: 20px; margin-bottom: 20px; }
         }
     </style>
 </head>
@@ -89,7 +118,24 @@ if ($is_logged_in) {
         <?php endif; ?>
     </div>
 
-    <div class="container">
+    <?php if ($featured_news): ?>
+        <div style="padding: 0 20px;">
+            <div class="featured-news-banner <?php echo $featured_news['type'] == 'event' ? 'event' : ''; ?>">
+                <div class="featured-content">
+                    <span class="featured-badge">
+                        <?php echo $featured_news['type'] == 'event' ? '📅 Upcoming Event' : '📰 Latest News'; ?>
+                    </span>
+                    <h3><?php echo htmlspecialchars($featured_news['title']); ?></h3>
+                    
+                    <p><?php echo htmlspecialchars(mb_strimwidth($featured_news['content'], 0, 150, "...")); ?></p>
+                    
+                    <a href="news.php" class="btn-read-more">View full details &rarr;</a>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <div class="container" style="<?php echo $featured_news ? 'padding-top: 0;' : ''; ?>">
         <h2 class="section-title">About the Museum</h2>
         <div class="about-grid">
             <div class="about-text">

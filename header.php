@@ -100,6 +100,8 @@ if (session_status() === PHP_SESSION_NONE) {
         
         <ul class="site-nav-links" id="nav-links">
             <li><a href="index.php">Home</a></li>
+            <li><a href="about.php">About</a></li>
+            <li><a href="news.php">News & Events</a></li>
             <li><a href="categories.php">Departments</a></li>
             <li><a href="exhibits.php">All Artifacts</a></li>
             

@@ -92,16 +92,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <aside class="sidebar">
         <h3>Admin Menu</h3>
-        <ul class="sidebar-menu">
+       <ul class="sidebar-menu">
             <li><a href="admin_dashboard.php">📊 Overview</a></li>
             <li><a href="manage_visitors.php">👥 Visitor Log</a></li>
             <li><a href="manage_artifacts.php">🖼️ Manage Artifacts</a></li>
             <li><a href="manage_departments.php">📁 Manage Departments</a></li>
-            <li style="margin-top: 15px;">
+            <li><a href="manage_news.php">📰 Manage News</a></li> <li style="margin-top: 15px;">
                 <a href="add_exhibit.php" style="color: #2ecc71; border: 1px solid #2ecc71;">➕ Add Artifact</a>
             </li>
             <li>
                 <a href="add_category.php" style="color: #3498db; border: 1px solid #3498db;">➕ Add Department</a>
+            </li>
+            <li>
+                <a href="add_news.php" style="color: #e67e22; border: 1px solid #e67e22;">➕ Add News/Event</a> 
             </li>
         </ul>
     </aside>
