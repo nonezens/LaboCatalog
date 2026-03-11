@@ -42,7 +42,7 @@ $news_result = $conn->query($news_query);
         <?php endif; ?>
     </div>
 
-    <!-- News & Events Carousel -->
+    <!-- News & Events Card Stack (Swipeable) -->
 <?php 
     $news_result2 = $conn->query("SELECT * FROM news_events ORDER BY date_posted DESC LIMIT 5");
     if($news_result2 && $news_result2->num_rows > 0): 
@@ -52,36 +52,44 @@ $news_result = $conn->query($news_query);
         }
         $itemCount = count($news_items);
     ?>
-    <div class="news-carousel-section">
+    <div class="news-swipe-section">
         <h2 class="section-title">News & Events</h2>
-        <?php if($itemCount > 1): ?>
-        <button class="carousel-btn news-carousel-btn prev" onclick="moveNewsCarousel(-1)">&#10094;</button>
-        <button class="carousel-btn news-carousel-btn next" onclick="moveNewsCarousel(1)">&#10095;</button>
-        <?php endif; ?>
-        <div class="carousel-container">
-            <div class="carousel-track" id="newsCarouselTrack">
-                <?php 
-                // No duplication - items displayed once, JavaScript handles auto-advance
-                foreach($news_items as $index => $row): ?>
-                    <div class="carousel-card">
+        <div class="swipe-nav-buttons">
+            <button class="swipe-nav-btn prev" id="swipePrevBtn">&#10094;</button>
+            <button class="swipe-nav-btn next" id="swipeNextBtn">&#10095;</button>
+        </div>
+        <div class="card-stack" id="newsCardStack">
+            <?php foreach($news_items as $index => $row): ?>
+                <a href="news.php#news-<?php echo $row['id']; ?>" class="swipe-card-link" data-id="<?php echo $row['id']; ?>">
+                    <div class="swipe-card" style="--i: <?php echo $index; ?>;">
                         <?php if(!empty($row['image_path'])): ?>
-                        <img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>" class="news-card-image">
+                        <div class="swipe-card-image">
+                            <img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
+                        </div>
                         <?php endif; ?>
-                        <span class="news-badge <?php echo $row['type'] == 'event' ? 'type-event' : ''; ?>">
-                            <?php echo $row['type'] == 'event' ? '📅 Event' : '📰 News'; ?>
-                        </span>
-                        <h3 class="news-card-title"><?php echo htmlspecialchars($row['title']); ?></h3>
-                        <p class="news-card-date">
-                            <?php if($row['type'] == 'event' && $row['event_date']): ?>
-                                <?php echo date("F j, Y", strtotime($row['event_date'])); ?>
-                            <?php else: ?>
-                                <?php echo date("F j, Y", strtotime($row['date_posted'])); ?>
-                            <?php endif; ?>
-                        </p>
-                        <p class="news-card-excerpt"><?php echo htmlspecialchars(substr($row['content'], 0, 100)); ?>...</p>
+                        <div class="swipe-card-content">
+                            <span class="swipe-badge <?php echo $row['type'] == 'event' ? 'type-event' : ''; ?>">
+                                <?php echo $row['type'] == 'event' ? '📅 Event' : '📰 News'; ?>
+                            </span>
+                            <h3 class="swipe-card-title"><?php echo htmlspecialchars($row['title']); ?></h3>
+                            <p class="swipe-card-date">
+                                <?php if($row['type'] == 'event' && $row['event_date']): ?>
+                                    <?php echo date("F j, Y", strtotime($row['event_date'])); ?>
+                                <?php else: ?>
+                                    <?php echo date("F j, Y", strtotime($row['date_posted'])); ?>
+                                <?php endif; ?>
+                            </p>
+                            <p class="swipe-card-excerpt"><?php echo htmlspecialchars(substr($row['content'], 0, 150)); ?>...</p>
+                            <span class="swipe-read-more">Click to read more &rarr;</span>
+                        </div>
                     </div>
-                <?php endforeach; ?>
-            </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+        <div class="swipe-indicators" id="swipeIndicators">
+            <?php for($i = 0; $i < $itemCount; $i++): ?>
+                <span class="indicator <?php echo $i === 0 ? 'active' : ''; ?>" data-index="<?php echo $i; ?>"></span>
+            <?php endfor; ?>
         </div>
     </div>
     <?php endif; ?>

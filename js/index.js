@@ -44,84 +44,282 @@ document.addEventListener('DOMContentLoaded', function() {
     cards.forEach(card => cardObserver.observe(card));
     
     // ========================================
-    // NEWS CAROUSEL CONTROLS - Auto advance every 5 seconds
+    // NEWS SWIPE CARD STACK - Auto swipe every 10 seconds
     // ========================================
-    const newsTrack = document.getElementById('newsCarouselTrack');
-    let newsCurrentIndex = 0;
-    let newsInterval;
-    const newsCardWidth = 300; // card width + gap
+    const newsCardStack = document.getElementById('newsCardStack');
+    let swipeCards = [];
+    let currentSwipeIndex = 0;
+    let isSwiping = false;
+    let startX = 0;
+    let currentX = 0;
+    let autoSwipeInterval = null;
+    let animationFrameId = null;
     
-    if (newsTrack) {
-        const newsCards = newsTrack.querySelectorAll('.carousel-card');
-        const newsCardCount = newsCards.length;
+    if (newsCardStack) {
+        // Get all swipe cards
+        swipeCards = [...document.querySelectorAll('.swipe-card')];
         
-        // Add "is-active" class to all cards initially (hover effect)
-        newsCards.forEach(card => card.classList.add('is-active'));
-        
-        // Use event delegation for better performance - hover effect on news cards
-        newsTrack.addEventListener('mouseenter', function(event) {
-            const card = event.target.closest('.carousel-card');
-            if (card) {
-                newsCards.forEach(c => c.classList.remove('is-active'));
-                card.classList.add('is-active');
-            }
-        }, true);
-        
-        newsTrack.addEventListener('mouseleave', function(event) {
-            const card = event.target.closest('.carousel-card');
-            if (card) {
-                newsCards.forEach(c => c.classList.add('is-active'));
-            }
-        }, true);
-        
-        // Function to move carousel to specific card
-        function updateNewsCarousel() {
-            newsTrack.style.transition = 'transform 0.5s ease-in-out';
-            newsTrack.style.transform = `translateX(-${newsCurrentIndex * newsCardWidth}px)`;
-        }
-        
-        // Auto-advance function
-        function autoAdvanceNews() {
-            newsCurrentIndex++;
-            if (newsCurrentIndex >= newsCardCount) {
-                newsCurrentIndex = 0;
-            }
-            updateNewsCarousel();
-        }
-        
-        // Start auto-advance every 5 seconds
-        if (newsCardCount > 1) {
-            newsInterval = setInterval(autoAdvanceNews, 5000);
-            
-            // Pause on hover
-            newsTrack.addEventListener('mouseenter', () => {
-                clearInterval(newsInterval);
-            });
-            
-            // Resume on mouse leave
-            newsTrack.addEventListener('mouseleave', () => {
-                newsInterval = setInterval(autoAdvanceNews, 5000);
-            });
-        }
-        
-        window.moveNewsCarousel = function(direction) {
-            newsCurrentIndex += direction;
-            
-            // Handle wrapping
-            if (newsCurrentIndex < 0) {
-                newsCurrentIndex = newsCardCount - 1;
-            } else if (newsCurrentIndex >= newsCardCount) {
-                newsCurrentIndex = 0;
-            }
-            
-            updateNewsCarousel();
-            
-            // Reset the interval after manual navigation
-            if (newsInterval) {
-                clearInterval(newsInterval);
-                newsInterval = setInterval(autoAdvanceNews, 5000);
-            }
+        const getDurationFromCSS = (variableName, element = document.documentElement) => {
+            const value = getComputedStyle(element)?.getPropertyValue(variableName)?.trim();
+            if (!value) return 400;
+            if (value.endsWith("ms")) return parseFloat(value);
+            if (value.endsWith("s")) return parseFloat(value) * 1000;
+            return parseFloat(value) || 400;
         };
+        
+        const getActiveCard = () => swipeCards[0];
+        
+        const updatePositions = () => {
+            swipeCards.forEach((card, i) => {
+                card.style.setProperty('--i', i + 1);
+                card.style.setProperty('--swipe-x', '0px');
+                card.style.setProperty('--swipe-rotate', '0deg');
+                card.style.opacity = '1';
+                card.classList.remove('swiping', 'swiped-left', 'swiped-right');
+            });
+            updateIndicators();
+        };
+        
+        const updateIndicators = () => {
+            const indicators = document.querySelectorAll('.indicator');
+            indicators.forEach((ind, i) => {
+                ind.classList.toggle('active', i === currentSwipeIndex);
+            });
+        };
+        
+        const applySwipeStyles = (deltaX) => {
+            const card = getActiveCard();
+            if (!card) return;
+            card.classList.add('swiping');
+            card.style.setProperty('--swipe-x', `${deltaX}px`);
+            card.style.setProperty('--swipe-rotate', `${deltaX * 0.15}deg`);
+            card.style.opacity = 1 - Math.min(Math.abs(deltaX) / 200, 1) * 0.5;
+        };
+        
+        const handleStart = (clientX) => {
+            if (isSwiping) return;
+            // Pause auto swipe on manual interaction
+            if (autoSwipeInterval) {
+                clearInterval(autoSwipeInterval);
+                autoSwipeInterval = null;
+            }
+            isSwiping = true;
+            startX = currentX = clientX;
+            const card = getActiveCard();
+            card && (card.style.transition = 'none');
+        };
+        
+        const handleMove = (clientX) => {
+            if (!isSwiping) return;
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = requestAnimationFrame(() => {
+                currentX = clientX;
+                const deltaX = currentX - startX;
+                applySwipeStyles(deltaX);
+                
+                if (Math.abs(deltaX) > 50) handleEnd();
+            });
+        };
+        
+        const handleEnd = () => {
+            if (!isSwiping) return;
+            cancelAnimationFrame(animationFrameId);
+            
+            const deltaX = currentX - startX;
+            const threshold = 50;
+            const duration = getDurationFromCSS('--swipe-swap-duration');
+            const card = getActiveCard();
+            
+            if (card) {
+                card.style.transition = `transform ${duration}ms ease, opacity ${duration}ms ease`;
+                
+                if (Math.abs(deltaX) > threshold) {
+                    const direction = Math.sign(deltaX);
+                    
+                    // Animate card swiping out
+                    card.classList.add(direction > 0 ? 'swiped-right' : 'swiped-left');
+                    card.style.setProperty('--swipe-x', `${direction * 500}px`);
+                    card.style.setProperty('--swipe-rotate', `${direction * 20}deg`);
+                    
+                    setTimeout(() => {
+                        // Move card to end and reset
+                        swipeCards = [...swipeCards.slice(1), card];
+                        currentSwipeIndex = (currentSwipeIndex + 1) % swipeCards.length;
+                        updatePositions();
+                    }, duration);
+                } else {
+                    applySwipeStyles(0);
+                    card.classList.remove('swiping');
+                }
+            }
+            
+            isSwiping = false;
+            startX = currentX = 0;
+            
+            // Resume auto swipe after manual interaction
+            startAutoSwipe();
+        };
+        
+        // Add event listeners
+        newsCardStack.addEventListener('pointerdown', ({ clientX }) => handleStart(clientX));
+        newsCardStack.addEventListener('pointermove', ({ clientX }) => handleMove(clientX));
+        newsCardStack.addEventListener('pointerup', handleEnd);
+        newsCardStack.addEventListener('pointerleave', () => {
+            if (isSwiping) handleEnd();
+        });
+        
+        // Touch support
+        newsCardStack.addEventListener('touchstart', (e) => {
+            handleStart(e.touches[0].clientX);
+        }, { passive: true });
+        
+        newsCardStack.addEventListener('touchmove', (e) => {
+            handleMove(e.touches[0].clientX);
+        }, { passive: true });
+        
+        newsCardStack.addEventListener('touchend', handleEnd);
+        
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (!newsCardStack) return;
+            if (e.key === 'ArrowLeft') {
+                swipeLeft();
+            } else if (e.key === 'ArrowRight') {
+                swipeRight();
+            }
+        });
+        
+        const swipeLeft = () => {
+            if (isSwiping || swipeCards.length === 0) return;
+            const card = getActiveCard();
+            if (!card) return;
+            
+            if (autoSwipeInterval) {
+                clearInterval(autoSwipeInterval);
+                autoSwipeInterval = null;
+            }
+            
+            isSwiping = true;
+            const duration = getDurationFromCSS('--swipe-swap-duration');
+            card.style.transition = `transform ${duration}ms ease, opacity ${duration}ms ease`;
+            card.classList.add('swiped-left');
+            card.style.setProperty('--swipe-x', '-500px');
+            card.style.setProperty('--swipe-rotate', '-20deg');
+            
+            setTimeout(() => {
+                swipeCards = [...swipeCards.slice(1), card];
+                currentSwipeIndex = (currentSwipeIndex + 1) % swipeCards.length;
+                updatePositions();
+                isSwiping = false;
+                startAutoSwipe();
+            }, duration);
+        };
+        
+        const swipeRight = () => {
+            if (isSwiping || swipeCards.length === 0) return;
+            const card = getActiveCard();
+            if (!card) return;
+            
+            if (autoSwipeInterval) {
+                clearInterval(autoSwipeInterval);
+                autoSwipeInterval = null;
+            }
+            
+            isSwiping = true;
+            const duration = getDurationFromCSS('--swipe-swap-duration');
+            card.style.transition = `transform ${duration}ms ease, opacity ${duration}ms ease`;
+            card.classList.add('swiped-right');
+            card.style.setProperty('--swipe-x', '500px');
+            card.style.setProperty('--swipe-rotate', '20deg');
+            
+            setTimeout(() => {
+                swipeCards = [...swipeCards.slice(1), card];
+                currentSwipeIndex = (currentSwipeIndex + 1) % swipeCards.length;
+                updatePositions();
+                isSwiping = false;
+                startAutoSwipe();
+            }, duration);
+        };
+        
+        // Indicator click support
+        const indicators = document.querySelectorAll('.indicator');
+        indicators.forEach((ind, index) => {
+            ind.addEventListener('click', () => {
+                if (index === currentSwipeIndex || isSwiping) return;
+                
+                if (autoSwipeInterval) {
+                    clearInterval(autoSwipeInterval);
+                    autoSwipeInterval = null;
+                }
+                
+                // Swipe cards until we reach the target index
+                const cardsToSwipe = (index - currentSwipeIndex + swipeCards.length) % swipeCards.length;
+                
+                const swipeMultiple = (count) => {
+                    if (count <= 0) {
+                        startAutoSwipe();
+                        return;
+                    }
+                    swipeLeft();
+                    setTimeout(() => swipeMultiple(count - 1), getDurationFromCSS('--swipe-swap-duration') + 100);
+                };
+                
+                swipeMultiple(cardsToSwipe);
+            });
+        });
+        
+        // Button navigation support
+        const prevBtn = document.getElementById('swipePrevBtn');
+        const nextBtn = document.getElementById('swipeNextBtn');
+        
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                if (autoSwipeInterval) {
+                    clearInterval(autoSwipeInterval);
+                    autoSwipeInterval = null;
+                }
+                swipeLeft();
+            });
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                if (autoSwipeInterval) {
+                    clearInterval(autoSwipeInterval);
+                    autoSwipeInterval = null;
+                }
+                swipeRight();
+            });
+        }
+        
+        // Auto swipe function
+        const startAutoSwipe = () => {
+            if (autoSwipeInterval || swipeCards.length <= 1) return;
+            
+            autoSwipeInterval = setInterval(() => {
+                if (!isSwiping) {
+                    swipeLeft();
+                }
+            }, 10000); // 10 seconds auto swipe
+        };
+        
+        // Initialize
+        updatePositions();
+        startAutoSwipe();
+        
+        // Pause on hover
+        newsCardStack.addEventListener('mouseenter', () => {
+            if (autoSwipeInterval) {
+                clearInterval(autoSwipeInterval);
+                autoSwipeInterval = null;
+            }
+        });
+        
+        newsCardStack.addEventListener('mouseleave', () => {
+            if (!autoSwipeInterval) {
+                startAutoSwipe();
+            }
+        });
     }
     
     // ========================================

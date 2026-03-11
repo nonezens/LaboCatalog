@@ -29,7 +29,7 @@ $result = $conn->query($query);
         <?php if($result->num_rows > 0): ?>
             <?php while($row = $result->fetch_assoc()): ?>
                 
-                <article class="news-article clearfix">
+                <article class="news-article clearfix" id="news-<?php echo $row['id']; ?>">
                     
                     <span class="news-type <?php echo $row['type'] == 'event' ? 'type-event' : ''; ?>">
                         <?php echo $row['type'] == 'event' ? '📅 Upcoming Event' : '📰 Museum News'; ?>
