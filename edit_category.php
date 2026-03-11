@@ -45,6 +45,7 @@ if(isset($_POST['update_cat'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Category | Admin</title>
+    <link rel="stylesheet" href="css/style.css">
     <style>
         body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; margin: 0; }
         .admin-card { max-width: 500px; margin: 60px auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }

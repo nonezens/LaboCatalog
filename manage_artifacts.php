@@ -14,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_exhibit'])) {
     $origin = trim($_POST['origin']);
     $donated_by = trim($_POST['donated_by']);
     $description = trim($_POST['description']);
+    $is_donated = isset($_POST['is_donated']) ? 1 : 0;
     
     // Image Upload Logic
     $image_path = "";
@@ -25,10 +26,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_exhibit'])) {
     }
 
     if (!empty($title) && !empty($description) && !empty($image_path)) {
-        $stmt = $conn->prepare("INSERT INTO exhibits (title, category_id, description, image_path, artifact_year, origin, donated_by) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sisssss", $title, $category_id, $description, $image_path, $artifact_year, $origin, $donated_by);
+        $stmt = $conn->prepare("INSERT INTO exhibits (title, category_id, description, image_path, artifact_year, origin, donated_by, is_donated) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sisssssi", $title, $category_id, $description, $image_path, $artifact_year, $origin, $donated_by, $is_donated);
         
         if ($stmt->execute()) {
+            $new_exhibit_id = $conn->insert_id;
+            
+            // If this is a newly donated artifact, auto-create a news entry
+            if ($is_donated == 1) {
+                $news_title = "New Artifact Donation: " . htmlspecialchars($title);
+                $news_content = "We are thrilled to announce a new addition to our museum collection! ";
+                
+                if (!empty($donated_by)) {
+                    $news_content .= "The artifact \"" . htmlspecialchars($title) . "\" was generously donated by " . htmlspecialchars($donated_by) . ". ";
+                } else {
+                    $news_content .= "The artifact \"" . htmlspecialchars($title) . "\" has been added to our collection. ";
+                }
+                
+                if (!empty($artifact_year)) {
+                    $news_content .= "This piece dates back to " . htmlspecialchars($artifact_year) . ". ";
+                }
+                
+                if (!empty($origin)) {
+                    $news_content .= "It originates from " . htmlspecialchars($origin) . ". ";
+                }
+                
+                $news_content .= "Come visit us to see this wonderful new piece in person!";
+                
+                $news_stmt = $conn->prepare("INSERT INTO news_events (title, content, type, image_path, date_posted) VALUES (?, ?, 'news', ?, NOW())");
+                $news_stmt->bind_param("sss", $news_title, $news_content, $image_path);
+                $news_stmt->execute();
+                $news_stmt->close();
+            }
+            
             $msg = "Artifact added successfully!";
             $msg_color = "green";
         } else {
@@ -111,6 +141,12 @@ $result = $conn->query($query);
                 <div class="form-group">
                     <label class="form-label">Origin / Discovery Location</label>
                     <input type="text" name="origin" class="form-control" placeholder="e.g., Labo River">
+                </div>
+                <div class="form-group full-width">
+                    <label class="form-label">
+                        <input type="checkbox" name="is_donated" value="1" style="margin-right: 8px;">
+                        This is a newly donated artifact
+                    </label>
                 </div>
                 <div class="form-group full-width">
                     <label class="form-label">Donated / Contributed By</label>

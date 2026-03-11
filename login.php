@@ -125,14 +125,14 @@ if (isset($_POST['request_access'])) {
         if ($stmt === false) {
             $msg = "Database error: " . $conn->error;
         } else {
-            $stmt->bind_param("ssssissss", $name, $gender, $residence, $nationality, $days, $purpose, $contact, $access_id);
+            $stmt->bind_param("ssssisss", $name, $gender, $residence, $nationality, $days, $purpose, $contact, $access_id);
         }
     } else {
-        $stmt = $conn->prepare("INSERT INTO guests (guest_name, gender, residence, nationality, num_days, purpose, contact_no) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO guests (guest_name, gender, residence, nationality, num_days, purpose, contact_no) VALUES (?, ?, ?, ?, ?, ?, ?)");
         if ($stmt === false) {
             $msg = "Database error: " . $conn->error;
         } else {
-            $stmt->bind_param("ssssisss", $name, $gender, $residence, $nationality, $days, $purpose, $contact);
+            $stmt->bind_param("ssssiss", $name, $gender, $residence, $nationality, $days, $purpose, $contact);
         }
     }
 

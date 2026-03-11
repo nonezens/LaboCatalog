@@ -8,6 +8,10 @@ $is_logged_in = isset($_SESSION['guest_logged_in']) || isset($_SESSION['admin_lo
 // 2. Fetch the latest acquisitions for ALL visitors (logged in or not)
 $recent_query = "SELECT * FROM exhibits ORDER BY id DESC LIMIT 4";
 $recent_result = $conn->query($recent_query);
+
+// 3. Fetch news/events for carousel
+$news_query = "SELECT * FROM news_events ORDER BY date_posted DESC LIMIT 5";
+$news_result = $conn->query($news_query);
 ?>
 
 <!DOCTYPE html>
@@ -20,6 +24,8 @@ $recent_result = $conn->query($recent_query);
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/index.css">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 </head>
 <body>
 
@@ -35,6 +41,50 @@ $recent_result = $conn->query($recent_query);
             <a href="categories.php" class="hero-btn">Enter the Catalog</a>
         <?php endif; ?>
     </div>
+
+    <!-- News & Events Carousel -->
+<?php 
+    $news_result2 = $conn->query("SELECT * FROM news_events ORDER BY date_posted DESC LIMIT 5");
+    if($news_result2 && $news_result2->num_rows > 0): 
+        $news_items = [];
+        while($row = $news_result2->fetch_assoc()) {
+            $news_items[] = $row;
+        }
+        $itemCount = count($news_items);
+    ?>
+    <div class="news-carousel-section">
+        <h2 class="section-title">News & Events</h2>
+        <?php if($itemCount > 1): ?>
+        <button class="carousel-btn news-carousel-btn prev" onclick="moveNewsCarousel(-1)">&#10094;</button>
+        <button class="carousel-btn news-carousel-btn next" onclick="moveNewsCarousel(1)">&#10095;</button>
+        <?php endif; ?>
+        <div class="carousel-container">
+            <div class="carousel-track" id="newsCarouselTrack">
+                <?php 
+                // No duplication - items displayed once, JavaScript handles auto-advance
+                foreach($news_items as $index => $row): ?>
+                    <div class="carousel-card">
+                        <?php if(!empty($row['image_path'])): ?>
+                        <img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>" class="news-card-image">
+                        <?php endif; ?>
+                        <span class="news-badge <?php echo $row['type'] == 'event' ? 'type-event' : ''; ?>">
+                            <?php echo $row['type'] == 'event' ? '📅 Event' : '📰 News'; ?>
+                        </span>
+                        <h3 class="news-card-title"><?php echo htmlspecialchars($row['title']); ?></h3>
+                        <p class="news-card-date">
+                            <?php if($row['type'] == 'event' && $row['event_date']): ?>
+                                <?php echo date("F j, Y", strtotime($row['event_date'])); ?>
+                            <?php else: ?>
+                                <?php echo date("F j, Y", strtotime($row['date_posted'])); ?>
+                            <?php endif; ?>
+                        </p>
+                        <p class="news-card-excerpt"><?php echo htmlspecialchars(substr($row['content'], 0, 100)); ?>...</p>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <div class="container">
         <h2 class="section-title" id="aboutTitle">About the Museum</h2>
@@ -60,40 +110,75 @@ $recent_result = $conn->query($recent_query);
         </div>
     </div>
 
+    <hr class="section-divider">
+    
     <div class="container" style="padding-top: 0;">
         <h2 class="section-title" id="recentTitle">Latest Acquisitions</h2>
         <p style="text-align: center; color: #7f8c8d; margin-bottom: 30px;">Get a sneak peek at the newest historical pieces added to our archives.</p>
         
-        <div class="gallery-grid">
-            <?php if($recent_result->num_rows > 0): ?>
-                <?php while($row = $recent_result->fetch_assoc()): ?>
-                    <?php if ($is_logged_in): ?>
-                        <a href="exhibit_detail.php?id=<?php echo $row['id']; ?>" class="card-link">
-                            <div class="card">
-                                <img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
-                                <div class="card-body">
-                                    <h3 class="card-title"><?php echo htmlspecialchars($row['title']); ?></h3>
-                                    <div class="card-meta">
-                                        <strong>Period:</strong> <?php echo $row['artifact_year'] ? htmlspecialchars($row['artifact_year']) : 'Unknown'; ?><br>
-                                        <strong>Origin:</strong> <?php echo $row['origin'] ? htmlspecialchars($row['origin']) : 'Labo'; ?>
-                                    </div>
+        <?php 
+        // Get total count of all exhibits
+        $total_count_query = "SELECT COUNT(*) as total FROM exhibits";
+        $total_count_result = $conn->query($total_count_query);
+        $total_exhibits = $total_count_result->fetch_assoc()['total'];
+        
+        // Fetch all exhibits for JavaScript navigation (if more than 6)
+        $all_exhibits_query = "SELECT * FROM exhibits ORDER BY id DESC";
+        $all_exhibits_result = $conn->query($all_exhibits_query);
+        $all_exhibit_items = [];
+        while($row = $all_exhibits_result->fetch_assoc()) {
+            $all_exhibit_items[] = $row;
+        }
+        
+        // Only show first 6 for display
+        $exhibit_items = array_slice($all_exhibit_items, 0, 6);
+        
+        $has_navigation = $total_exhibits > 6;
+        ?>
+        
+        <!-- 3D Carousel for Latest Acquisitions -->
+        <div class="carousel">
+            <div class="carousel__body">
+                <div class="carousel__slider">
+                    <?php 
+                    // Get all exhibits for the carousel (we'll use all available)
+                    $carousel_query = "SELECT * FROM exhibits ORDER BY id DESC";
+                    $carousel_result = $conn->query($carousel_query);
+                    $exhibit_count = 0;
+                    while($row = $carousel_result->fetch_assoc()): 
+                        $exhibit_count++;
+                    ?>
+                    <div class="carousel__slider__item">
+                        <div class="item__3d-frame">
+                            <?php if ($is_logged_in): ?>
+                                <a href="exhibit_detail.php?id=<?php echo $row['id']; ?>" class="card-link" style="text-decoration: none; color: inherit;">
+                            <?php else: ?>
+                                <div class="card-link" style="cursor: pointer;" onclick="alert('Please register to view full details!');">
+                            <?php endif; ?>
+                            <div class="item__3d-frame__box">
+                                <img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
+                                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); padding: 15px;">
+                                    <h1 style="font-size: 1.2em; margin: 0; color: #fff;"><?php echo htmlspecialchars($row['title']); ?></h1>
+                                    <?php if ($is_logged_in): ?>
+                                    <p style="font-size: 0.8em; margin: 5px 0 0 0; color: #ccc;">Period: <?php echo $row['artifact_year'] ? htmlspecialchars($row['artifact_year']) : 'Unknown'; ?></p>
+                                    <?php endif; ?>
                                 </div>
                             </div>
-                        </a>
-                    <?php else: ?>
-                        <div class="card-link" style="cursor: pointer;" onclick="alert('Please register to view full details!');">
-                            <div class="card">
-                                <img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
-                                <div class="card-body">
-                                    <h3 class="card-title"><?php echo htmlspecialchars($row['title']); ?></h3>
-                                    <p class="card-desc" style="color: #c5a059; font-weight: bold;">🔒 Login to view details</p>
+                            <?php if ($is_logged_in): ?>
+                                </a>
+                            <?php else: ?>
                                 </div>
-                            </div>
+                            <?php endif; ?>
+                            <div class="item__3d-frame__box item__3d-frame__box--left"></div>
+                            <div class="item__3d-frame__box item__3d-frame__box--right"></div>
                         </div>
-                    <?php endif; ?>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <p style="grid-column: 1 / -1; text-align: center; font-size: 1.2rem; color: #7f8c8d; padding: 40px;">Check back soon for new artifacts!</p>
+                    </div>
+                    <?php endwhile; ?>
+                </div>
+            </div>
+            <?php if ($exhibit_count > 1): ?>
+            <div class="carousel__prev">&#10094;</div>
+            <div class="carousel__next">&#10095;</div>
             <?php endif; ?>
         </div>
         
@@ -107,6 +192,7 @@ $recent_result = $conn->query($recent_query);
     </div>
 
     <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="js/index.js"></script>
 
 </body>

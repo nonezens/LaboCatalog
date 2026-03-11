@@ -2,7 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit(); }
 
-include 'db.php'; include 'header.php';
+include 'db.php';
 
 // Fetch existing data
 if (!isset($_GET['id'])) { header("Location: admin_dashboard.php"); exit(); }
@@ -17,6 +17,7 @@ $exhibit = $stmt->get_result()->fetch_assoc();
 if(isset($_POST['update'])) {
     $title = $_POST['title']; $cat = $_POST['category_id']; $desc = $_POST['description'];
     $donor = $_POST['donated_by']; $year = $_POST['artifact_year']; $origin = $_POST['origin'];
+    $is_donated = isset($_POST['is_donated']) ? 1 : 0;
     
     // Check if a new image was uploaded
     if (!empty($_FILES['image']['name'])) {
@@ -24,12 +25,12 @@ if(isset($_POST['update'])) {
         move_uploaded_file($_FILES['image']['tmp_name'], "uploads/" . $imgName);
         
         // Update WITH new image
-        $update_stmt = $conn->prepare("UPDATE exhibits SET title=?, category_id=?, image_path=?, description=?, donated_by=?, artifact_year=?, origin=? WHERE id=?");
-        $update_stmt->bind_param("sisssssi", $title, $cat, $imgName, $desc, $donor, $year, $origin, $id);
+        $update_stmt = $conn->prepare("UPDATE exhibits SET title=?, category_id=?, image_path=?, description=?, donated_by=?, artifact_year=?, origin=?, is_donated=? WHERE id=?");
+        $update_stmt->bind_param("sisssssii", $title, $cat, $imgName, $desc, $donor, $year, $origin, $is_donated, $id);
     } else {
         // Update WITHOUT changing the image
-        $update_stmt = $conn->prepare("UPDATE exhibits SET title=?, category_id=?, description=?, donated_by=?, artifact_year=?, origin=? WHERE id=?");
-        $update_stmt->bind_param("sissssi", $title, $cat, $desc, $donor, $year, $origin, $id);
+        $update_stmt = $conn->prepare("UPDATE exhibits SET title=?, category_id=?, description=?, donated_by=?, artifact_year=?, origin=?, is_donated=? WHERE id=?");
+        $update_stmt->bind_param("sissssii", $title, $cat, $desc, $donor, $year, $origin, $is_donated, $id);
     }
     
     if($update_stmt->execute()) {
@@ -39,6 +40,18 @@ if(isset($_POST['update'])) {
 
 $categories = $conn->query("SELECT * FROM categories");
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Exhibit | Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<?php include 'header.php'; ?>
 
 <style>
     body { background-color: #f4f7f6; }
@@ -191,6 +204,12 @@ $categories = $conn->query("SELECT * FROM categories");
                     <label for="donated_by">Donated By</label>
                     <input type="text" id="donated_by" name="donated_by" value="<?php echo htmlspecialchars($exhibit['donated_by']); ?>">
                 </div>
+                <div>
+                    <label for="is_donated">
+                        <input type="checkbox" id="is_donated" name="is_donated" value="1" <?php echo !empty($exhibit['is_donated']) ? 'checked' : ''; ?>>
+                        This is a newly donated artifact
+                    </label>
+                </div>
             </div>
 
             <button type="submit" name="update" class="update-btn">Update Artifact</button>
@@ -208,3 +227,6 @@ $categories = $conn->query("SELECT * FROM categories");
         }
     });
 </script>
+
+</body>
+</html>

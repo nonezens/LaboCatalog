@@ -11,7 +11,7 @@
 .sidebar-menu { list-style: none; padding: 0; margin: 0; }
 .sidebar-menu li { margin-bottom: 10px; }
 .sidebar-menu a { color: #ecf0f1; text-decoration: none; display: block; padding: 12px 15px; border-radius: 6px; transition: 0.3s; font-weight: bold; }
-.sidebar-menu a:hover { background: #34495e; color: #c5a059; padding-left: 20px; }
+.sidebar-menu a:hover { background: #34495e; color: #c5a059; }
 
 /* Right Content Area */
 .main-content { flex-grow: 1; padding: 40px; box-sizing: border-box; max-width: calc(100% - 250px); }
@@ -95,28 +95,7 @@ tr:hover { background: #f9f9f9; }
    ======================================== */
 html, body { margin: 0 !important; padding: 0 !important; width: 100%; }
 
-/* Morphing Page Transition */
-.morph-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #2c3e50;
-    z-index: 99999;
-    pointer-events: none;
-    opacity: 0;
-    transform: scale(0.8, 0.8);
-    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 50%;
-}
-
-.morph-overlay.active {
-    opacity: 1;
-    transform: scale(2, 2);
-}
-
-.site-header { 
+.site-header {
     background: #2c3e50; 
     color: white; 
     padding: 1rem 2rem; 
