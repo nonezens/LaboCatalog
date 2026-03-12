@@ -28,15 +28,36 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             <span></span>
         </div>
         
+<<<<<<< Updated upstream
         <ul class="site-nav-links" id="nav-links">
             <li><a href="index.php" class="nav-link <?php echo $current_page == 'index' ? 'active-page' : ''; ?>">Home</a></li>
             <li><a href="about.php" class="nav-link <?php echo $current_page == 'about' ? 'active-page' : ''; ?>">About</a></li>
             <li><a href="categories.php" class="nav-link <?php echo $current_page == 'categories' ? 'active-page' : ''; ?>">Departments</a></li>
             <li><a href="exhibits.php" class="nav-link <?php echo $current_page == 'exhibits' ? 'active-page' : ''; ?>">All Artifacts</a></li>
             <li><a href="news.php" class="nav-link <?php echo $current_page == 'news' ? 'active-page' : ''; ?>">News & Events</a></li>
+=======
+<ul class="site-nav-links" id="nav-links">
+<?php if(!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true): ?>
+            $nav_links = [
+                'home' => 'Home',
+                'departments' => 'Departments',
+                'artifacts' => 'All Artifacts',
+                'about' => 'About'
+            ];
+
+            foreach ($nav_links as $hash => $title) {
+                $url = ($current_page === 'index') ? "#{$hash}" : "index.php#{$hash}";
+                echo "<li><a href='{$url}' data-tab='{$hash}' class='nav-link'>{$title}</a></li>";
+            }
+            <?php endif; ?>
+</xai:function_call">
+
+<xai:function_call name="edit_file">
+<parameter name="path">header.php
+>>>>>>> Stashed changes
             
             <?php if(isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true): ?>
-                <li class="admin-link"><a href="admin_dashboard.php" style="color: #3498db; font-weight: bold;">⚙️ Dashboard</a></li>
+<li class="admin-link"><a href="admin_dashboard.php" style="color: #3498db; font-weight: bold;">⚙️ Dashboard</a></li>
                 <li><a href="logout.php" style="color: #e74c3c; font-weight: bold;">Logout</a></li>
             <?php elseif(isset($_SESSION['guest_logged_in']) && $_SESSION['guest_logged_in'] === true): ?>
                 <li class="admin-link" style="color: #bdc3c7; font-size: 0.95rem;">Welcome, <?php echo htmlspecialchars($_SESSION['guest_name']); ?>!</li>

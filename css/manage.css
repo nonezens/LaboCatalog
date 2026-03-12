@@ -1,7 +1,7 @@
 /* ========================================
    MANAGE ARTIFACTS & DEPARTMENTS STYLES
    ======================================== */
-body.admin-body { background: #f4f7f6; margin: 0; font-family: sans-serif; }
+body.admin-body { background: #f4f7f6; margin: 0; padding-top: 90px !important; font-family: sans-serif; }
 
 /* Filter Container */
 .filter-container {
