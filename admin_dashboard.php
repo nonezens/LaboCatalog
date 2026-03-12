@@ -42,10 +42,10 @@ $max_daily = max(array_column($daily_data, 'count'), 1);
     <title>Admin Dashboard</title>
     
     <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/manage.css">
+    <link rel="stylesheet" href="css/admin.css">
 </head>
-<body class="admin-body">
+<body class="admin-page admin-body">
+
 
     <?php include 'header.php'; ?>
     

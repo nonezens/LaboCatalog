@@ -36,7 +36,7 @@ $all_exhibits_result = $conn->query($all_exhibits_query);
             justify-content: center;
             gap: 10px;
             padding: 20px;
-            background: #f8f9fa;
+            background: #2c3e50;
             border-bottom: 1px solid #eee;
             flex-wrap: wrap;
         }
@@ -454,10 +454,6 @@ $all_exhibits_result = $conn->query($all_exhibits_query);
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="js/index.js"></script>
-    <?php if ($is_admin): ?>
-    <script src="js/admin.js"></script>
-    <script src="js/manage.js"></script>
-    <?php endif; ?>
 
 </body>
 </html>

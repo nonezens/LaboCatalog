@@ -47,12 +47,12 @@ $cat_result = $conn->query("SELECT * FROM categories ORDER BY id DESC");
     <title>Manage Departments</title>
     
     <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/manage.css">
+    <link rel="stylesheet" href="css/admin.css">
 </head>
-<body class="admin-body">
+<body class="admin-page admin-body">
 
     <?php include 'header.php'; ?>
+
 
     <div class="admin-layout">
         <?php include 'admin_sidebar.php'; ?>
@@ -114,8 +114,11 @@ $cat_result = $conn->query("SELECT * FROM categories ORDER BY id DESC");
     </div>
 
     <!-- JS -->
-    <script src="js/manage.js"></script>
     <script src="js/admin.js"></script>
 
 </body>
 </html>
+</xai:function_call name="edit_file">
+
+<xai:function_call name="edit_file">
+<parameter name="path">manage_news.php

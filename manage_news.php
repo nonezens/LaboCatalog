@@ -47,11 +47,11 @@ $result = $conn->query("SELECT * FROM news_events ORDER BY date_posted DESC");
     <title>Manage News | Admin</title>
     
     <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/manage.css">
+    <link rel="stylesheet" href="css/admin.css">
 </head>
-<body class="admin-body">
+<body class="admin-page admin-body">
     <?php include 'header.php'; ?>
+
 
     <div class="admin-layout">
         <?php include 'admin_sidebar.php'; ?>

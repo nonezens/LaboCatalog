@@ -94,14 +94,14 @@ $result = $conn->query($query);
     <title>Manage Artifacts</title>
     
     <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/manage.css">
+    <link rel="stylesheet" href="css/admin.css">
 </head>
-<body class="admin-body">
+<body class="admin-page admin-body">
 
     <?php include 'header.php'; ?>
 
     <div class="admin-layout">
+
         <?php include 'admin_sidebar.php'; ?>
 
         <main class="main-content">
@@ -208,8 +208,11 @@ $result = $conn->query($query);
     </div>
 
     <!-- JS -->
-    <script src="js/manage.js"></script>
     <script src="js/admin.js"></script>
 
 </body>
 </html>
+</xai:function_call name="edit_file">
+
+<xai:function_call name="edit_file">
+<parameter name="path">manage_departments.php

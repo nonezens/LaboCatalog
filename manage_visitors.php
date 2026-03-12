@@ -44,10 +44,10 @@ $guest_result = $conn->query($query);
     <title>Manage Visitors | Admin</title>
     
     <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/manage.css">
+    <link rel="stylesheet" href="css/admin.css">
 </head>
-<body class="admin-body">
+<body class="admin-page admin-body">
+
 
     <?php include 'header.php'; ?>
 
