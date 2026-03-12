@@ -31,9 +31,8 @@ include 'header.php';
         <div class="info-grid">
             <div class="info-box">
                 <h3>🕒 Visiting Hours</h3>
-                <p>Monday - Friday: 9:00 AM - 5:00 PM</p>
-                <p>Saturday: 10:00 AM - 4:00 PM</p>
-                <p>Sunday: Closed</p>
+                <p>Monday - Friday: 8:00 AM - 5:00 PM</p>
+                <p>Weekends: Closed</p>
             </div>
 
             <div class="info-box">

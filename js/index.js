@@ -2,432 +2,228 @@
    INDEX PAGE JS
    ======================================== */
 document.addEventListener('DOMContentLoaded', function() {
-    // Set hash
-    history.replaceState(null, null, '#home');
+
+    // ========================================
+    // TAB NAVIGATION
+    // ========================================
+    function switchTab(tabName, pushState = true) {
+        if (!tabName) {
+            tabName = 'home'; // Default to home
+        }
+
+        const header = document.querySelector('.site-header');
+        if (header) {
+            if (tabName === 'home') {
+                header.classList.add('header-large');
+            } else {
+                header.classList.remove('header-large');
+            }
+        }
+
+        // Get all buttons and contents
+        const allNavLinks = document.querySelectorAll('[data-tab]');
+        const allContents = document.querySelectorAll('.tab-content');
+
+        // Deactivate all buttons/links and hide all content
+        allNavLinks.forEach(link => link.classList.remove('active', 'active-page'));
+        allContents.forEach(content => {
+            content.classList.remove('active');
+            // No need for inline style changes, CSS will handle it.
+        });
+
+        // Activate the selected button/link
+        const selectedLinks = document.querySelectorAll(`[data-tab="${tabName}"]`);
+        selectedLinks.forEach(link => {
+            link.classList.add('active');
+            // For header links, use 'active-page' style
+            if (link.classList.contains('nav-link')) {
+                link.classList.add('active-page');
+            }
+        });
+        
+        // Show selected content
+        const selectedContent = document.getElementById(tabName);
+        if (selectedContent) {
+            selectedContent.classList.add('active');
+        }
+
+        // Update URL hash without jumping
+        if (pushState) {
+            history.pushState(null, '', `#${tabName}`);
+        }
+    }
+
+    // Add click handlers to all navigation elements with data-tab
+    const navElements = document.querySelectorAll('[data-tab]');
+    navElements.forEach(elem => {
+        elem.addEventListener('click', function(e) {
+            // Prevent default anchor behavior
+            e.preventDefault(); 
+            const tabName = this.getAttribute('data-tab');
+            switchTab(tabName);
+        });
+    });
+
+    // Handle initial page load based on hash
+    const currentHash = window.location.hash.substring(1);
+    if (currentHash && document.getElementById(currentHash)) {
+        switchTab(currentHash, false);
+    } else {
+        switchTab('home', false); // Default to home
+    }
     
-    // Animate sections on scroll
-    const aboutTitle = document.getElementById('aboutTitle');
-    const aboutText = document.getElementById('aboutText');
-    const recentTitle = document.getElementById('recentTitle');
-    const cards = document.querySelectorAll('.card');
+    // Handle back/forward browser buttons
+    window.addEventListener('popstate', function() {
+        const hash = window.location.hash.substring(1);
+        switchTab(hash, false);
+    });
+
+    // ========================================
+    // ANIMATIONS & DYNAMIC CONTENT
+    // ========================================
+
+    // Animate sections on scroll - FIXED SELECTORS
+    const animatedElements = document.querySelectorAll('.section-title, .about-text, .card, .cat-card');
     
-    const observerOptions = { root: null, rootMargin: '0px', threshold: 0.2 };
+    const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
     
-    const observer = new IntersectionObserver((entries) => {
+    const observer = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                if (entry.target.id === 'aboutTitle') {
-                    entry.target.classList.add('visible');
-                } else if (entry.target.id === 'aboutText') {
-                    entry.target.classList.add('visible');
-                } else if (entry.target.id === 'recentTitle') {
-                    entry.target.classList.add('visible');
-                }
+                // Add a class to trigger CSS animation
+                entry.target.classList.add('visible');
+                // Stop observing once it's visible
+                observer.unobserve(entry.target); 
             }
         });
     }, observerOptions);
     
-    if (aboutTitle) observer.observe(aboutTitle);
-    if (aboutText) observer.observe(aboutText);
-    if (recentTitle) observer.observe(recentTitle);
-    
-    // Animate cards when visible
-    const cardObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                cardObserver.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.1 });
-    
-    cards.forEach(card => cardObserver.observe(card));
-    
+    animatedElements.forEach(el => observer.observe(el));
+
     // ========================================
-    // NEWS SWIPE CARD STACK - Auto swipe every 10 seconds
+    // NEWS CAROUSEL (SIMPLE)
     // ========================================
-    const newsCardStack = document.getElementById('newsCardStack');
-    let swipeCards = [];
-    let currentSwipeIndex = 0;
-    let isSwiping = false;
-    let startX = 0;
-    let currentX = 0;
-    let autoSwipeInterval = null;
-    let animationFrameId = null;
-    
-    if (newsCardStack) {
-        // Get all swipe cards
-        swipeCards = [...document.querySelectorAll('.swipe-card')];
-        
-        const getDurationFromCSS = (variableName, element = document.documentElement) => {
-            const value = getComputedStyle(element)?.getPropertyValue(variableName)?.trim();
-            if (!value) return 400;
-            if (value.endsWith("ms")) return parseFloat(value);
-            if (value.endsWith("s")) return parseFloat(value) * 1000;
-            return parseFloat(value) || 400;
-        };
-        
-        const getActiveCard = () => swipeCards[0];
-        
-        const updatePositions = () => {
-            swipeCards.forEach((card, i) => {
-                card.style.setProperty('--i', i + 1);
-                card.style.setProperty('--swipe-x', '0px');
-                card.style.setProperty('--swipe-rotate', '0deg');
-                card.style.opacity = '1';
-                card.classList.remove('swiping', 'swiped-left', 'swiped-right');
-            });
-            updateIndicators();
-        };
-        
-        const updateIndicators = () => {
-            const indicators = document.querySelectorAll('.indicator');
-            indicators.forEach((ind, i) => {
-                ind.classList.toggle('active', i === currentSwipeIndex);
-            });
-        };
-        
-        const applySwipeStyles = (deltaX) => {
-            const card = getActiveCard();
-            if (!card) return;
-            card.classList.add('swiping');
-            card.style.setProperty('--swipe-x', `${deltaX}px`);
-            card.style.setProperty('--swipe-rotate', `${deltaX * 0.15}deg`);
-            card.style.opacity = 1 - Math.min(Math.abs(deltaX) / 200, 1) * 0.5;
-        };
-        
-        const handleStart = (clientX) => {
-            if (isSwiping) return;
-            // Pause auto swipe on manual interaction
-            if (autoSwipeInterval) {
-                clearInterval(autoSwipeInterval);
-                autoSwipeInterval = null;
-            }
-            isSwiping = true;
-            startX = currentX = clientX;
-            const card = getActiveCard();
-            card && (card.style.transition = 'none');
-        };
-        
-        const handleMove = (clientX) => {
-            if (!isSwiping) return;
-            cancelAnimationFrame(animationFrameId);
-            animationFrameId = requestAnimationFrame(() => {
-                currentX = clientX;
-                const deltaX = currentX - startX;
-                applySwipeStyles(deltaX);
-                
-                if (Math.abs(deltaX) > 50) handleEnd();
-            });
-        };
-        
-        const handleEnd = () => {
-            if (!isSwiping) return;
-            cancelAnimationFrame(animationFrameId);
-            
-            const deltaX = currentX - startX;
-            const threshold = 50;
-            const duration = getDurationFromCSS('--swipe-swap-duration');
-            const card = getActiveCard();
-            
-            if (card) {
-                card.style.transition = `transform ${duration}ms ease, opacity ${duration}ms ease`;
-                
-                if (Math.abs(deltaX) > threshold) {
-                    const direction = Math.sign(deltaX);
-                    
-                    // Animate card swiping out
-                    card.classList.add(direction > 0 ? 'swiped-right' : 'swiped-left');
-                    card.style.setProperty('--swipe-x', `${direction * 500}px`);
-                    card.style.setProperty('--swipe-rotate', `${direction * 20}deg`);
-                    
-                    setTimeout(() => {
-                        // Move card to end and reset
-                        swipeCards = [...swipeCards.slice(1), card];
-                        currentSwipeIndex = (currentSwipeIndex + 1) % swipeCards.length;
-                        updatePositions();
-                    }, duration);
-                } else {
-                    applySwipeStyles(0);
-                    card.classList.remove('swiping');
-                }
-            }
-            
-            isSwiping = false;
-            startX = currentX = 0;
-            
-            // Resume auto swipe after manual interaction
-            startAutoSwipe();
-        };
-        
-        // Add event listeners
-        newsCardStack.addEventListener('pointerdown', ({ clientX }) => handleStart(clientX));
-        newsCardStack.addEventListener('pointermove', ({ clientX }) => handleMove(clientX));
-        newsCardStack.addEventListener('pointerup', handleEnd);
-        newsCardStack.addEventListener('pointerleave', () => {
-            if (isSwiping) handleEnd();
-        });
-        
-        // Touch support
-        newsCardStack.addEventListener('touchstart', (e) => {
-            handleStart(e.touches[0].clientX);
-        }, { passive: true });
-        
-        newsCardStack.addEventListener('touchmove', (e) => {
-            handleMove(e.touches[0].clientX);
-        }, { passive: true });
-        
-        newsCardStack.addEventListener('touchend', handleEnd);
-        
-        // Keyboard support
-        document.addEventListener('keydown', (e) => {
-            if (!newsCardStack) return;
-            if (e.key === 'ArrowLeft') {
-                swipeLeft();
-            } else if (e.key === 'ArrowRight') {
-                swipeRight();
-            }
-        });
-        
-        const swipeLeft = () => {
-            if (isSwiping || swipeCards.length === 0) return;
-            const card = getActiveCard();
-            if (!card) return;
-            
-            if (autoSwipeInterval) {
-                clearInterval(autoSwipeInterval);
-                autoSwipeInterval = null;
-            }
-            
-            isSwiping = true;
-            const duration = getDurationFromCSS('--swipe-swap-duration');
-            card.style.transition = `transform ${duration}ms ease, opacity ${duration}ms ease`;
-            card.classList.add('swiped-left');
-            card.style.setProperty('--swipe-x', '-500px');
-            card.style.setProperty('--swipe-rotate', '-20deg');
-            
-            setTimeout(() => {
-                swipeCards = [...swipeCards.slice(1), card];
-                currentSwipeIndex = (currentSwipeIndex + 1) % swipeCards.length;
-                updatePositions();
-                isSwiping = false;
-                startAutoSwipe();
-            }, duration);
-        };
-        
-        const swipeRight = () => {
-            if (isSwiping || swipeCards.length === 0) return;
-            const card = getActiveCard();
-            if (!card) return;
-            
-            if (autoSwipeInterval) {
-                clearInterval(autoSwipeInterval);
-                autoSwipeInterval = null;
-            }
-            
-            isSwiping = true;
-            const duration = getDurationFromCSS('--swipe-swap-duration');
-            card.style.transition = `transform ${duration}ms ease, opacity ${duration}ms ease`;
-            card.classList.add('swiped-right');
-            card.style.setProperty('--swipe-x', '500px');
-            card.style.setProperty('--swipe-rotate', '20deg');
-            
-            setTimeout(() => {
-                swipeCards = [...swipeCards.slice(1), card];
-                currentSwipeIndex = (currentSwipeIndex + 1) % swipeCards.length;
-                updatePositions();
-                isSwiping = false;
-                startAutoSwipe();
-            }, duration);
-        };
-        
-        // Indicator click support
-        const indicators = document.querySelectorAll('.indicator');
-        indicators.forEach((ind, index) => {
-            ind.addEventListener('click', () => {
-                if (index === currentSwipeIndex || isSwiping) return;
-                
-                if (autoSwipeInterval) {
-                    clearInterval(autoSwipeInterval);
-                    autoSwipeInterval = null;
-                }
-                
-                // Swipe cards until we reach the target index
-                const cardsToSwipe = (index - currentSwipeIndex + swipeCards.length) % swipeCards.length;
-                
-                const swipeMultiple = (count) => {
-                    if (count <= 0) {
-                        startAutoSwipe();
-                        return;
-                    }
-                    swipeLeft();
-                    setTimeout(() => swipeMultiple(count - 1), getDurationFromCSS('--swipe-swap-duration') + 100);
-                };
-                
-                swipeMultiple(cardsToSwipe);
-            });
-        });
-        
-        // Button navigation support
-        const prevBtn = document.getElementById('swipePrevBtn');
-        const nextBtn = document.getElementById('swipeNextBtn');
-        
-        if (prevBtn) {
-            prevBtn.addEventListener('click', () => {
-                if (autoSwipeInterval) {
-                    clearInterval(autoSwipeInterval);
-                    autoSwipeInterval = null;
-                }
-                swipeLeft();
+    const newsContainer = document.querySelector('.news-carousel-container');
+    if (newsContainer) {
+        const newsCards = newsContainer.querySelectorAll('.news-card');
+        const nextBtn = document.getElementById('news-next');
+        const prevBtn = document.getElementById('news-prev');
+        let currentNewsIndex = 0;
+
+        function showNewsCard(index) {
+            newsCards.forEach((card, i) => {
+                card.classList.toggle('active', i === index);
             });
         }
-        
+
         if (nextBtn) {
             nextBtn.addEventListener('click', () => {
-                if (autoSwipeInterval) {
-                    clearInterval(autoSwipeInterval);
-                    autoSwipeInterval = null;
-                }
-                swipeRight();
+                currentNewsIndex = (currentNewsIndex + 1) % newsCards.length;
+                showNewsCard(currentNewsIndex);
             });
         }
-        
-        // Auto swipe function
-        const startAutoSwipe = () => {
-            if (autoSwipeInterval || swipeCards.length <= 1) return;
-            
-            autoSwipeInterval = setInterval(() => {
-                if (!isSwiping) {
-                    swipeLeft();
-                }
-            }, 10000); // 10 seconds auto swipe
-        };
-        
-        // Initialize
-        updatePositions();
-        startAutoSwipe();
-        
-        // Pause on hover
-        newsCardStack.addEventListener('mouseenter', () => {
-            if (autoSwipeInterval) {
-                clearInterval(autoSwipeInterval);
-                autoSwipeInterval = null;
-            }
-        });
-        
-        newsCardStack.addEventListener('mouseleave', () => {
-            if (!autoSwipeInterval) {
-                startAutoSwipe();
-            }
-        });
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                currentNewsIndex = (currentNewsIndex - 1 + newsCards.length) % newsCards.length;
+                showNewsCard(currentNewsIndex);
+            });
+        }
+
+        // Initially show the first card if it exists
+        if(newsCards.length > 0) {
+            showNewsCard(currentNewsIndex);
+        }
     }
-    
-    // ========================================
-    // ACQUISITIONS - Simple Grid Layout (no JS needed)
-    // Cards are displayed in a responsive grid
-    // ========================================
-    
+
     // ========================================
     // 3D CAROUSEL FOR LATEST ACQUISITIONS
     // ========================================
     (function() {
         "use strict";
 
-        var carousel = document.getElementsByClassName('carousel')[0];
+        const carousel = document.querySelector('.carousel');
         if (!carousel) return;
         
-        var slider = carousel.getElementsByClassName('carousel__slider')[0],
-            items = carousel.getElementsByClassName('carousel__slider__item'),
-            prevBtn = carousel.getElementsByClassName('carousel__prev')[0],
-            nextBtn = carousel.getElementsByClassName('carousel__next')[0];
+        const slider = carousel.querySelector('.carousel__slider');
+        const items = carousel.querySelectorAll('.carousel__slider__item');
+        const prevBtn = carousel.querySelector('.carousel__prev');
+        const nextBtn = carousel.querySelector('.carousel__next');
         
-        if (!slider || items.length === 0) return;
-        
-        var width = 320,
-            margin = 20,
-            currIndex = 0,
-            interval, intervalTime = 4000;
-        
-        function init() {
-            resize();
-            move(0);
-            bindEvents();
-            timer();
+        if (!slider || items.length < 2) {
+            if(prevBtn) prevBtn.style.display = 'none';
+            if(nextBtn) nextBtn.style.display = 'none';
+            return;
         }
         
-        function resize() {
-            width = Math.max(window.innerWidth * 0.3, 300);
-            
-            for(var i = 0; i < items.length; i++) {
-                let item = items[i];
-                item.style.width = (width - (margin * 2)) + "px";
-                item.style.height = (width * 1.3) + "px";
-            }
-            
-            // Recalculate position after resize
-            move(currIndex);
-        }
+        let width = 320;
+        let margin = 20;
+        let currIndex = 0;
+        let interval;
+        const intervalTime = 4000;
         
         function move(index) {
-            // Loop the index
+            // This logic ensures the carousel loops endlessly
             if (index < 0) {
-                index = items.length - 1;
+                currIndex = items.length - 1;
             } else if (index >= items.length) {
-                index = 0;
+                currIndex = 0;
+            } else {
+                currIndex = index;
             }
-            currIndex = index;
           
-            // Center the active item
-            var containerWidth = carousel.offsetWidth;
-            var translateX = (containerWidth / 2) - (width / 2) - (currIndex * width);
+            const containerWidth = carousel.offsetWidth;
+            const translateX = (containerWidth / 2) - (width / 2) - (currIndex * width);
           
-            for(var i = 0; i < items.length; i++) {
-                let item = items[i],
-                    box = item.getElementsByClassName('item__3d-frame')[0];
-                if(i == currIndex) {
+            for(let i = 0; i < items.length; i++) {
+                let item = items[i];
+                let box = item.querySelector('.item__3d-frame');
+                if(i === currIndex) {
                     item.classList.add('carousel__slider__item--active');
                     box.style.transform = "perspective(1200px) rotateY(0deg)"; 
                 } else {
                     item.classList.remove('carousel__slider__item--active');
-                    var rotation = i < currIndex ? 45 : -45;
-                    box.style.transform = "perspective(1200px) rotateY(" + rotation + "deg)";
+                    let rotation = i < currIndex ? 45 : -45;
+                    box.style.transform = `perspective(1200px) rotateY(${rotation}deg) scale(0.9)`;
                 }
             }
           
-            slider.style.transition = "transform 0.6s ease-in-out";
-            slider.style.transform = "translate3d(" + translateX + "px, 0, 0)";
+            slider.style.transform = `translate3d(${translateX}px, 0, 0)`;
         }
         
-        function timer() {
+        // Timer function now just resets the interval
+        function startTimer() {
             clearInterval(interval);    
-            interval = setInterval(() => {
-              move(++currIndex);
-            }, intervalTime);    
+            interval = setInterval(() => move(currIndex + 1), intervalTime);    
         }
         
-        function prev() {
-          move(--currIndex);
-          timer();
+        function handlePrev() {
+          move(currIndex - 1);
+          startTimer(); // Reset timer on manual interaction
         }
         
-        function next() {
-          move(++currIndex);    
-          timer();
+        function handleNext() {
+          move(currIndex + 1);
+          startTimer(); // Reset timer on manual interaction
         }
         
-        
-        function bindEvents() {
-            window.onresize = resize;
-            if (prevBtn) {
-                prevBtn.addEventListener('click', () => { prev(); });
+        function resize() {
+            width = Math.max(window.innerWidth * 0.25, 280);
+            for(let i = 0; i < items.length; i++) {
+                let item = items[i];
+                item.style.width = (width - margin * 2) + "px";
+                item.style.height = (width * 1.2) + "px";
             }
-            if (nextBtn) {
-                nextBtn.addEventListener('click', () => { next(); });
-            }    
+            move(currIndex); // Recalculate position on resize
         }
 
-        init();
+        // Initialize
+        window.addEventListener('resize', resize);
+        prevBtn?.addEventListener('click', handlePrev);
+        nextBtn?.addEventListener('click', handleNext);
+        
+        resize();
+        startTimer();
         
     })();
 });
-

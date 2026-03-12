@@ -93,7 +93,7 @@ tr:hover { background: #f9f9f9; }
 /* ========================================
    HEADER STYLES (from header.php)
    ======================================== */
-html, body { margin: 0 !important; padding: 0 !important; width: 100%; }
+html, body { margin: 0 !important; padding: 0 !important; width: 100%; padding-top: 70px; /* Account for fixed header */ }
 
 .site-header {
     background: #2c3e50; 
@@ -102,8 +102,9 @@ html, body { margin: 0 !important; padding: 0 !important; width: 100%; }
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
     width: 100%; 
     box-sizing: border-box; 
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
     z-index: 9999;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
 }
@@ -168,9 +169,16 @@ html, body { margin: 0 !important; padding: 0 !important; width: 100%; }
     color: #c5a059; 
 }
 
+@keyframes navLinkFlash {
+    0% { background-color: rgba(197, 160, 89, 0.1); }
+    50% { background-color: rgba(197, 160, 89, 0.5); }
+    100% { background-color: rgba(197, 160, 89, 0.2); }
+}
+
 .site-nav-links li a.active-page {
     color: #c5a059;
-    background: rgba(197, 160, 89, 0.15);
+    background: rgba(197, 160, 89, 0.2);
+    animation: navLinkFlash 0.7s ease-out;
 }
 
 .admin-link { border-left: 1px solid #7f8c8d; padding-left: 20px; }

@@ -7,13 +7,10 @@ if (session_status() === PHP_SESSION_NONE) {
 $current_page = basename($_SERVER['PHP_SELF'], '.php');
 ?>
 
-<!-- Morphing Page Transition -->
-<div class="morph-overlay" id="morphOverlay"></div>
-
 <header class="site-header">
     <nav class="site-nav">
         <div class="site-logo">
-            <a href="index.php" class="nav-link">
+<a href="index.php" class="nav-link">
                 <img src="uploads/logo.png" alt="Museum Logo" class="logo-img" onerror="this.style.display='none';">
                 <div class="logo-text-container">
                     <span class="logo-text">Museo De Labo</span>
@@ -28,11 +25,11 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             <span></span>
         </div>
         
-        <ul class="site-nav-links" id="nav-links">
-            <li><a href="index.php" class="nav-link <?php echo $current_page == 'index' ? 'active-page' : ''; ?>">Home</a></li>
-            <li><a href="categories.php" class="nav-link <?php echo $current_page == 'categories' ? 'active-page' : ''; ?>">Departments</a></li>
-            <li><a href="exhibits.php" class="nav-link <?php echo $current_page == 'exhibits' ? 'active-page' : ''; ?>">All Artifacts</a></li>
-            <li><a href="about.php" class="nav-link <?php echo $current_page == 'about' ? 'active-page' : ''; ?>">About</a></li>
+<ul class="site-nav-links" id="nav-links">
+            <li><a href="#home" data-tab="home" class="nav-link">Home</a></li>
+            <li><a href="#departments" data-tab="departments" class="nav-link">Departments</a></li>
+            <li><a href="#artifacts" data-tab="artifacts" class="nav-link">All Artifacts</a></li>
+            <li><a href="#about" data-tab="about" class="nav-link">About</a></li>
             
             <?php if(isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true): ?>
                 <li class="admin-link"><a href="admin_dashboard.php" style="color: #3498db; font-weight: bold;">⚙️ Dashboard</a></li>
