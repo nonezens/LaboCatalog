@@ -251,3 +251,30 @@ textarea.form-control { resize: vertical; min-height: 120px; }
     }
 }
 
+/* Tab Content Sections - Animated Fade-in */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+.sidebar-menu li.active a {
+    background: #c5a059;
+    color: white;
+    font-weight: bold;
+}
+

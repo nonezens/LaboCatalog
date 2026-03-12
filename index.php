@@ -447,12 +447,6 @@ $all_exhibits_result = $conn->query($all_exhibits_query);
                     <p><strong>Phone:</strong> +63 (054) 123-4567</p>
                 </div>
             </div>
-             <div class="content-section" style="margin-top: 60px;">
-                <h2 class="section-title">Find Us</h2>
-                <div class="location-map" style="background: #f0f0f0; border: 1px solid #ddd; text-align: center; padding: 80px 20px; border-radius: 8px;">
-                    <p style="color: #777; font-size: 1.2rem;">[ Interactive Map Placeholder ]</p>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -460,7 +454,10 @@ $all_exhibits_result = $conn->query($all_exhibits_query);
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="js/index.js"></script>
+    <?php if ($is_admin): ?>
+    <script src="js/admin.js"></script>
+    <script src="js/manage.js"></script>
+    <?php endif; ?>
 
 </body>
 </html>
-

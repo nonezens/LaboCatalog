@@ -144,86 +144,153 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const carousel = document.querySelector('.carousel');
         if (!carousel) return;
-        
+
         const slider = carousel.querySelector('.carousel__slider');
-        const items = carousel.querySelectorAll('.carousel__slider__item');
         const prevBtn = carousel.querySelector('.carousel__prev');
         const nextBtn = carousel.querySelector('.carousel__next');
         
-        if (!slider || items.length < 2) {
-            if(prevBtn) prevBtn.style.display = 'none';
-            if(nextBtn) nextBtn.style.display = 'none';
+        if (!slider) return;
+
+        let items = Array.from(slider.children);
+        
+        if (items.length < 2) {
+            if (prevBtn) prevBtn.style.display = 'none';
+            if (nextBtn) nextBtn.style.display = 'none';
             return;
         }
-        
+
+        // Settings
+        const CLONE_COUNT = 3; // Number of items to clone from each end
         let width = 320;
         let margin = 20;
-        let currIndex = 0;
+        let currIndex = CLONE_COUNT; // Start on the first "real" item
         let interval;
         const intervalTime = 4000;
-        
-        function move(index) {
-            // This logic ensures the carousel loops endlessly
-            if (index < 0) {
-                currIndex = items.length - 1;
-            } else if (index >= items.length) {
-                currIndex = 0;
-            } else {
-                currIndex = index;
+        let isTransitioning = false;
+        let isJumping = false; // Guard flag to prevent multiple jumps during transitionend
+
+        // 1. Clone items for the infinite loop effect
+        function cloneItems() {
+            if (items.length <= CLONE_COUNT) { // Not enough items to clone
+                return;
             }
-          
+            const itemsToPrepend = items.slice(items.length - CLONE_COUNT).map(item => item.cloneNode(true));
+            const itemsToAppend = items.slice(0, CLONE_COUNT).map(item => item.cloneNode(true));
+            
+            slider.append(...itemsToAppend);
+            slider.prepend(...itemsToPrepend);
+            
+            // Update items array
+            items = Array.from(slider.children);
+        }
+        
+        // 2. Core function to move the slider
+        function move(index, withTransition = true) {
+            if (isTransitioning) return;
+            
+            if(withTransition) {
+                isTransitioning = true;
+            }
+            
+            currIndex = index;
+            
             const containerWidth = carousel.offsetWidth;
             const translateX = (containerWidth / 2) - (width / 2) - (currIndex * width);
-          
-            for(let i = 0; i < items.length; i++) {
+            
+            slider.style.transition = withTransition ? 'transform 0.6s ease-in-out' : 'none';
+            slider.style.transform = `translate3d(${translateX}px, 0, 0)`;
+
+            // Update item styles (rotation, active class)
+            for (let i = 0; i < items.length; i++) {
                 let item = items[i];
                 let box = item.querySelector('.item__3d-frame');
-                if(i === currIndex) {
+                if (i === currIndex) {
                     item.classList.add('carousel__slider__item--active');
-                    box.style.transform = "perspective(1200px) rotateY(0deg)"; 
+                    if (box) box.style.transform = "perspective(1200px) rotateY(0deg)";
                 } else {
                     item.classList.remove('carousel__slider__item--active');
                     let rotation = i < currIndex ? 45 : -45;
-                    box.style.transform = `perspective(1200px) rotateY(${rotation}deg) scale(0.9)`;
+                    if (box) box.style.transform = `perspective(1200px) rotateY(${rotation}deg) scale(0.9)`;
                 }
             }
-          
-            slider.style.transform = `translate3d(${translateX}px, 0, 0)`;
+        }
+
+        // 3. Handle the "jump" when the slider reaches the cloned section
+        function handleTransitionEnd() {
+            isTransitioning = false;
+            
+            // Guard against multiple jumps
+            if (isJumping) return;
+            
+            const originalItemsCount = items.length - 2 * CLONE_COUNT;
+            
+            // If there are no original items (should not happen), bail out
+            if (originalItemsCount <= 0) return;
+            
+            let shouldJump = false;
+            let targetIndex = currIndex;
+            
+            // Jump to the start if we've reached the end clones
+            if (currIndex >= originalItemsCount + CLONE_COUNT) {
+                targetIndex = CLONE_COUNT + (currIndex - (originalItemsCount + CLONE_COUNT));
+                shouldJump = true;
+            }
+            // Jump to the end if we've reached the start clones
+            else if (currIndex < CLONE_COUNT) {
+                targetIndex = originalItemsCount + currIndex;
+                shouldJump = true;
+            }
+            
+            if (shouldJump) {
+                isJumping = true;
+                currIndex = targetIndex;
+                move(currIndex, false);
+                // Reset jumping flag after a short delay to allow the DOM to update
+                setTimeout(() => {
+                    isJumping = false;
+                }, 50);
+            }
         }
         
-        // Timer function now just resets the interval
+        // 4. Timer logic
         function startTimer() {
-            clearInterval(interval);    
-            interval = setInterval(() => move(currIndex + 1), intervalTime);    
+            clearInterval(interval);
+            interval = setInterval(handleNext, intervalTime);
         }
         
+        // 5. Event Handlers
         function handlePrev() {
-          move(currIndex - 1);
-          startTimer(); // Reset timer on manual interaction
+            if (isTransitioning) return;
+            move(currIndex - 1);
+            startTimer();
         }
         
         function handleNext() {
-          move(currIndex + 1);
-          startTimer(); // Reset timer on manual interaction
+            if (isTransitioning) return;
+            move(currIndex + 1);
+            startTimer();
         }
         
+        // 6. Resize handler
         function resize() {
             width = Math.max(window.innerWidth * 0.25, 280);
-            for(let i = 0; i < items.length; i++) {
+            for (let i = 0; i < items.length; i++) {
                 let item = items[i];
                 item.style.width = (width - margin * 2) + "px";
                 item.style.height = (width * 1.2) + "px";
             }
-            move(currIndex); // Recalculate position on resize
+            move(currIndex, false); // Recalculate position on resize
         }
 
         // Initialize
-        window.addEventListener('resize', resize);
-        prevBtn?.addEventListener('click', handlePrev);
-        nextBtn?.addEventListener('click', handleNext);
-        
+        cloneItems();
         resize();
         startTimer();
+        
+        slider.addEventListener('transitionend', handleTransitionEnd);
+        prevBtn?.addEventListener('click', handlePrev);
+        nextBtn?.addEventListener('click', handleNext);
+        window.addEventListener('resize', resize);
         
     })();
 });

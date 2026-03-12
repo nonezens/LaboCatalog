@@ -26,10 +26,19 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
         </div>
         
 <ul class="site-nav-links" id="nav-links">
-            <li><a href="#home" data-tab="home" class="nav-link">Home</a></li>
-            <li><a href="#departments" data-tab="departments" class="nav-link">Departments</a></li>
-            <li><a href="#artifacts" data-tab="artifacts" class="nav-link">All Artifacts</a></li>
-            <li><a href="#about" data-tab="about" class="nav-link">About</a></li>
+            <?php
+            $nav_links = [
+                'home' => 'Home',
+                'departments' => 'Departments',
+                'artifacts' => 'All Artifacts',
+                'about' => 'About'
+            ];
+
+            foreach ($nav_links as $hash => $title) {
+                $url = ($current_page === 'index') ? "#{$hash}" : "index.php#{$hash}";
+                echo "<li><a href='{$url}' data-tab='{$hash}' class='nav-link'>{$title}</a></li>";
+            }
+            ?>
             
             <?php if(isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true): ?>
                 <li class="admin-link"><a href="admin_dashboard.php" style="color: #3498db; font-weight: bold;">⚙️ Dashboard</a></li>

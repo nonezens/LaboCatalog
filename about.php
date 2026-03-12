@@ -43,12 +43,24 @@ include 'header.php';
             </div>
         </div>
 
-        <div class="content-section" style="margin-top: 60px;">
-            <h2>Find Us</h2>
-            <div class="location-map">
-                <p style="color: #777;">[ Interactive Map Placeholder ]</p>
+        <div class="content-section mt-40">
+            <h2>Our Location</h2>
+            <div style="position: relative; margin-top: 20px;">
+                <iframe 
+                    src="https://www.google.com/maps?q=Labo+Museum,+Labo,+Camarines+Norte,+Philippines&t=m&z=15&output=embed&iwloc=near" 
+                    width="100%" 
+                    height="450" 
+                    style="border:0; border-radius: 8px;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
             </div>
-        </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button id="navigationBtn" style="display: inline-block; background: var(--gold); color: #333; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: background 0.3s; border: none; font-size: 1rem;">
+                    📍 Show the Way
+                </button>
+            </div>
     </div>
 
     <footer>

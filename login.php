@@ -200,19 +200,19 @@ if (isset($_POST['guest_login'])) {
                 </div>
             <?php endif; ?>
 
-            <h3 class="login-title" style="margin-top: 0px;">New Visitor? Register Here</h3>
+            <h3 class="login-title">New Visitor? Register Here</h3>
             <form method="POST" class="login-form-grid">
 
-                <input type="text" name="guest_name" placeholder="Full Name" required class="login-input-full" style="padding: 10px; border: 1px solid #ddd; border-radius:4px;">
+                <input type="text" name="guest_name" placeholder="Full Name" required class="login-input-full">
 
-                <select name="gender" required style="padding: 10px; border: 1px solid #ddd; border-radius:4px; background: white;" class="login-select">
+                <select name="gender" required class="login-select">
                     <option value="">Select Gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
                 </select>
 
-                <select name="nationality" required style="padding: 10px; border: 1px solid #ddd; border-radius:4px; background: white;" class="login-select">
+                <select name="nationality" required class="login-select">
                     <option value="">Select Nationality</option>
                     <option value="Filipino">Filipino</option>
                     <option value="American">American</option>
@@ -223,7 +223,7 @@ if (isset($_POST['guest_login'])) {
                     <option value="Other">Other</option>
                 </select>
 
-                <select name="residence" required class="login-input-full" style="padding: 10px; border: 1px solid #ddd; border-radius:4px;">
+                <select name="residence" required class="login-input-full">
                     <option value="">Select Place of Residence</option>
                     <option value="Labo, Camarines Norte">Labo, Camarines Norte</option>
                     <option value="Daet, Camarines Norte">Daet, Camarines Norte</option>
@@ -232,14 +232,14 @@ if (isset($_POST['guest_login'])) {
                     <option value="Outside Philippines">Outside Philippines</option>
                 </select>
 
-                <input type="number" name="num_days" placeholder="No. of Days Visiting" min="1" required style="padding: 10px; border: 1px solid #ddd; border-radius:4px;" class="login-input">
+                <input type="number" name="num_days" placeholder="No. of Days Visiting" min="1" required class="login-input">
 
                 <div class="phone-wrapper">
                     <span class="phone-prefix">+63</span>
                     <input type="tel" name="contact_no" placeholder="912 345 6789" required class="phone-input" pattern="[0-9]{10}" title="Please enter a valid 10-digit mobile number">
                 </div>
 
-                <input type="text" name="purpose" placeholder="Purpose of Visit (e.g., Tourism, Research)" required class="login-input-full" style="padding: 10px; border: 1px solid #ddd; border-radius:4px;">
+                <input type="text" name="purpose" placeholder="Purpose of Visit (e.g., Tourism, Research)" required class="login-input-full">
 
                 <button type="submit" name="request_access" class="login-btn">Register & Access Catalog</button>
             </form>
@@ -248,11 +248,11 @@ if (isset($_POST['guest_login'])) {
         <div class="login-admin">
             <h3 class="admin-title">Admin Portal</h3>
             <form method="POST">
-                <input type="text" name="username" placeholder="Admin Username" style="width: 100%; padding: 10px; margin-bottom: 15px; box-sizing:border-box; border: 1px solid #ddd; border-radius: 4px;" required>
-                <input type="password" name="password" placeholder="Password" style="width: 100%; padding: 10px; margin-bottom: 20px; box-sizing:border-box; border: 1px solid #ddd; border-radius: 4px;" required>
-                <button type="submit" name="admin_login" style="width: 100%; padding: 12px; background: #7f8c8d; color: white; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.3s;">Login</button>
+                <input type="text" name="username" placeholder="Admin Username" class="login-input" required>
+                <input type="password" name="password" placeholder="Password" class="login-input" required>
+                <button type="submit" name="admin_login" class="admin-login-btn">Login</button>
             </form>
         </div>
+    </div>
 
-</body>
-</html>
+<?php include 'footer.php'; ?>
