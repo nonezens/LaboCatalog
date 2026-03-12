@@ -1,46 +1,79 @@
 /* ========================================
-   HEADER JS - Shared navigation functionality
+   HEADER JS - SPA Navigation
    ======================================== */
-document.addEventListener("DOMContentLoaded", function() {
-    const hamburger = document.getElementById("hamburger-menu");
-    const navLinks = document.getElementById("nav-links");
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Intercept Navigation Clicks
+    document.body.addEventListener("click", async (e) => {
+        const link = e.target.closest("a.nav-link");
+        
+        // Ignore if it's not a nav link or opens in a new tab
+        if (!link || link.target === "_blank") return;
+        
+        e.preventDefault();
+        const url = link.href;
 
-    // Hamburger menu toggle
-    if (hamburger) {
-        hamburger.addEventListener("click", function() {
-            navLinks.classList.toggle("active");
-            hamburger.classList.toggle("open");
-        });
-    }
+        // Update URL bar
+        window.history.pushState({ path: url }, "", url);
 
-    // Hash URL handling
-    if (window.location.hash) {
-        const hash = window.location.hash.substring(1);
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.remove('active-page');
-            if (link.getAttribute('href') && link.getAttribute('href').includes(hash + '.php')) {
-                link.classList.add('active-page');
-            }
-        });
-    }
-
-    // Update active state on nav click
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', function() {
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active-page'));
-            this.classList.add('active-page');
-        });
+        // Execute swap
+        await loadPage(url, link);
     });
 
-    // Handle browser back/forward
-    window.addEventListener('popstate', function() {
-        const hash = window.location.hash.substring(1);
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.remove('active-page');
-            if (link.getAttribute('href') && link.getAttribute('href').includes(hash + '.php')) {
-                link.classList.add('active-page');
-            }
-        });
+    // 2. Handle Browser Back/Forward Buttons
+    window.addEventListener("popstate", () => {
+        loadPage(window.location.href, null);
     });
+
+    // 3. The Content Swapping Logic
+    async function loadPage(url, clickedLink) {
+        const container = document.getElementById("main-content");
+        if (!container) {
+            window.location.href = url; 
+            return;
+        }
+
+        // Start fade-out
+        container.classList.add("fade-out");
+
+        // Highlight the clicked button immediately
+        document.querySelectorAll(".nav-link").forEach(nav => nav.classList.remove("active-page"));
+        if (clickedLink) {
+            clickedLink.classList.add("active-page");
+        } else {
+            // Highlight correct link if back button was used
+            const activeNav = document.querySelector(`.nav-link[href="${window.location.pathname.split('/').pop()}"]`);
+            if(activeNav) activeNav.classList.add("active-page");
+        }
+
+        try {
+            const response = await fetch(url);
+            const html = await response.text();
+
+            // Parse the new HTML
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+            const newContent = doc.getElementById("main-content");
+
+            if (newContent) {
+                setTimeout(() => {
+                    // Swap the content
+                    container.innerHTML = newContent.innerHTML;
+                    document.title = doc.title;
+
+                    // Trigger the custom event so your other JS files wake up!
+                    document.dispatchEvent(new Event('PageContentUpdated'));
+
+                    // Fade it back in
+                    container.classList.remove("fade-out");
+                    container.classList.add("fade-in");
+                    setTimeout(() => container.classList.remove("fade-in"), 300);
+                }, 300); 
+            } else {
+                window.location.href = url;
+            }
+        } catch (error) {
+            console.error("AJAX Load Error:", error);
+            window.location.href = url;
+        }
+    }
 });
-

@@ -197,3 +197,43 @@ html, body { margin: 0 !important; padding: 0 !important; width: 100%; }
     .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(7px, -7px); }
 }
 
+/* --- Navigation Highlight Animation --- */
+.site-nav-links .nav-link {
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.site-nav-links .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: #c5a059; /* Your gold theme */
+    transition: width 0.3s ease;
+}
+
+.site-nav-links .nav-link.active-page::after {
+    width: 100%;
+}
+
+/* --- Container Page Transitions --- */
+#main-content {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-out {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.fade-in {
+    animation: fadeInAnimation 0.3s forwards;
+}
+
+@keyframes fadeInAnimation {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
