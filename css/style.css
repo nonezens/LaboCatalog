@@ -197,6 +197,10 @@ html, body { margin: 0 !important; padding: 0 !important; width: 100%; }
     .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(7px, -7px); }
 }
 
+/* ========================================
+   SPA NAVIGATION & TRANSITIONS
+   ======================================== */
+
 /* --- Navigation Highlight Animation --- */
 .site-nav-links .nav-link {
     position: relative;
@@ -211,7 +215,7 @@ html, body { margin: 0 !important; padding: 0 !important; width: 100%; }
     transform: translateX(-50%);
     width: 0;
     height: 2px;
-    background: #c5a059; /* Your gold theme */
+    background: #c5a059; /* Gold theme */
     transition: width 0.3s ease;
 }
 

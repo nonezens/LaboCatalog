@@ -1,16 +1,33 @@
 /* ========================================
-   HEADER JS - SPA Navigation
+   HEADER JS - SPA Navigation & Routing
    ======================================== */
 document.addEventListener("DOMContentLoaded", () => {
+    const hamburger = document.getElementById("hamburger-menu");
+    const navLinks = document.getElementById("nav-links");
+
+    // Hamburger menu toggle
+    if (hamburger) {
+        hamburger.addEventListener("click", function() {
+            navLinks.classList.toggle("active");
+            hamburger.classList.toggle("open");
+        });
+    }
+
     // 1. Intercept Navigation Clicks
     document.body.addEventListener("click", async (e) => {
         const link = e.target.closest("a.nav-link");
         
-        // Ignore if it's not a nav link or opens in a new tab
-        if (!link || link.target === "_blank") return;
+        // Ignore if it's not a nav link, opens in a new tab, or is an external link
+        if (!link || link.target === "_blank" || link.getAttribute('href').startsWith('http')) return;
         
         e.preventDefault();
         const url = link.href;
+
+        // Close mobile menu on click
+        if (navLinks.classList.contains("active")) {
+            navLinks.classList.remove("active");
+            hamburger.classList.remove("open");
+        }
 
         // Update URL bar
         window.history.pushState({ path: url }, "", url);
@@ -28,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function loadPage(url, clickedLink) {
         const container = document.getElementById("main-content");
         if (!container) {
-            window.location.href = url; 
+            window.location.href = url; // Fallback hard redirect
             return;
         }
 
@@ -41,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
             clickedLink.classList.add("active-page");
         } else {
             // Highlight correct link if back button was used
-            const activeNav = document.querySelector(`.nav-link[href="${window.location.pathname.split('/').pop()}"]`);
+            const activeNav = document.querySelector(`.nav-link[href*="${window.location.pathname.split('/').pop()}"]`);
             if(activeNav) activeNav.classList.add("active-page");
         }
 
@@ -60,13 +77,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     container.innerHTML = newContent.innerHTML;
                     document.title = doc.title;
 
-                    // Trigger the custom event so your other JS files wake up!
+                    // WAKE UP OTHER SCRIPTS! Trigger custom event
                     document.dispatchEvent(new Event('PageContentUpdated'));
 
                     // Fade it back in
                     container.classList.remove("fade-out");
                     container.classList.add("fade-in");
                     setTimeout(() => container.classList.remove("fade-in"), 300);
+                    
+                    // Scroll to top smoothly
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 }, 300); 
             } else {
                 window.location.href = url;
