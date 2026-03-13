@@ -1,76 +1,96 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) { session_start(); }
+session_start();
+include 'db.php';
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit(); }
 
-include 'db.php'; 
-include 'header.php';
+if (!isset($_GET['id'])) {
+    header("Location: manage_departments.php");
+    exit();
+}
+
+$id = $_GET['id'];
+$msg = "";
 
 // Fetch the existing category data
-if (!isset($_GET['id'])) { header("Location: admin_dashboard.php"); exit(); }
-$id = $_GET['id'];
-
 $stmt = $conn->prepare("SELECT * FROM categories WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
-$category = $stmt->get_result()->fetch_assoc();
+$result = $stmt->get_result();
+$category = $result->fetch_assoc();
 
-// Handle the update form submission
-if(isset($_POST['update_cat'])) {
-    $name = $_POST['cat_name'];
+if (!$category) {
+    header("Location: manage_departments.php");
+    exit();
+}
+
+// --- HANDLE UPDATE ---
+if (isset($_POST['update_category'])) {
+    $name = $_POST['name'];
+    $image_path = $category['image_path']; // Keep old image by default
     
-    // Check if a new image was uploaded
-    if (!empty($_FILES['cat_image']['name'])) {
-        $imgName = $_FILES['cat_image']['name'];
-        move_uploaded_file($_FILES['cat_image']['tmp_name'], "uploads/" . $imgName);
-        
-        // Update name AND image
-        $update_stmt = $conn->prepare("UPDATE categories SET name=?, image_path=? WHERE id=?");
-        $update_stmt->bind_param("ssi", $name, $imgName, $id);
-    } else {
-        // Update ONLY the name
-        $update_stmt = $conn->prepare("UPDATE categories SET name=? WHERE id=?");
-        $update_stmt->bind_param("si", $name, $id);
+    // If a new image was uploaded, process it
+    if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+        $target_dir = "uploads/";
+        if (!is_dir($target_dir)) { mkdir($target_dir, 0777, true); }
+        $image_path = time() . "_" . basename($_FILES["image"]["name"]);
+        move_uploaded_file($_FILES["image"]["tmp_name"], $target_dir . $image_path);
     }
     
-    if($update_stmt->execute()) {
-        header("Location: admin_dashboard.php"); 
-        exit();
+    $update_stmt = $conn->prepare("UPDATE categories SET name = ?, image_path = ? WHERE id = ?");
+    if ($update_stmt) {
+        $update_stmt->bind_param("ssi", $name, $image_path, $id);
+        if ($update_stmt->execute()) {
+            header("Location: manage_departments.php?success=1");
+            exit();
+        } else {
+            $msg = "<div style='color: red; padding: 10px; border: 1px solid #e74c3c; border-radius: 4px; margin-bottom: 15px;'>Error: " . $conn->error . "</div>";
+        }
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Category | Admin</title>
-    <style>
-        body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; margin: 0; }
-        .admin-card { max-width: 500px; margin: 60px auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-        .admin-card h2 { text-align: center; color: #2c3e50; margin-top: 0; margin-bottom: 30px; }
-        .form-control { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        .btn-submit { width: 100%; padding: 14px; background: #f39c12; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-submit:hover { background: #d68910; }
-    </style>
+    <title>Edit Department | Admin</title>
 </head>
-<body>
+<body style="margin: 0; background: #f4f7f6;">
 
-<div class="admin-card">
-    <h2>Edit Department</h2>
-    
-    <form method="POST" enctype="multipart/form-data">
-        <label style="font-weight: bold; color: #555;">Department Name</label>
-        <input type="text" name="cat_name" class="form-control" value="<?php echo htmlspecialchars($category['name']); ?>" required>
+    <?php include 'header.php'; ?>
+    <?php include 'admin_sidebar.php'; ?>
 
-        <label style="font-weight: bold; color: #555;">New Cover Image (Leave blank to keep current)</label>
-        <input type="file" name="cat_image" class="form-control" accept="image/*">
+    <h2 class="table-title">✏️ Edit Department</h2>
+    <?php echo $msg; ?>
 
-        <button type="submit" name="update_cat" class="btn-submit">Update Category</button>
-        <div style="text-align: center; margin-top: 15px;">
-            <a href="admin_dashboard.php" style="color: #7f8c8d; text-decoration: none;">Cancel</a>
-        </div>
-    </form>
+    <div class="card" style="max-width: 600px;">
+        <form method="POST" enctype="multipart/form-data">
+            
+            <?php if(!empty($category['image_path'])): ?>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; color: #2c3e50; font-weight: bold; margin-bottom: 5px;">Current Image:</label>
+                    <img src="uploads/<?php echo htmlspecialchars($category['image_path']); ?>" style="max-width: 200px; border-radius: 8px; border: 1px solid #ddd;">
+                </div>
+            <?php endif; ?>
+
+            <div class="form-group">
+                <label>Department Name</label>
+                <input type="text" name="name" class="form-control" value="<?php echo htmlspecialchars($category['name']); ?>" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Upload New Image (Leave blank to keep current image)</label>
+                <input type="file" name="image" class="form-control" accept="image/*">
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" name="update_category" class="btn-submit bg-category">Update Department</button>
+                <a href="manage_departments.php" class="action-btn" style="background: #95a5a6; padding: 10px 20px; font-weight: bold; line-height: 18px;">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    </main>
 </div>
 
 </body>

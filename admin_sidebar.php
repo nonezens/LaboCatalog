@@ -1,3 +1,11 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+// Automatically detect which page the admin is currently on
+$current_page = basename($_SERVER['PHP_SELF']);
+?>
+
 <style>
     /* Admin Shared Layout & Styling */
     .admin-layout { display: flex; min-height: calc(100vh - 70px); font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
@@ -7,11 +15,19 @@
     .sidebar h3 { color: #c5a059; margin-top: 0; margin-bottom: 20px; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; }
     .sidebar-menu { list-style: none; padding: 0; margin: 0; }
     .sidebar-menu li { margin-bottom: 10px; }
-    .sidebar-menu a { color: #ecf0f1; text-decoration: none; display: block; padding: 12px 15px; border-radius: 6px; transition: 0.3s; font-weight: bold; }
-    .sidebar-menu a:hover { background: #34495e; color: #c5a059; padding-left: 20px; }
+    .sidebar-menu a { color: #ecf0f1; text-decoration: none; display: block; padding: 12px 15px; border-radius: 6px; transition: 0.3s; font-weight: bold; border-left: 4px solid transparent; }
+    .sidebar-menu a:hover { background: #34495e; color: #c5a059; padding-left: 20px; border-left-color: #c5a059; }
+    
+    /* --- ACTIVE SIDEBAR LINK STYLE --- */
+    .sidebar-menu a.active-sidebar {
+        background: #c5a059;
+        color: white;
+        padding-left: 20px;
+        border-left: 4px solid #fff;
+    }
     
     /* Right Content Area */
-    .main-content { flex-grow: 1; padding: 40px; box-sizing: border-box; max-width: calc(100% - 250px); }
+    .main-content { flex-grow: 1; padding: 40px; box-sizing: border-box; max-width: calc(100% - 250px); background: #f4f7f6; }
     
     /* Headers & Stats */
     .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
@@ -29,59 +45,39 @@
     .action-btn:hover { opacity: 0.8; }
     .btn-edit { background: #f39c12; }
     .btn-delete { background: #e74c3c; }
-    .btn-approve { background: #2ecc71; margin-bottom: 5px; display: block; }
-    .btn-reject { background: #e74c3c; display: block; }
     
-    /* Tables (Made scrollable for mobile!) */
+    /* Forms inside cards */
+    .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 30px; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; color: #2c3e50; font-weight: bold; }
+    .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-family: inherit;}
+    .btn-submit { background: #2c3e50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+    /* Tables */
     .table-title { color: #2c3e50; margin-top: 0; margin-bottom: 15px; border-bottom: 2px solid #c5a059; display: inline-block; padding-bottom: 5px; font-size: 1.5rem; }
     .table-container { background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 50px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    table { width: 100%; border-collapse: collapse; min-width: 700px; /* Forces table to stay wide so user can swipe left/right */ }
+    table { width: 100%; border-collapse: collapse; min-width: 700px; }
     th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; vertical-align: middle; }
     th { background: #2c3e50; color: white; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; }
     tr:hover { background: #f9f9f9; }
-    
-    /* Badges */
-    .badge { padding: 4px 10px; border-radius: 12px; font-weight: bold; font-size: 0.8rem; color: white; display: inline-block; }
-    .badge-pending { background: #f1c40f; color: #333; }
-    .badge-approved { background: #2ecc71; }
-    .badge-rejected { background: #e74c3c; }
 
     /* --- RESPONSIVE ADMIN DASHBOARD --- */
     @media (max-width: 992px) {
-        /* On tablets/laptops, stack the top header stats and buttons */
         .dashboard-header { flex-direction: column; align-items: flex-start; gap: 20px; }
     }
-
     @media (max-width: 768px) {
-        /* On cellphones, move the sidebar to the top! */
         .admin-layout { flex-direction: column; }
-        .sidebar { 
-            width: 100%; 
-            height: auto; 
-            position: static; 
-            padding: 20px; 
-        }
-        .sidebar-menu { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 10px; 
-        }
-        .sidebar-menu li { 
-            margin-bottom: 0; 
-            flex: 1 1 45%; /* Makes buttons sit 2-per-row */
-        }
-        .sidebar-menu a {
-            text-align: center;
-            background: #34495e;
-        }
-        .main-content { 
-            max-width: 100%; 
-            padding: 20px; 
-        }
+        .sidebar { width: 100%; height: auto; position: static; padding: 20px; }
+        .sidebar-menu { display: flex; flex-wrap: wrap; gap: 10px; }
+        .sidebar-menu li { margin-bottom: 0; flex: 1 1 45%; }
+        .sidebar-menu a { text-align: center; background: #34495e; }
+        
+        /* Mobile Active state adjustment */
+        .sidebar-menu a.active-sidebar { border-left: none; border-bottom: 4px solid #fff; }
+        
+        .main-content { max-width: 100%; padding: 20px; }
     }
-
     @media (max-width: 480px) {
-        /* On very small phones, stack the sidebar menu 1-per-row */
         .sidebar-menu li { flex: 1 1 100%; }
         .action-buttons { width: 100%; }
         .btn-add { width: 100%; box-sizing: border-box; }
@@ -89,23 +85,18 @@
 </style>
 
 <div class="admin-layout">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <aside class="sidebar">
         <h3>Admin Menu</h3>
-       <ul class="sidebar-menu">
-            <li><a href="admin_dashboard.php">📊 Overview</a></li>
-            <li><a href="manage_visitors.php">👥 Visitor Log</a></li>
-            <li><a href="manage_artifacts.php">🖼️ Manage Artifacts</a></li>
-            <li><a href="manage_departments.php">📁 Manage Departments</a></li>
-            <li><a href="manage_news.php">📰 Manage News</a></li> <li style="margin-top: 15px;">
-                <a href="add_exhibit.php" style="color: #2ecc71; border: 1px solid #2ecc71;">➕ Add Artifact</a>
-            </li>
-            <li>
-                <a href="add_category.php" style="color: #3498db; border: 1px solid #3498db;">➕ Add Department</a>
-            </li>
-            <li>
-                <a href="add_news.php" style="color: #e67e22; border: 1px solid #e67e22;">➕ Add News/Event</a> 
-            </li>
+        <ul class="sidebar-menu">
+            <li><a href="admin_dashboard.php" class="<?php echo ($current_page == 'admin_dashboard.php') ? 'active-sidebar' : ''; ?>">📊 Overview</a></li>
+            
+            <li><a href="manage_visitors.php" class="<?php echo ($current_page == 'manage_visitors.php') ? 'active-sidebar' : ''; ?>">👥 Visitor Log</a></li>
+            
+            <li><a href="manage_exhibits.php" class="<?php echo ($current_page == 'manage_exhibits.php' || $current_page == 'edit_exhibit.php') ? 'active-sidebar' : ''; ?>">🖼️ Manage Artifacts</a></li>
+            
+            <li><a href="manage_departments.php" class="<?php echo ($current_page == 'manage_departments.php' || $current_page == 'edit_category.php') ? 'active-sidebar' : ''; ?>">📁 Manage Departments</a></li>
+            
+            <li><a href="manage_news.php" class="<?php echo ($current_page == 'manage_news.php' || $current_page == 'edit_news.php') ? 'active-sidebar' : ''; ?>">📰 Manage News</a></li>
         </ul>
     </aside>
 

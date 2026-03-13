@@ -2,7 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit(); }
 
-include 'db.php'; include 'header.php';
+include 'db.php'; include 'header.php'; include 'admin_sidebar.php';
 
 // Fetch existing data
 if (!isset($_GET['id'])) { header("Location: admin_dashboard.php"); exit(); }

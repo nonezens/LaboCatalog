@@ -2,6 +2,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+// Automatically detect which page the user is currently on
+$current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
 <style>
@@ -26,7 +28,7 @@ if (session_status() === PHP_SESSION_NONE) {
         align-items: center; 
         max-width: 1200px; 
         margin: 0 auto; 
-        flex-wrap: wrap; /* Allows the menu to drop down to the next row on mobile */
+        flex-wrap: wrap; 
     }
     
     .site-logo a { color: white; text-decoration: none; font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; gap: 10px; }
@@ -48,18 +50,36 @@ if (session_status() === PHP_SESSION_NONE) {
     }
 
     .site-nav-links { list-style: none; display: flex; gap: 20px; margin: 0; padding: 0; align-items: center; }
-    .site-nav-links li a { color: white; text-decoration: none; font-size: 1rem; transition: color 0.3s; }
-    .site-nav-links li a:hover { color: #c5a059; }
+    
+    /* Navigation Links Base Style */
+    .site-nav-links li a { 
+        color: white; 
+        text-decoration: none; 
+        font-size: 1rem; 
+        transition: all 0.3s; 
+        padding-bottom: 4px;
+        border-bottom: 2px solid transparent; /* Invisible border prevents jumping */
+    }
+    
+    .site-nav-links li a:hover { 
+        color: #c5a059; 
+    }
+    
+    /* --- ACTIVE PAGE INDICATOR STYLE --- */
+    .site-nav-links li a.active-page {
+        color: #c5a059;
+        font-weight: bold;
+        border-bottom: 2px solid #c5a059; /* Adds the gold underline */
+    }
+
     .admin-link { border-left: 1px solid #7f8c8d; padding-left: 20px; }
 
     /* --- RESPONSIVE MOBILE VIEW --- */
     @media (max-width: 768px) {
         .site-header { padding: 1rem; }
         
-        /* Show the hamburger icon */
         .hamburger { display: flex; }
 
-        /* Hide the navigation links by default on mobile */
         .site-nav-links { 
             display: none; 
             width: 100%; 
@@ -69,14 +89,12 @@ if (session_status() === PHP_SESSION_NONE) {
             gap: 15px;
         }
 
-        /* This class is added by JavaScript when the hamburger is tapped */
         .site-nav-links.active {
             display: flex;
         }
 
-        .admin-link { border-left: none; padding-left: 0; }
+        .admin-link { border-left: none; padding-left: 0; border-top: 1px solid #7f8c8d; padding-top: 15px; margin-top: 5px; width: 100%;}
 
-        /* Fancy Animation: Turn the Hamburger into an "X" when open */
         .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
         .hamburger.open span:nth-child(2) { opacity: 0; }
         .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(7px, -7px); }
@@ -99,11 +117,11 @@ if (session_status() === PHP_SESSION_NONE) {
         </div>
         
         <ul class="site-nav-links" id="nav-links">
-            <li><a href="index.php">Home</a></li>
-            <li><a href="about.php">About</a></li>
-            <li><a href="news.php">News & Events</a></li>
-            <li><a href="categories.php">Departments</a></li>
-            <li><a href="exhibits.php">All Artifacts</a></li>
+            <li><a href="index.php" class="<?php echo ($current_page == 'index.php') ? 'active-page' : ''; ?>">Home</a></li>
+            <li><a href="about.php" class="<?php echo ($current_page == 'about.php') ? 'active-page' : ''; ?>">About</a></li>
+            <li><a href="news.php" class="<?php echo ($current_page == 'news.php') ? 'active-page' : ''; ?>">News & Events</a></li>
+            <li><a href="categories.php" class="<?php echo ($current_page == 'categories.php') ? 'active-page' : ''; ?>">Departments</a></li>
+            <li><a href="exhibits.php" class="<?php echo ($current_page == 'exhibits.php') ? 'active-page' : ''; ?>">All Artifacts</a></li>
             
             <?php if(isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true): ?>
                 <li class="admin-link"><a href="admin_dashboard.php" style="color: #3498db; font-weight: bold;">⚙️ Dashboard</a></li>

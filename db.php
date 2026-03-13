@@ -1,7 +1,12 @@
 <?php
-$conn = mysqli_connect("localhost", "root", "", "museum_db");
+$servername = "localhost";
+$username = "root";       // Change this from "root"
+$password = "";    // Change this from "" (blank)
+$dbname = "museum_db";
 
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 ?>

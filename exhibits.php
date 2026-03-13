@@ -51,21 +51,23 @@ if ($is_logged_in) {
 
         /* Gallery Styles */
         .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
-        .card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.3s, opacity 0.3s; border: 1px solid #eee; display: flex; flex-direction: column; }
+        
+        /* The Card is now a Link - Text-decoration removed so it looks clean */
+        .card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.3s, opacity 0.3s; border: 1px solid #eee; display: flex; flex-direction: column; text-decoration: none; color: inherit; cursor: pointer; }
         .card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
         .card img { width: 100%; height: 220px; object-fit: cover; }
         .card-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
-        .card-title { margin: 0 0 10px 0; color: #2c3e50; font-size: 1.4rem; }
+        .card-title { margin: 0 0 10px 0; color: #2c3e50; font-size: 1.4rem; transition: color 0.3s; }
+        .card:hover .card-title { color: #c5a059; } /* Title turns gold when you hover the card! */
         .card-meta { font-size: 0.9rem; color: #7f8c8d; margin-bottom: 15px; }
-        .card-desc { font-size: 0.95rem; color: #555; line-height: 1.5; margin-bottom: 20px; flex-grow: 1; }
-        .btn-view { display: block; text-align: center; padding: 10px; background: #c5a059; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; transition: 0.3s; }
-        .btn-view:hover { background: #b48a3d; }
+        .card-desc { font-size: 0.95rem; color: #555; line-height: 1.5; margin-bottom: 0; flex-grow: 1; }
         
         #noResultsMessage { grid-column: 1 / -1; text-align: center; font-size: 1.2rem; color: #7f8c8d; padding: 40px; display: none; }
+        
         /* --- RESPONSIVE CATALOG & SEARCH --- */
         @media (max-width: 768px) {
             .search-container { 
-                flex-direction: column; /* Stack search bar and buttons on phones */
+                flex-direction: column; 
                 gap: 15px; 
             }
             .btn-search, .btn-clear { 
@@ -74,10 +76,10 @@ if ($is_logged_in) {
                 box-sizing: border-box;
             }
             .page-title { 
-                font-size: 2rem; /* Smaller title for mobile */
+                font-size: 2rem; 
             }
             .gallery-grid, .cat-grid {
-                grid-template-columns: 1fr; /* Force 1 column on very small phones */
+                grid-template-columns: 1fr; 
             }
         }
     </style>
@@ -123,7 +125,7 @@ if ($is_logged_in) {
                     <?php while($row = $result->fetch_assoc()): 
                         $searchable_text = strtolower($row['title'] . " " . $row['artifact_year'] . " " . $row['origin'] . " " . $row['donated_by'] . " " . $row['description']);
                     ?>
-                        <div class="card" data-search="<?php echo htmlspecialchars($searchable_text); ?>">
+                        <a href="exhibit_detail.php?id=<?php echo $row['id']; ?>" class="card" data-search="<?php echo htmlspecialchars($searchable_text); ?>">
                             <img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
                             <div class="card-body">
                                 <h3 class="card-title"><?php echo htmlspecialchars($row['title']); ?></h3>
@@ -132,9 +134,8 @@ if ($is_logged_in) {
                                     <strong>Origin:</strong> <?php echo $row['origin'] ? htmlspecialchars($row['origin']) : 'Unknown'; ?>
                                 </div>
                                 <p class="card-desc"><?php echo htmlspecialchars(substr($row['description'], 0, 100)); ?>...</p>
-                                <a href="exhibit_detail.php?id=<?php echo $row['id']; ?>" class="btn-view">View Full Details</a>
                             </div>
-                        </div>
+                        </a>
                     <?php endwhile; ?>
                 <?php else: ?>
                     <p style="grid-column: 1 / -1; text-align: center; font-size: 1.2rem; color: #7f8c8d; padding: 40px;">No artifacts found in the database.</p>
