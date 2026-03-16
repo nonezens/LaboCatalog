@@ -109,6 +109,7 @@ tr:hover { background: #f9f9f9; }
    HEADER STYLES (from header.php)
    ======================================== */
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 html, body { margin: 0 !important; padding: 0 !important; width: 100%; }
 =======
 html, body { margin: 0 !important; padding: 0 !important; width: 100%; padding-top: 90px !important; /* Increased for fixed header clearance */ }
@@ -137,6 +138,17 @@ html, body { margin: 0 !important; padding: 0 !important; width: 100%; padding-t
 
 .site-header { 
     background: #2c3e50; 
+=======
+
+.home-page .site-header {
+    background: #2c3e50 !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
+}
+html, body { margin: 0 !important; padding: 0 !important; width: 100%; /* Account for fixed header */ }
+
+.site-header {
+    background: transparent; /* Make it transparent by default */
+>>>>>>> Stashed changes
     color: white; 
     padding: 1rem 2rem; 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -145,7 +157,17 @@ html, body { margin: 0 !important; padding: 0 !important; width: 100%; padding-t
     position: sticky;
     top: 0;
     z-index: 9999;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+    transition: background-color 0.3s ease, top 0.3s ease; /* Add transition */
+    box-shadow: none; /* Remove shadow by default */
+}
+
+.site-header.scrolled {
+    background: #2c3e50;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.site-header.hidden {
+    top: -100px; /* Hide the header */
 }
 
 .site-nav { 

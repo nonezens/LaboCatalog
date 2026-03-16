@@ -98,6 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }, observerOptions);
     
+<<<<<<< Updated upstream
     if (aboutTitle) observer.observe(aboutTitle);
     if (aboutText) observer.observe(aboutText);
     if (recentTitle) observer.observe(recentTitle);
@@ -113,5 +114,73 @@ document.addEventListener('DOMContentLoaded', function() {
     }, { threshold: 0.1 });
     
     cards.forEach(card => cardObserver.observe(card));
+=======
+    animatedElements.forEach(el => observer.observe(el));
+
+    // ========================================
+    // NEWS CAROUSEL (SIMPLE)
+    // ========================================
+    const newsContainer = document.querySelector('.news-carousel-container');
+    if (newsContainer) {
+        const newsCards = newsContainer.querySelectorAll('.news-card');
+        const nextBtn = document.getElementById('news-next');
+        const prevBtn = document.getElementById('news-prev');
+        let currentNewsIndex = 0;
+
+        function showNewsCard(index) {
+            newsCards.forEach((card, i) => {
+                card.classList.toggle('active', i === index);
+            });
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                currentNewsIndex = (currentNewsIndex + 1) % newsCards.length;
+                showNewsCard(currentNewsIndex);
+            });
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                currentNewsIndex = (currentNewsIndex - 1 + newsCards.length) % newsCards.length;
+                showNewsCard(currentNewsIndex);
+            });
+        }
+
+        // Initially show the first card if it exists
+        if(newsCards.length > 0) {
+            showNewsCard(currentNewsIndex);
+        }
+
+        // ========================================
+        // LATEST ACQUISITIONS CARD HOVER EFFECTS
+        // Single card active on hover, all active on leave
+        // ========================================
+        // Check if we're on home/latest acquisitions section
+        if (document.querySelector('.gallery-grid')) {
+            const cards = document.querySelectorAll(".card");
+
+            // Add "is-active" class to all cards initially
+            cards.forEach(card => card.classList.add("is-active"));
+
+            // Use event delegation for better performance
+            document.addEventListener("mouseenter", event => {
+                const card = event.target.closest(".card");
+                if (card) {
+                    cards.forEach(c => c.classList.remove("is-active"));
+                    card.classList.add("is-active");
+                }
+            }, true);
+
+            document.addEventListener("mouseleave", event => {
+                const card = event.target.closest(".card");
+                if (card) {
+                    cards.forEach(c => c.classList.add("is-active"));
+                }
+            }, true);
+        }
+    }
+
+>>>>>>> Stashed changes
 });
 

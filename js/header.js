@@ -72,5 +72,26 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     });
+
+    // Header scroll effect
+    const header = document.querySelector('.site-header');
+    if (header) {
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+
+            if (scrollTop > lastScrollTop && scrollTop > 200) { // Scrolling Down
+                header.classList.add('hidden');
+            } else { // Scrolling Up
+                header.classList.remove('hidden');
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+        });
+    }
 });
 

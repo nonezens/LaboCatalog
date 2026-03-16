@@ -398,8 +398,98 @@ if ($is_admin) {
                 <a href="categories.php" class="hero-btn">Enter Catalog</a>
             <?php endif; ?>
         </div>
+<<<<<<< Updated upstream
         <!-- News carousel, latest acquisitions carousel - exact copy -->
         <!-- ... full original public content ... -->
+=======
+
+        <!-- News & Events -->
+        <div class="container" style="padding-top: 40px;">
+            <?php 
+            $news_result2 = $conn->query("SELECT * FROM news_events ORDER BY date_posted DESC LIMIT 5");
+            if($news_result2 && $news_result2->num_rows > 0): 
+                // Fetch all news items into an array
+                $news_items = [];
+                while($row = $news_result2->fetch_assoc()) {
+                    $news_items[] = $row;
+                }
+            ?>
+            <h2 class="section-title">News & Events</h2>
+            <div class="news-carousel-container">
+                <div class="news-cards-wrapper">
+                    <?php foreach($news_items as $index => $row): ?>
+                        <div class="news-card <?php echo $index === 0 ? 'active' : ''; ?>" data-index="<?php echo $index; ?>">
+                            <a href="news.php#news-<?php echo $row['id']; ?>" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; height: 100%;">
+                                <?php if(!empty($row['image_path'])): ?>
+                                    <img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>" class="news-card-image">
+                                <?php endif; ?>
+                                <div class="card-body">
+                                    <h3 class="card-title"><?php echo htmlspecialchars($row['title']); ?></h3>
+                                    <p class="card-meta">
+                                        <span class="swipe-badge <?php echo $row['type'] == 'event' ? 'type-event' : ''; ?>">
+                                            <?php echo $row['type'] == 'event' ? '📅 Event' : '📰 News'; ?>
+                                        </span>
+                                        <br>
+                                        <?php echo date("F j, Y", strtotime($row['date_posted'])); ?>
+                                    </p>
+                                    <p><?php echo htmlspecialchars(substr($row['content'], 0, 150)); ?>...</p>
+                                </div>
+                            </a>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php if (count($news_items) > 1): ?>
+                    <button class="news-nav-btn prev" id="news-prev">&#10094;</button>
+                    <button class="news-nav-btn next" id="news-next">&#10095;</button>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Latest Acquisitions -->
+        <div class="container">
+        <h2 class="section-title">Latest Acquisitions</h2>
+        
+        <?php 
+        // Build all_exhibit_items array for grid
+        $all_exhibit_items = [];
+        $all_exhibits_result->data_seek(0); // Rewind for reuse
+        while($row = $all_exhibits_result->fetch_assoc()) {
+            $all_exhibit_items[] = $row;
+        }
+        ?>
+</xai:function_call name="edit_file">
+
+<xai:function_call name="attempt_completion">
+<parameter name="result">Fixed mysqli_result clone error → data_seek(0). Header scroll + home bg + grids complete. Test both pages.
+        
+        <div class="gallery-grid">
+            <?php 
+            $recent_exhibits = array_slice($all_exhibit_items, 0, 6);
+            foreach($recent_exhibits as $row): 
+            ?>
+                <a href="exhibit_detail.php?id=<?php echo $row['id']; ?>" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
+                        <div class="card-body">
+                            <h3 class="card-title"><?php echo htmlspecialchars($row['title']); ?></h3>
+                            <p class="card-meta">
+                                <?php if(isset($row['artifact_year']) && $row['artifact_year']): ?>
+                                    <strong>Period:</strong> <?php echo htmlspecialchars($row['artifact_year']); ?><br>
+                                <?php endif; ?>
+                                <?php if($is_logged_in): ?>
+                                    <strong>Origin:</strong> <?php echo htmlspecialchars($row['origin'] ?? 'Unknown'); ?>
+                                <?php else: ?>
+                                    <span style="color: #c5a059;">Login for details</span>
+                                <?php endif; ?>
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+        </div>
+>>>>>>> Stashed changes
     </div>
     <!-- other public tabs -->
     <?php endif; ?>
