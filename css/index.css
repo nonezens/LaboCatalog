@@ -149,7 +149,7 @@ body {
 .visitor-info li strong { color: #2c3e50; }
 
 /* Latest Acquisitions Grid */
-.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-top: 20px; }
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 30px; margin-top: 20px; }
 .card-link { text-decoration: none; color: inherit; display: flex; }
 .card { 
     background: white; 
@@ -175,7 +175,7 @@ body {
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
     border-color: #c5a059;
 }
-.card img { width: 100%; height: 220px; object-fit: cover; transition: transform 0.4s ease; }
+.card img { width: 100%; height: 180px; object-fit: cover; transition: transform 0.4s ease; }
 .card-link:hover .card img { transform: scale(1.1); }
 .card-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
 .card-title { margin: 0 0 10px 0; color: #2c3e50; font-size: 1.3rem; transition: color 0.3s; }
@@ -196,5 +196,496 @@ body {
     .hero p { font-size: 1rem; }
     .section-title { font-size: 1.8rem; }
     .visitor-info ul { flex-direction: column; }
+<<<<<<< Updated upstream
+=======
+    
+    /* Carousel responsive */
+    .carousel-container { padding: 0 10px; }
+    .carousel-card { min-width: 200px; padding: 15px; }
+    .news-card-title { font-size: 1rem; }
 }
 
+/* ========================================
+   LATEST ACQUISITIONS - Simple Grid Layout
+   ======================================== */
+.acquisitions-carousel-wrapper {
+    position: relative;
+    max-width: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.acquisitions-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.acquisitions-card-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.acquisitions-card-wrapper .card-link {
+    width: 100%;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.acquisitions-card-wrapper .card {
+    width: 100%;
+    opacity: 1;
+    transform: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.acquisitions-card-wrapper.carousel__slider__item--active .card {
+    opacity: 1;
+    transform: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.acquisitions-card-wrapper:not(.carousel__slider__item--active) .card {
+    transform: none;
+}
+
+/* Navigation buttons for acquisitions carousel */
+.acquisitions-carousel-wrapper .carousel-btn {
+    display: none;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .acquisitions-cards-container {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .acquisitions-cards-container {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+    }
+}
+
+/* ========================================
+   NEWS SWIPE CARD STACK (Tinder-style)
+   ======================================== */
+:root {
+    --swipe-perspective: 1000px;
+    --swipe-card-z-offset: 15px;
+    --swipe-card-y-offset: 8px;
+    --swipe-max-z-index: 100;
+    --swipe-swap-duration: 0.4s;
+    --swipe-x: 0px;
+    --swipe-rotate: 0deg;
+}
+
+.news-swipe-section {
+    background: transparent;
+    padding: 60px 20px;
+    margin-top: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.news-swipe-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 80%, rgba(197, 160, 89, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(52, 152, 219, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.news-swipe-section .section-title {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.news-swipe-section .section-title::after {
+    background: #c5a059;
+}
+
+.swipe-hint {
+    text-align: center;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Swipe Navigation Buttons */
+.swipe-nav-buttons {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    z-index: 20;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+    pointer-events: none;
+}
+
+.swipe-nav-btn {
+    pointer-events: auto;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(197, 160, 89, 0.9);
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.swipe-nav-btn:hover {
+    background: #c5a059;
+    transform: scale(1.1);
+}
+
+.swipe-nav-btn:active {
+    transform: scale(0.95);
+}
+
+/* Card Stack Container */
+.card-stack {
+    width: 100%;
+    max-width: 900px;
+    height: 350px;
+    margin: 0 auto;
+    position: relative;
+    display: grid;
+    place-content: center;
+    perspective: var(--swipe-perspective);
+    z-index: 1;
+}
+
+/* Swipe Card Link */
+.swipe-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Individual Swipe Card */
+.swipe-card {
+    cursor: grab;
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+    display: flex;
+    position: absolute;
+    width: calc(100% - 40px);
+    height: calc(100% - 40px);
+    max-width: 850px;
+    max-height: 310px;
+    border-radius: 16px;
+    overflow: hidden;
+    z-index: calc(var(--swipe-max-z-index) - var(--i, 0));
+    transform: perspective(var(--swipe-perspective))
+        translateZ(calc(-1 * var(--swipe-card-z-offset) * var(--i, 0)))
+        translateY(calc(var(--swipe-card-y-offset) * var(--i, 0)))
+        translateX(var(--swipe-x, 0px)) 
+        rotateY(var(--swipe-rotate, 0deg));
+    transition: transform var(--swipe-swap-duration) ease, box-shadow var(--swipe-swap-duration) ease;
+    will-change: transform;
+    backface-visibility: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15),
+                0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.swipe-card:active {
+    cursor: grabbing;
+}
+
+/* Card Image Section */
+.swipe-card-image {
+    flex: 0 0 45%;
+    position: relative;
+    overflow: hidden;
+}
+
+.swipe-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.swipe-card:hover .swipe-card-image img {
+    transform: scale(1.05);
+}
+
+/* Card Content Section */
+.swipe-card-content {
+    flex: 1;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: linear-gradient(135deg, #ffffff 0%, #f5f6fa 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.swipe-card-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, #c5a059, #b48a3d);
+}
+
+/* Badge */
+.swipe-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    border-radius: 20px;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    align-self: flex-start;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+}
+
+.swipe-badge.type-event {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    box-shadow: 0 2px 8px rgba(155, 89, 182, 0.3);
+}
+
+/* Title */
+.swipe-card-title {
+    font-size: 1.4rem;
+    margin: 0 0 8px 0;
+    color: #1a252f;
+    line-height: 1.3;
+    font-weight: 700;
+}
+
+/* Date */
+.swipe-card-date {
+    font-size: 0.85rem;
+    color: #c5a059;
+    margin: 0 0 12px 0;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Excerpt */
+.swipe-card-excerpt {
+    font-size: 0.9rem;
+    color: #5a6a7a;
+    margin: 0;
+    line-height: 1.5;
+    flex-grow: 1;
+}
+
+/* Read More */
+.swipe-read-more {
+    font-size: 0.8rem;
+    color: #c5a059;
+    font-weight: 600;
+    margin-top: 12px;
+    transition: color 0.3s ease;
+}
+
+.swipe-card-link:hover .swipe-read-more {
+    color: #b48a3d;
+}
+
+/* Swipe Indicators */
+.swipe-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 25px;
+    position: relative;
+    z-index: 1;
+}
+
+.indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ccc;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.indicator.active {
+    background: #c5a059;
+    transform: scale(1.2);
+    box-shadow: 0 0 10px rgba(197, 160, 89, 0.5);
+}
+
+.indicator:hover {
+    background: #999;
+}
+
+/* Swipe Animation States */
+.swipe-card.swiping {
+    transition: none !important;
+}
+
+.swipe-card.swiped-left {
+    transform: translateX(-150%) rotate(-30deg) !important;
+    opacity: 0;
+}
+
+.swipe-card.swiped-right {
+    transform: translateX(150%) rotate(30deg) !important;
+    opacity: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .card-stack {
+        height: 280px;
+    }
+    
+    .swipe-card {
+        width: calc(100% - 30px);
+        height: calc(100% - 30px);
+        max-height: 240px;
+        flex-direction: column;
+    }
+    
+    .swipe-card-image {
+        flex: 0 0 40%;
+    }
+    
+    .swipe-card-content {
+        padding: 15px;
+    }
+    
+    .swipe-card-title {
+        font-size: 1.1rem;
+    }
+    
+    .swipe-card-excerpt {
+        font-size: 0.8rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .swipe-badge {
+        font-size: 0.6rem;
+        padding: 3px 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .news-swipe-section {
+        padding: 40px 15px;
+    }
+    
+    .card-stack {
+        height: 250px;
+    }
+    
+    .swipe-card-content {
+        padding: 12px;
+    }
+    
+    .swipe-card-title {
+        font-size: 1rem;
+    }
+    
+    .swipe-card-date {
+        font-size: 0.75rem;
+    }
+    
+    .swipe-nav-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+>>>>>>> Stashed changes
+}
+
+
+/* ========================================
+   LATEST ACQUISITIONS - New Grid Layout
+   ======================================== */
+.acquisitions-grid-new {
+    display: grid;
+grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 30px;
+}
+
+.acquisition-card-new {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+}
+
+.acquisition-card-new:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+}
+
+.acquisition-card-new a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.acquisition-card-new .card-image-new {
+    width: 100%;
+height: 120px;
+    overflow: hidden;
+}
+
+.acquisition-card-new .card-image-new img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.acquisition-card-new:hover .card-image-new img {
+    transform: scale(1.05);
+}
+
+.acquisition-card-new .card-content-new {
+    padding: 20px;
+}
+
+.acquisition-card-new .card-title-new {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}

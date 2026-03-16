@@ -16,15 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
             tabName = 'home'; // Default to home
         }
 
-        const header = document.querySelector('.site-header');
-        if (header) {
-            if (tabName === 'home') {
-                header.classList.add('header-large');
-            } else {
-                header.classList.remove('header-large');
-            }
-        }
-
         // Get all buttons and contents
         const allNavLinks = document.querySelectorAll('[data-tab]');
         const allContents = document.querySelectorAll('.tab-content');
@@ -181,6 +172,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 });
 

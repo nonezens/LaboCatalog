@@ -2,16 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 include 'db.php'; 
 
-// 1. Check if the user is logged in (Guest or Admin)
 $is_logged_in = isset($_SESSION['guest_logged_in']) || isset($_SESSION['admin_logged_in']);
-
-// 2. Fetch the latest acquisitions for ALL visitors (logged in or not)
-$recent_query = "SELECT * FROM exhibits ORDER BY id DESC LIMIT 4";
-$recent_result = $conn->query($recent_query);
-
-// 3. Fetch news/events for carousel
-$news_query = "SELECT * FROM news_events ORDER BY date_posted DESC LIMIT 5";
-$news_result = $conn->query($news_query);
 ?>
 
 <!DOCTYPE html>
@@ -19,105 +10,80 @@ $news_result = $conn->query($news_query);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome | Museo de Labo</title>
+    <title>Home | Museo de Labo</title>
     
-    <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/index.css">
-    <!-- Swiper CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <style>
+        .home-hero {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('uploads/background.jpg') no-repeat center center/cover;
+            color: white;
+            padding: 150px 20px;
+            text-align: center;
+        }
+        .home-hero h1 {
+            font-size: 4rem;
+            margin: 0;
+            font-weight: 700;
+        }
+        .home-hero p {
+            font-size: 1.3rem;
+            max-width: 600px;
+            margin: 15px auto 30px auto;
+        }
+        .home-section {
+            padding: 80px 20px;
+        }
+        .home-section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: #2c3e50;
+        }
+        .home-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+    </style>
 </head>
 <body class="home-page">
 
     <?php include 'header.php'; ?>
 
-    <div class="hero">
-        <h1>Welcome to Museo de Labo</h1>
-        <p>Preserving the rich history, culture, and heritage of Camarines Norte. Step through our doors to uncover the stories of our ancestors and the treasures of our past.</p>
-        
-        <?php if (!$is_logged_in): ?>
-            <a href="login.php" class="hero-btn">Request Access to Digital Catalog</a>
-        <?php else: ?>
-            <a href="categories.php" class="hero-btn">Enter the Catalog</a>
-        <?php endif; ?>
+    <div class="home-hero">
+        <h1>Discover the Soul of Labo</h1>
+        <p>A curated collection of our town's most treasured artifacts and stories.</p>
+        <a href="exhibits.php" class="hero-btn">Explore Collection</a>
     </div>
 
-    <!-- News & Events Card Stack (Swipeable) -->
-<?php 
-    $news_result2 = $conn->query("SELECT * FROM news_events ORDER BY date_posted DESC LIMIT 5");
-    if($news_result2 && $news_result2->num_rows > 0): 
-        $news_items = [];
-        while($row = $news_result2->fetch_assoc()) {
-            $news_items[] = $row;
-        }
-        $itemCount = count($news_items);
-    ?>
-    <div class="news-swipe-section">
-        <h2 class="section-title">News & Events</h2>
-        <div class="swipe-nav-buttons">
-            <button class="swipe-nav-btn prev" id="swipePrevBtn">&#10094;</button>
-            <button class="swipe-nav-btn next" id="swipeNextBtn">&#10095;</button>
-        </div>
-        <div class="card-stack" id="newsCardStack">
-            <?php foreach($news_items as $index => $row): ?>
-                <a href="news.php#news-<?php echo $row['id']; ?>" class="swipe-card-link" data-id="<?php echo $row['id']; ?>">
-                    <div class="swipe-card" style="--i: <?php echo $index; ?>;">
-                        <?php if(!empty($row['image_path'])): ?>
-                        <div class="swipe-card-image">
-                            <img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
-                        </div>
-                        <?php endif; ?>
-                        <div class="swipe-card-content">
-                            <span class="swipe-badge <?php echo $row['type'] == 'event' ? 'type-event' : ''; ?>">
-                                <?php echo $row['type'] == 'event' ? '📅 Event' : '📰 News'; ?>
-                            </span>
-                            <h3 class="swipe-card-title"><?php echo htmlspecialchars($row['title']); ?></h3>
-                            <p class="swipe-card-date">
-                                <?php if($row['type'] == 'event' && $row['event_date']): ?>
-                                    <?php echo date("F j, Y", strtotime($row['event_date'])); ?>
-                                <?php else: ?>
-                                    <?php echo date("F j, Y", strtotime($row['date_posted'])); ?>
-                                <?php endif; ?>
-                            </p>
-                            <p class="swipe-card-excerpt"><?php echo htmlspecialchars(substr($row['content'], 0, 150)); ?>...</p>
-                            <span class="swipe-read-more">Click to read more &rarr;</span>
-                        </div>
-                    </div>
-                </a>
-            <?php endforeach; ?>
-        </div>
-        <div class="swipe-indicators" id="swipeIndicators">
-            <?php for($i = 0; $i < $itemCount; $i++): ?>
-                <span class="indicator <?php echo $i === 0 ? 'active' : ''; ?>" data-index="<?php echo $i; ?>"></span>
-            <?php endfor; ?>
-        </div>
-    </div>
-    <?php endif; ?>
-
-    <div class="container">
-        <h2 class="section-title" id="aboutTitle">About the Museum</h2>
-        <div class="about-grid">
-            <div class="about-text" id="aboutText">
-                <p>Located in the heart of Camarines Norte, the <strong>Museo de Labo</strong> serves as the primary custodian of the municipality's historical artifacts, cultural relics, and artistic heritage.</p>
-                <p>Our mission is to educate, inspire, and connect both locals and tourists with the vibrant legacy of Labo. From ancient indigenous roots to the Spanish colonial era and the rich mining history of the region, every piece in our collection tells a unique story.</p>
-                <p>Step through our doors and immerse yourself in history. We warmly invite students, researchers, and history enthusiasts to walk our halls and experience the rich heritage of Camarines Norte firsthand. Plan your visit today, join one of our guided tours, and let our curated exhibits transport you through time!</p>
-                
-                <div class="visitor-info">
-                    <h4>Plan Your Visit</h4>
-                    <ul>
-                        <li><span>📍</span> <span><strong>Location:</strong> <a href="https://www.google.com/maps/dir/?api=1&destination=Municipal+Hall+Compound, Labo, Camarines Norte" target="_blank" style="color: inherit; text-decoration: none;">Municipal Hall Compound, Labo, Camarines Norte</a></span></li>
-                        <li><span>🕒</span> <span><strong>Hours:</strong> Monday to Friday, 8:00 AM - 5:00 PM</span></li>
-                        <li><span>🎟️</span> <span><strong>Admission:</strong> Free (Digital catalog access via online registration)</span></li>
-                    </ul>
-                </div>
-
-            </div>
-            <div class="about-image">
-                <img src="uploads/background.jpg" alt="Museo de Labo Building" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;" onerror="this.style.display='none'; this.parentNode.innerHTML='[Insert Museum Photo Here]';">
+    <div id="latest-acquisitions" class="home-section">
+        <div class="container">
+            <h2 class="home-section-title">Latest Acquisitions</h2>
+            <div class="acquisitions-grid-new">
+                <?php
+                $latest_query = "SELECT * FROM exhibits ORDER BY id DESC LIMIT 3";
+                $latest_result = $conn->query($latest_query);
+                if ($latest_result->num_rows > 0) {
+                    while($row = $latest_result->fetch_assoc()) {
+                        echo '<div class="acquisition-card-new">';
+                        echo '<a href="exhibit_detail.php?id='.$row['id'].'">';
+                        echo '<div class="card-image-new">';
+                        echo '<img src="uploads/' . $row['image_path'] . '" alt="'.htmlspecialchars($row['title']).'">';
+                        echo '</div>';
+                        echo '<div class="card-content-new">';
+                        echo '<h3 class="card-title-new">'.htmlspecialchars($row['title']).'</h3>';
+                        echo '</div>';
+                        echo '</a>';
+                        echo '</div>';
+                    }
+                }
+                ?>
             </div>
         </div>
     </div>
 
+<<<<<<< Updated upstream
     <hr class="section-divider">
     
     <div class="container" style="padding-top: 0;">
@@ -184,13 +150,38 @@ $news_result = $conn->query($news_query);
             <?php else: ?>
                 <a href="exhibits.php" style="color: #c5a059; font-weight: bold; text-decoration: none; font-size: 1.1rem;">View All Artifacts &rarr;</a>
             <?php endif; ?>
+=======
+    <div id="news-events" class="home-section" style="background-color: #f8f9fa;">
+        <div class="container">
+            <h2 class="home-section-title">News & Events</h2>
+            <div class="acquisitions-grid-new">
+                <?php
+                $news_query = "SELECT * FROM news_events ORDER BY date_posted DESC LIMIT 3";
+                $news_result = $conn->query($news_query);
+                if ($news_result->num_rows > 0) {
+                    while($row = $news_result->fetch_assoc()) {
+                        echo '<div class="acquisition-card-new">';
+                        echo '<a href="news.php#news-'.$row['id'].'">';
+                        if (!empty($row['image_path'])) {
+                            echo '<div class="card-image-new">';
+                            echo '<img src="uploads/' . $row['image_path'] . '" alt="'.htmlspecialchars($row['title']).'">';
+                            echo '</div>';
+                        }
+                        echo '<div class="card-content-new">';
+                        echo '<h3 class="card-title-new">'.htmlspecialchars($row['title']).'</h3>';
+                        echo '<p class="card-meta">'.date("F j, Y", strtotime($row['date_posted'])).'</p>';
+                        echo '</div>';
+                        echo '</a>';
+                        echo '</div>';
+                    }
+                }
+                ?>
+            </div>
+>>>>>>> Stashed changes
         </div>
     </div>
 
-    <!-- JS -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script src="js/index.js"></script>
+    <?php include 'footer.php'; ?>
 
 </body>
 </html>
-

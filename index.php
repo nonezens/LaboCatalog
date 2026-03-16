@@ -153,6 +153,112 @@ if ($is_admin) {
         
         /* Tab content */
         .tab-content {
+<<<<<<< Updated upstream
+=======
+            display: none; /* Keep hidden by default */
+            width: 100%;
+        }
+        
+        .tab-content.active {
+            display: block; /* Change to block to show */
+            animation: fadeIn 0.6s ease-in-out forwards; /* Apply the animation */
+        }
+        
+        /* Static Hero */
+        .hero { 
+            background: linear-gradient(rgba(44, 62, 80, 0.8), rgba(26, 37, 47, 0.8));
+            color: white; 
+            text-align: center; 
+            padding: 100px 20px; 
+            border-bottom: 5px solid #c5a059;
+        }
+
+        .hero h1 { font-size: 3.5rem; margin: 0 0 15px 0; letter-spacing: 2px; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); }
+        .hero p { font-size: 1.2rem; color: #ecf0f1; max-width: 700px; margin: 0 auto 30px auto; line-height: 1.6; text-shadow: 1px 1px 4px rgba(0,0,0,0.5); }
+
+        .hero-btn { 
+            display: inline-block; padding: 15px 35px; background: #c5a059; color: white; 
+            text-decoration: none; border-radius: 30px; font-size: 1.1rem; font-weight: bold; 
+            transition: 0.3s; box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4);
+        }
+        .hero-btn:hover { background: #b48a3d; transform: translateY(-3px) scale(1.05); }
+
+        /* Static Sections */
+        .section-title { text-align: center; color: #2c3e50; font-size: 2.2rem; margin-bottom: 40px; }
+        .section-title::after { content: ''; display: block; width: 80px; height: 3px; background: #c5a059; margin: 15px auto 0 auto; }
+
+        /* About */
+        .about-text { font-size: 1.1rem; color: #333; line-height: 1.7; text-align: center; max-width: 800px; margin: 0 auto; }
+        .about-text p { margin-bottom: 20px; }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .info-box {
+            background: #fdfdfd;
+            border: 1px solid #eee;
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .info-box h3 {
+            margin-top: 0;
+            color: #c5a059;
+        }
+
+        /* Categories Grid */
+        .cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; padding: 20px 0; }
+        .cat-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s; }
+        .cat-card:hover { transform: translateY(-5px); }
+        .cat-card img { width: 100%; height: 200px; object-fit: cover; }
+        .cat-body { padding: 20px; text-align: center; }
+        .cat-title { margin: 0 0 15px 0; color: #2c3e50; }
+        .btn-view { display: inline-block; padding: 10px 20px; background: #c5a059; color: white; text-decoration: none; border-radius: 20px; font-weight: bold; }
+
+        /* Exhibits Grid */
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
+        .card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; }
+        .card img { width: 100%; height: 220px; object-fit: cover; }
+        .card-body { padding: 20px; }
+        .card-title { margin: 0 0 10px 0; color: #2c3e50; }
+        .card-meta { font-size: 0.9rem; color: #7f8c8d; margin-bottom: 15px; }
+
+        /* Guest Banner */
+        .guest-banner { background: linear-gradient(rgba(44, 62, 80, 0.9), rgba(26, 37, 47, 0.9)); color: white; text-align: center; padding: 60px 20px; margin: 20px; border-radius: 12px; }
+        .guest-banner h3 { font-size: 2rem; margin-bottom: 15px; color: #c5a059; }
+        .cta-btn { display: inline-block; padding: 15px 35px; background: #c5a059; color: white; text-decoration: none; border-radius: 30px; font-size: 1.1rem; font-weight: bold; margin-top: 20px; }
+
+        /* Carousel */
+        .carousel { position: relative; display: block; width: 100%; box-sizing: border-box; margin: 0 auto; max-width: 100%; min-height: 450px; overflow: hidden; }
+        .carousel__prev, .carousel__next { position: absolute; top: 50%; transform: translateY(-50%); width: 50px; height: 50px; cursor: pointer; z-index: 100; display: flex; align-items: center; justify-content: center; font-size: 30px; color: #c5a059; background: rgba(44, 62, 80, 0.8); border-radius: 50%; }
+        .carousel__prev:hover, .carousel__next:hover { transform: translateY(-50%) scale(1.25); background: #c5a059; color: white; }
+        .carousel__prev { left: 5%; }
+        .carousel__next { right: 5%; }
+        .carousel__body { width: 100%; padding: 20px 0 60px 0; overflow: visible; position: relative; }
+        .carousel__slider { position: relative; transition: transform 0.6s ease-in-out; display: flex; justify-content: flex-start; align-items: center; }
+        .carousel__slider__item { position: relative; display: block; box-sizing: border-box; margin: 0 20px; flex-shrink: 0; }
+        .item__3d-frame { position: relative; width: 100%; height: 100%; transition: transform 0.6s ease-in-out; transform-style: preserve-3d; }
+        .item__3d-frame__box { display: flex; align-items: center; justify-content: center; position: absolute; width: 100%; height: 100%; box-sizing: border-box; border-color: #c5a059; background: #fff; border-width: 3px; border-style: solid; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .item__3d-frame__box--right, .item__3d-frame__box--left { top: 0; width: 35px; height: 100%; backface-visibility: hidden; background: #b48a3d; }
+        .item__3d-frame__box--left { left: 0; border-left-width: 5px; transform: translate3d(1px, 0, -35px) rotateY(-90deg); transform-origin: 0%; }
+        .item__3d-frame__box--right { right: 0; border-right-width: 5px; transform: translate3d(-1px, 0, -35px) rotateY(90deg); transform-origin: 100%; }
+        .carousel__slider__item--active .item__3d-frame { transform: perspective(1200px) rotateY(0deg); z-index: 10; }
+
+
+
+        /* News Carousel Simple */
+        .news-carousel-container {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .news-card {
+>>>>>>> Stashed changes
             display: none;
             animation: fadeIn 0.6s ease-in-out;
         }
@@ -448,6 +554,7 @@ if ($is_admin) {
 
         <!-- Latest Acquisitions -->
         <div class="container">
+<<<<<<< Updated upstream
         <h2 class="section-title">Latest Acquisitions</h2>
         
         <?php 
@@ -487,6 +594,26 @@ if ($is_admin) {
                     </div>
                 </a>
             <?php endforeach; ?>
+=======
+            <h2 class="section-title">Latest Acquisitions</h2>
+            <div class="acquisitions-grid-new">
+                <?php 
+                $carousel_result = $conn->query("SELECT * FROM exhibits ORDER BY id DESC LIMIT 6");
+                while($row = $carousel_result->fetch_assoc()): 
+                ?>
+                <div class="acquisition-card-new">
+                    <a href="<?php echo $is_logged_in ? 'exhibit_detail.php?id=' . $row['id'] : '#'; ?>" <?php if (!$is_logged_in): ?>onclick="alert('Please register to view full details!'); return false;"<?php endif; ?>>
+                        <div class="card-image-new">
+                            <img src="uploads/<?php echo $row['image_path']; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
+                        </div>
+                        <div class="card-content-new">
+                            <h3 class="card-title-new"><?php echo htmlspecialchars($row['title']); ?></h3>
+                        </div>
+                    </a>
+                </div>
+                <?php endwhile; ?>
+            </div>
+>>>>>>> Stashed changes
         </div>
         </div>
 >>>>>>> Stashed changes
