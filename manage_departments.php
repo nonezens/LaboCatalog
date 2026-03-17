@@ -1,7 +1,5 @@
 <?php
-session_start();
-include 'db.php';
-if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit(); }
+include 'includes/auth.php';
 
 $msg = "";
 $msg_color = "red";
@@ -27,10 +25,10 @@ if (isset($_POST['add_department'])) {
             header("Location: manage_departments.php?success=1");
             exit();
         } else {
-            $msg = "Database Error: " . $stmt->error;
+            $msg = "Database error occurred.";
         }
     } else {
-        $msg = "SQL Error: " . $conn->error;
+        $msg = "Database error occurred.";
     }
 }
 
@@ -42,7 +40,9 @@ if (isset($_GET['success'])) {
 // --- DELETE DEPARTMENT ---
 if (isset($_GET['delete_id'])) {
     $id = $_GET['delete_id'];
-    $conn->query("DELETE FROM categories WHERE id = $id");
+    $stmt = $conn->prepare("DELETE FROM categories WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
     header("Location: manage_departments.php");
     exit();
 }

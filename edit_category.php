@@ -43,7 +43,7 @@ if (isset($_POST['update_category'])) {
             header("Location: manage_departments.php?success=1");
             exit();
         } else {
-            $msg = "<div style='color: red; padding: 10px; border: 1px solid #e74c3c; border-radius: 4px; margin-bottom: 15px;'>Error: " . $conn->error . "</div>";
+$msg = "<div style='color: red; padding: 10px; border: 1px solid #e74c3c; border-radius: 4px; margin-bottom: 15px;'>Database error occurred.</div>";
         }
     }
 }

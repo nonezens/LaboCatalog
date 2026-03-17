@@ -4,7 +4,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     header("Location: login.php"); exit(); 
 }
 
-include 'db.php';
+include 'includes/auth.php';
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];

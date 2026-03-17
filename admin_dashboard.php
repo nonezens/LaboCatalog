@@ -1,7 +1,5 @@
 <?php
-session_start();
-include 'db.php';
-if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit(); }
+include 'includes/auth.php';
 
 // Fetch statistics
 $visitor_count = $conn->query("SELECT COUNT(*) as count FROM guests")->fetch_assoc()['count'];

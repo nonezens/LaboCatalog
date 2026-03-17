@@ -1,6 +1,5 @@
 <?php
-session_start();
-include 'db.php';
+include 'includes/db.php';
 
 $msg = "";
 
@@ -57,7 +56,7 @@ if (isset($_POST['register_guest'])) {
             header("Location: index.php"); 
             exit();
         } else {
-            $msg = "<div style='color: red; text-align: center; margin-bottom: 15px;'>Error saving data: " . $stmt->error . "</div>";
+            $msg = "<div style='color: red; text-align: center; margin-bottom: 15px;'>Database error occurred.</div>";
         }
     } else {
         $msg = "<div style='color: red; text-align: center; margin-bottom: 15px;'>Database configuration error.</div>";
