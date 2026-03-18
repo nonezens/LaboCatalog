@@ -142,119 +142,10 @@ if (isset($_POST['guest_login'])) {
     <style>
         /* SPA Section Management */
         .spa-section {
-            display: none !important;
+            display: none;
         }
         .spa-section.active {
-            display: block !important;
-        }
-        
-        /* Login Section Styling */
-        #login {
-            background: #f4f7f6;
-            padding: 60px 20px;
-            min-height: auto;
-        }
-        
-        #login .page-container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        #login .card {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-            border-top: 5px solid #c5a059;
-        }
-        
-        #login h2 {
-            margin-top: 0;
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.8rem;
-        }
-        
-        #login .form-group {
-            margin-bottom: 15px;
-        }
-        
-        #login .form-group label {
             display: block;
-            margin-bottom: 5px;
-            color: #555;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-        
-        #login .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-family: inherit;
-            font-size: 1rem;
-        }
-        
-        #login .btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.3s;
-            color: white;
-            margin-top: 10px;
-        }
-        
-        #login .btn-gold {
-            background: #c5a059;
-        }
-        
-        #login .btn-gold:hover {
-            background: #b48a3d;
-        }
-        
-        #login .btn-dark {
-            background: #2c3e50;
-        }
-        
-        #login .btn-dark:hover {
-            background: #1a252f;
-        }
-        
-        #login .btn-blue {
-            background: #2980b9;
-        }
-        
-        #login .btn-blue:hover {
-            background: #2471a3;
-        }
-        
-        #login .row {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        
-        #login .col {
-            flex: 1;
-            min-width: 200px;
-        }
-        
-        #login #group_fields {
-            display: none;
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 6px;
-            border: 1px dashed #ccc;
-            margin-bottom: 15px;
         }
     </style>
 </head>
@@ -897,27 +788,16 @@ if (isset($_POST['guest_login'])) {
         // ==================== HASH ROUTING ====================
         function handleRouting() {
             const hash = window.location.hash.slice(1) || 'home';
-            console.log('Current hash:', hash);
-            console.log('Looking for section with id:', hash);
             
-            // Get all sections
-            const allSections = document.querySelectorAll('.spa-section');
-            console.log('Total spa-sections found:', allSections.length);
-            
-            // Hide all sections and verify they have the class
-            allSections.forEach(section => {
-                const sectionId = section.getAttribute('id');
-                console.log('Processing section:', sectionId);
+            // Hide all sections
+            document.querySelectorAll('.spa-section').forEach(section => {
                 section.classList.remove('active');
             });
             
-            // Find and show the target section
+            // Show the requested section
             const targetSection = document.getElementById(hash);
-            console.log('Target section found:', targetSection ? 'YES' : 'NO');
-            
             if (targetSection) {
                 targetSection.classList.add('active');
-                console.log('Added active class to:', hash);
                 window.scrollTo(0, 0);
                 
                 // Initialize JS when section becomes active
@@ -925,32 +805,19 @@ if (isset($_POST['guest_login'])) {
                     setTimeout(initializeNewsCarousel, 100);
                 }
             } else {
-                console.log('Section not found, defaulting to home');
-                const homeSection = document.getElementById('home');
-                if (homeSection) {
-                    homeSection.classList.add('active');
-                    console.log('Showing home section');
-                    setTimeout(initializeNewsCarousel, 100);
-                }
+                document.getElementById('home').classList.add('active');
+                setTimeout(initializeNewsCarousel, 100);
             }
         }
 
         // Handle hash changes
-        window.addEventListener('hashchange', function() {
-            console.log('Hash changed to:', window.location.hash);
-            handleRouting();
-        });
+        window.addEventListener('hashchange', handleRouting);
         
         // Handle initial load
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() {
-                console.log('DOM loaded, initializing routing');
-                handleRouting();
-            });
-        } else {
-            console.log('DOM already loaded, initializing routing');
+        document.addEventListener('DOMContentLoaded', function() {
             handleRouting();
-        }
+            initializeNewsCarousel();
+        });
 
         // Prevent form submission from navigating away (stay on SPA)
         document.addEventListener('submit', function(e) {

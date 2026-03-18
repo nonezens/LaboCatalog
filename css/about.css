@@ -1,0 +1,42 @@
+:root { --dark: #1a1a1a; --gold: #c5a059; --bg: #fdfdfd; }
+body { font-family: 'Georgia', serif; line-height: 1.6; background-color: var(--bg); color: #333; margin: 0; }
+
+.container { max-width: 1000px; margin: auto; padding: 60px 20px; }
+
+/* Banner Style */
+.about-hero {
+    background: #2c3e50;
+    color: white;
+    padding: 80px 20px;
+    text-align: center;
+}
+.about-hero h1 { font-size: 3rem; margin: 0; color: var(--gold); }
+
+.content-section { margin-bottom: 50px; }
+.content-section h2 { border-bottom: 2px solid var(--gold); display: inline-block; padding-bottom: 5px; margin-bottom: 20px; }
+
+/* Information Grid */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+    margin-top: 40px;
+}
+.info-box {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+.info-box h3 { color: var(--gold); margin-top: 0; }
+
+.location-map {
+    width: 100%;
+    height: 300px;
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    border-radius: 8px;
+}

@@ -37,17 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_news'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add News | Admin</title>
-    <style>
-        .form-container { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); max-width: 800px; margin: 0 auto; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .full-width { grid-column: 1 / -1; }
-        .form-label { display: block; font-weight: bold; color: #2c3e50; margin-bottom: 8px; font-size: 0.95rem; }
-        .form-control { width: 100%; padding: 12px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; font-size: 1rem; }
-        textarea.form-control { resize: vertical; min-height: 150px; }
-        .btn-submit { width: 100%; padding: 15px; background: #e67e22; color: white; border: none; font-weight: bold; border-radius: 4px; font-size: 1.1rem; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        .btn-submit:hover { background: #d35400; }
-        @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } .form-container { padding: 20px; border-top: 2px solid #e67e22; } }
-    </style>
+    <link rel="stylesheet" href="css/admin-sidebar.css">
+    <link rel="stylesheet" href="css/add-news.css">
 </head>
 <body style="background: #f4f7f6; margin: 0; font-family: 'Segoe UI', Tahoma, sans-serif;">
     <?php include 'header.php'; ?>

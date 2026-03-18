@@ -1,0 +1,12 @@
+.form-container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); max-width: 600px; margin: 0 auto; }
+.form-group { margin-bottom: 20px; }
+.form-label { display: block; font-weight: bold; color: #2c3e50; margin-bottom: 8px; font-size: 0.95rem; }
+.form-control { width: 100%; padding: 12px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; font-size: 1rem; transition: border-color 0.3s; }
+.form-control:focus { border-color: #c5a059; outline: none; }
+.btn-submit { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; font-weight: bold; border-radius: 4px; font-size: 1.1rem; cursor: pointer; transition: 0.3s; }
+.btn-submit:hover { background: #219653; transform: translateY(-2px); }
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .form-container { padding: 20px; border-radius: 0; box-shadow: none; border-top: 2px solid #c5a059; }
+}

@@ -73,38 +73,8 @@ $exhibits = $conn->query("
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Artifacts | Admin</title>
-    <style>
-        .form-container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px; border-top: 4px solid #27ae60; display: none; /* Hidden by default */ }
-        
-        /* CSS Grid for form layout */
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .full-width { grid-column: 1 / -1; }
-        
-        .form-group { margin-bottom: 0; }
-        .form-label { display: block; font-weight: bold; color: #2c3e50; margin-bottom: 8px; font-size: 0.95rem; }
-        .form-control { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; font-size: 1rem; }
-        textarea.form-control { resize: vertical; min-height: 100px; }
-        
-        .btn-toggle { background: #27ae60; color: white; padding: 12px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1.1rem; margin-bottom: 20px; display: inline-block; transition: 0.3s; }
-        .btn-toggle:hover { background: #219653; }
-        .btn-submit-form { width: 100%; padding: 12px; background: #2c3e50; color: white; border: none; font-weight: bold; border-radius: 4px; font-size: 1.1rem; cursor: pointer; transition: 0.3s; }
-        .btn-submit-form:hover { background: #1a252f; }
-
-        /* Hidden file input */
-        input[type="file"] { display: none; }
-        
-        /* Stylized "Upload Image" button that triggers the hidden input */
-        .custom-file-upload { display: inline-block; padding: 10px 20px; cursor: pointer; background: #fdfdfd; border: 2px dashed #ddd; border-radius: 6px; color: #555; text-align: center; font-weight: bold; transition: 0.3s; }
-        .custom-file-upload:hover { border-color: #27ae60; color: #27ae60; }
-        
-        /* Hidden image preview container */
-        #imagePreviewContainer { display: none; margin-top: 20px; max-width: 100%; height: auto; border-radius: 4px; border: 1px solid #ddd; overflow: hidden; padding: 10px; background: #f9f9f9; text-align: center; }
-        #imagePreview { max-width: 100%; max-height: 300px; border-radius: 4px; }
-
-        @media (max-width: 768px) {
-            .form-grid { grid-template-columns: 1fr; gap: 15px; }
-        }
-    </style>
+    <link rel="stylesheet" href="css/admin-sidebar.css">
+    <link rel="stylesheet" href="css/manage-exhibits.css">
 </head>
 <body style="margin: 0; background: #f4f7f6;">
 
@@ -225,54 +195,7 @@ $exhibits = $conn->query("
     </main>
 </div>
 
-<script>
-    // 1. Logic to show the client-side image preview instantly after file upload
-    const fileInput = document.getElementById('fileInput');
-    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
-    const imagePreview = document.getElementById('imagePreview');
-
-    fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            // Check if it's an image
-            if (!file.type.startsWith('image/')) {
-                alert("Please select an image file.");
-                return;
-            }
-
-            const reader = new FileReader();
-
-            reader.addEventListener('load', function() {
-                // Populate the image preview tag with the file's contents
-                imagePreview.src = reader.result;
-                // Instantly slide down the preview container
-                imagePreviewContainer.style.display = 'block';
-            });
-
-            // Read the file as a data URL for client-side display
-            reader.readAsDataURL(file);
-        } else {
-            // If the user clears the file, hide the preview
-            imagePreviewContainer.style.display = 'none';
-            imagePreview.src = '#';
-        }
-    });
-
-    // 2. Logic to toggle the dropdown form open/close
-    function toggleForm() {
-        var form = document.getElementById("addArtifactForm");
-        if (form.style.display === "none" || form.style.display === "") {
-            form.style.display = "block";
-        } else {
-            form.style.display = "none";
-        }
-    }
-
-    // Smart Errors from previous logic: If there is an error message, keep the form open automatically so they don't have to click it again
-    <?php if ($msg && $msg_color == 'red'): ?>
-        document.getElementById("addArtifactForm").style.display = "block";
-    <?php endif; ?>
-</script>
+<script src="js/manage-exhibits.js"></script>
 
 </body>
 </html>

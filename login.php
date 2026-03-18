@@ -87,36 +87,8 @@ if (isset($_POST['guest_login'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login & Guestbook | Museo de Labo</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f4f7f6; margin: 0; padding: 0; }
-        .page-container { max-width: 600px; margin: 40px auto; padding: 0 20px; }
-        .card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px; border-top: 5px solid #c5a059; }
-        h2 { margin-top: 0; color: #2c3e50; text-align: center; margin-bottom: 20px; font-size: 1.8rem; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; color: #555; font-weight: bold; font-size: 0.9rem; }
-        .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-family: inherit; font-size: 1rem; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 4px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; color: white; margin-top: 10px; }
-        
-        .btn-gold { background: #c5a059; } .btn-gold:hover { background: #b48a3d; }
-        .btn-dark { background: #2c3e50; } .btn-dark:hover { background: #1a252f; }
-        .btn-blue { background: #2980b9; } .btn-blue:hover { background: #2471a3; }
-        
-        .row { display: flex; gap: 15px; flex-wrap: wrap; }
-        .col { flex: 1; min-width: 200px; }
-        
-        #group_fields { display: none; background: #f9f9f9; padding: 15px; border-radius: 6px; border: 1px dashed #ccc; margin-bottom: 15px; }
-
-        /* MAGIC FIX: Removes up/down arrows from all number fields */
-        input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type="number"] {
-            appearance: textfield;
-            -moz-appearance: textfield; /* For Firefox */
-        }
-    </style>
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
 
@@ -241,23 +213,6 @@ if (isset($_POST['guest_login'])) {
 
     </div>
 
-    <script>
-        function toggleGroupFields() {
-            var type = document.getElementById("visitor_type").value;
-            var groupFields = document.getElementById("group_fields");
-            var nameLabel = document.getElementById("name_label");
-            var orgInput = document.getElementById("org_input");
-
-            if (type === "Group") {
-                groupFields.style.display = "block";
-                nameLabel.innerText = "Representative's Full Name";
-                orgInput.required = true;
-            } else {
-                groupFields.style.display = "none";
-                nameLabel.innerText = "Full Name";
-                orgInput.required = false;
-            }
-        }
-    </script>
+    <script src="js/login.js"></script>
 </body>
 </html>

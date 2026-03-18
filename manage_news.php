@@ -47,16 +47,8 @@ $news = $conn->query("SELECT * FROM news_events ORDER BY id DESC");
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage News | Admin</title>
-    <style>
-        .form-container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px; border-top: 4px solid #e67e22; display: none; }
-        .form-group { margin-bottom: 15px; }
-        .form-label { display: block; font-weight: bold; color: #2c3e50; margin-bottom: 8px; font-size: 0.95rem; }
-        .form-control { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; font-size: 1rem; }
-        .btn-toggle { background: #e67e22; color: white; padding: 12px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1.1rem; margin-bottom: 20px; display: inline-block; transition: 0.3s; }
-        .btn-toggle:hover { background: #cf711f; }
-        .btn-submit-form { width: 100%; padding: 12px; background: #e67e22; color: white; border: none; font-weight: bold; border-radius: 4px; font-size: 1.1rem; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        .btn-submit-form:hover { background: #cf711f; }
-    </style>
+    <link rel="stylesheet" href="css/admin-sidebar.css">
+    <link rel="stylesheet" href="css/manage-news.css">
 </head>
 <body style="margin: 0; background: #f4f7f6;">
 
@@ -130,19 +122,7 @@ $news = $conn->query("SELECT * FROM news_events ORDER BY id DESC");
     </main>
 </div>
 
-<script>
-    function toggleForm() {
-        var form = document.getElementById("addNewsForm");
-        if (form.style.display === "none" || form.style.display === "") {
-            form.style.display = "block";
-        } else {
-            form.style.display = "none";
-        }
-    }
-    <?php if ($msg && $msg_color == 'red'): ?>
-        document.getElementById("addNewsForm").style.display = "block";
-    <?php endif; ?>
-</script>
+<script src="js/manage-news.js"></script>
 
 </body>
 </html>

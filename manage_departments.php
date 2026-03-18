@@ -56,26 +56,8 @@ $departments = $conn->query("SELECT * FROM categories ORDER BY id DESC");
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Departments | Admin</title>
-    <style>
-        .form-container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px; border-top: 4px solid #2980b9; display: none; /* Hidden by default! */ }
-        
-        .form-group { margin-bottom: 15px; }
-        .form-label { display: block; font-weight: bold; color: #2c3e50; margin-bottom: 8px; font-size: 0.95rem; }
-        .form-control { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; font-size: 1rem; }
-        
-        /* The Toggle Button Styles */
-        .btn-toggle { background: #2980b9; color: white; padding: 12px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1.1rem; margin-bottom: 20px; display: inline-block; transition: 0.3s; }
-        .btn-toggle:hover { background: #1f6391; }
-        
-        /* Hidden file input & Stylized "Upload Image" button */
-        input[type="file"] { display: none; }
-        .custom-file-upload { display: block; width: 100%; padding: 10px; box-sizing: border-box; cursor: pointer; background: #fdfdfd; border: 2px dashed #ddd; border-radius: 4px; color: #555; text-align: center; font-weight: bold; transition: 0.3s; margin-top: 5px; }
-        .custom-file-upload:hover { border-color: #2980b9; color: #2980b9; background: #f4f9fc; }
-        
-        /* Image preview container */
-        #imagePreviewContainer { display: none; margin-top: 15px; text-align: center; background: #f9f9f9; border: 1px solid #ddd; padding: 10px; border-radius: 4px; }
-        #imagePreview { max-width: 100%; max-height: 200px; border-radius: 4px; }
-    </style>
+    <link rel="stylesheet" href="css/admin-sidebar.css">
+    <link rel="stylesheet" href="css/manage-departments.css">
 </head>
 <body style="margin: 0; background: #f4f7f6;">
 
@@ -154,49 +136,7 @@ $departments = $conn->query("SELECT * FROM categories ORDER BY id DESC");
     </main>
 </div>
 
-<script>
-    // 1. Logic for the Dropdown Toggle Button
-    function toggleForm() {
-        var form = document.getElementById("addDepartmentForm");
-        if (form.style.display === "none" || form.style.display === "") {
-            form.style.display = "block";
-        } else {
-            form.style.display = "none";
-        }
-    }
-
-    // Keep form open if there is an error
-    <?php if ($msg && $msg_color == 'red'): ?>
-        document.getElementById("addDepartmentForm").style.display = "block";
-    <?php endif; ?>
-
-    // 2. Logic for the Image Preview
-    const fileInput = document.getElementById('fileInput');
-    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
-    const imagePreview = document.getElementById('imagePreview');
-
-    fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            if (!file.type.startsWith('image/')) {
-                alert("Please select an image file.");
-                return;
-            }
-
-            const reader = new FileReader();
-
-            reader.addEventListener('load', function() {
-                imagePreview.src = reader.result;
-                imagePreviewContainer.style.display = 'block';
-            });
-
-            reader.readAsDataURL(file);
-        } else {
-            imagePreviewContainer.style.display = 'none';
-            imagePreview.src = '#';
-        }
-    });
-</script>
+<script src="js/manage-departments.js"></script>
 
 </body>
 </html>
