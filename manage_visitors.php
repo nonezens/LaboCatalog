@@ -44,7 +44,9 @@ $guest_result = $conn->query($query);
     <title>Manage Visitors | Admin</title>
     
     <!-- CSS -->
-    <link rel="stylesheet" href="css/admin.css">
+<link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/manage_visitors.css">
+
 </head>
 <body class="admin-page admin-body">
 
@@ -55,43 +57,48 @@ $guest_result = $conn->query($query);
         <?php include 'admin_sidebar.php'; ?>
 
         <main class="main-content">
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
-                <h3 class="table-title" style="margin: 0;">👥 Visitor Log & Access Requests</h3>
-                
-                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                    <!-- Month Filter -->
-                    <div style="display: flex; align-items: center; gap: 5px; background: white; padding: 8px 12px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                        <label style="font-size: 0.85rem; font-weight: bold; color: #2c3e50;">Month:</label>
-                        <input type="month" name="filter_month" id="filterMonth" value="<?php echo htmlspecialchars($selected_month); ?>" style="padding: 6px; border: 1px solid #ddd; border-radius: 4px;" onchange="applyFilter()">
-                    </div>
-                    
-                    <!-- Gender Filter -->
-                    <div style="display: flex; align-items: center; gap: 5px; background: white; padding: 8px 12px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                        <label style="font-size: 0.85rem; font-weight: bold; color: #2c3e50;">Gender:</label>
-                        <select name="filter_gender" id="filterGender" style="padding: 6px; border: 1px solid #ddd; border-radius: 4px;" onchange="applyFilter()">
-                            <option value="">All</option>
-                            <option value="Male" <?php echo $filter_gender == 'Male' ? 'selected' : ''; ?>>Male</option>
-                            <option value="Female" <?php echo $filter_gender == 'Female' ? 'selected' : ''; ?>>Female</option>
-                            <option value="Other" <?php echo $filter_gender == 'Other' ? 'selected' : ''; ?>>Other</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Recent Filter -->
-                    <div style="display: flex; align-items: center; gap: 5px; background: white; padding: 8px 12px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                        <label style="font-size: 0.85rem; font-weight: bold; color: #2c3e50;">Recent:</label>
-                        <select name="filter_recent" id="filterRecent" style="padding: 6px; border: 1px solid #ddd; border-radius: 4px;" onchange="applyFilter()">
-                            <option value="">All Time</option>
-                            <option value="today" <?php echo $filter_recent == 'today' ? 'selected' : ''; ?>>Today</option>
-                            <option value="week" <?php echo $filter_recent == 'week' ? 'selected' : ''; ?>>This Week</option>
-                            <option value="month" <?php echo $filter_recent == 'month' ? 'selected' : ''; ?>>This Month</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Clear Button -->
-                    <a href="manage_visitors.php" id="clearBtn" class="action-btn <?php echo ($selected_month == '' && $filter_gender == '' && $filter_recent == '') ? 'btn-disabled' : ''; ?>" style="<?php echo ($selected_month == '' && $filter_gender == '' && $filter_recent == '') ? 'background: #ccc; cursor: not-allowed; pointer-events: none;' : 'background: #95a5a6;'; ?>">Clear</a>
-                    
-                    <!-- Download Excel -->
-                    <a href="export_visitors.php?filter_month=<?php echo urlencode($selected_month); ?>&filter_gender=<?php echo urlencode($filter_gender); ?>&filter_recent=<?php echo urlencode($filter_recent); ?>" class="action-btn" style="background: #27ae60; padding: 12px 15px; font-size: 0.95rem;">📥 Download Excel</a>
+    <div class="visitors-header">
+                <div class="visitors-title">
+                    <span>👥</span>
+                    <span>Visitor Management (<?php echo $guest_result ? $guest_result->num_rows : 0 ?>)</span>
+                </div>
+                <div class="stats-bar">
+                    <div class="stat-pill">All Time</div>
+                    <div class="stat-pill" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">Today</div>
+                    <div class="stat-pill" style="background: linear-gradient(135deg, #f39c12, #e67e22);">Export</div>
+                </div>
+            </div>
+
+            <div class="filter-pills">
+                <div class="filter-group">
+                    <label class="filter-label">Month:</label>
+                    <input type="month" name="filter_month" id="filterMonth" value="<?php echo htmlspecialchars($selected_month); ?>" class="filter-control" onchange="applyFilter()">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Gender:</label>
+                    <select name="filter_gender" id="filterGender" class="filter-control" onchange="applyFilter()">
+                        <option value="">All</option>
+                        <option value="Male" <?php echo $filter_gender == 'Male' ? 'selected' : ''; ?>>Male</option>
+                        <option value="Female" <?php echo $filter_gender == 'Female' ? 'selected' : ''; ?>>Female</option>
+                        <option value="Other" <?php echo $filter_gender == 'Other' ? 'selected' : ''; ?>>Other</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Recent:</label>
+                    <select name="filter_recent" id="filterRecent" class="filter-control" onchange="applyFilter()">
+                        <option value="">All Time</option>
+                        <option value="today" <?php echo $filter_recent == 'today' ? 'selected' : ''; ?>>Today</option>
+                        <option value="week" <?php echo $filter_recent == 'week' ? 'selected' : ''; ?>>Week</option>
+                        <option value="month" <?php echo $filter_recent == 'month' ? 'selected' : ''; ?>>Month</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <a href="manage_visitors.php" class="btn-clear action-btn">Clear All</a>
+                </div>
+                <div class="filter-group">
+                    <a href="export_visitors.php?filter_month=<?php echo urlencode($selected_month); ?>&filter_gender=<?php echo urlencode($filter_gender); ?>&filter_recent=<?php echo urlencode($filter_recent); ?>" class="btn-export action-btn">
+                        📥 Excel Export
+                    </a>
                 </div>
             </div>
 
@@ -112,30 +119,59 @@ $guest_result = $conn->query($query);
             }
             </script>
 
-            <div class="table-container">
-                <table>
+            <div class="visitors-table-container">
+                <table class="visitors-table">
                     <tr>
-                        <th>Date</th><th>Guest Name & Contact</th><th>Demographics</th><th>Purpose</th><th>Actions</th>
+                        <th>Date & Time</th>
+                        <th>Visitor Details</th>
+                        <th>Demographics</th>
+                        <th>Purpose</th>
+                        <th>Actions</th>
                     </tr>
-                    <?php if($guest_result->num_rows > 0): while($guest = $guest_result->fetch_assoc()): ?>
-                    <tr>
-                        <td style="font-size: 0.9rem;"><?php echo date("M d, Y g:i A", strtotime($guest['visit_date'])); ?></td>
+                    <?php if($guest_result && $guest_result->num_rows > 0): 
+                        while($guest = $guest_result->fetch_assoc()): ?>
+                    <tr class="visitor-row">
                         <td>
-                            <strong><?php echo htmlspecialchars($guest['guest_name']); ?></strong><br>
-                            <span style="color:#777; font-size:0.9rem;">📞 <?php echo htmlspecialchars($guest['contact_no']); ?></span>
+                            <div style="font-weight: 600; color: #2c3e50;"><?php echo date("M d", strtotime($guest['visit_date'])); ?></div>
+                            <div style="font-size: 0.85rem; color: #7f8c8d;"><?php echo date("g:i A", strtotime($guest['visit_date'])); ?></div>
                         </td>
-                        <td style="font-size: 0.9rem;">
-                            Gender: <?php echo htmlspecialchars($guest['gender']); ?><br>
-                            Nat: <?php echo htmlspecialchars($guest['nationality']); ?><br>
-                            From: <?php echo htmlspecialchars($guest['residence']); ?>
-                        </td>
-                        <td style="font-size: 0.9rem;"><?php echo htmlspecialchars($guest['purpose']); ?></td>
                         <td>
-                            <a href="delete_guest.php?id=<?php echo $guest['id']; ?>" class="action-btn btn-delete" onclick="return confirm('Delete this record?');">🗑️ Delete</a>
+                            <div class="visitor-name"><?php echo htmlspecialchars($guest['guest_name']); ?></div>
+                            <div class="visitor-contact">
+                                📞 <span><?php echo htmlspecialchars($guest['contact_no']); ?></span>
+                            </div>
+                            <?php if (!empty($guest['access_id'])): ?>
+                                <div style="margin-top: 8px; background: #e8f5e8; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; color: #27ae60;">
+                                    ID: <?php echo htmlspecialchars($guest['access_id']); ?>
+                                </div>
+                            <?php endif; ?>
+                        </td>
+                        <td class="demographics">
+                            <div><strong>Gender:</strong> <?php echo htmlspecialchars($guest['gender']); ?></div>
+                            <div><strong>From:</strong> <?php echo htmlspecialchars($guest['residence']); ?></div>
+                            <div style="font-size: 0.85rem;"><strong>Nat:</strong> <?php echo htmlspecialchars($guest['nationality']); ?></div>
+                        </td>
+                        <td class="purpose-cell">
+                            <?php echo htmlspecialchars($guest['purpose']); ?>
+                            <?php if (!empty($guest['num_days'])): ?>
+                                <div style="font-size: 0.8rem; color: #7f8c8d;">Stay: <?php echo $guest['num_days']; ?> days</div>
+                            <?php endif; ?>
+                        </td>
+                        <td class="action-cell">
+                            <a href="delete_guest.php?id=<?php echo $guest['id']; ?>" class="btn-delete action-btn" onclick="return confirm('Delete <?php echo htmlspecialchars($guest['guest_name']); ?> record?');">
+                                🗑️ Delete
+                            </a>
                         </td>
                     </tr>
-                    <?php endwhile; else: ?>
-                        <tr><td colspan="5" style="text-align: center; padding: 20px;">No visitors found for this period.</td></tr>
+                    <?php endwhile; 
+                    else: ?>
+                        <tr>
+                            <td colspan="5" class="empty-state">
+                                <div class="empty-state-icon">👥</div>
+                                <h3>No visitors yet</h3>
+                                <p>Visitors will appear here once they sign the digital guestbook.</p>
+                            </td>
+                        </tr>
                     <?php endif; ?>
                 </table>
             </div>

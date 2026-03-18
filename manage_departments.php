@@ -47,7 +47,9 @@ $cat_result = $conn->query("SELECT * FROM categories ORDER BY id DESC");
     <title>Manage Departments</title>
     
     <!-- CSS -->
-    <link rel="stylesheet" href="css/admin.css">
+<link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/manage_departments.css">
+
 </head>
 <body class="admin-page admin-body">
 

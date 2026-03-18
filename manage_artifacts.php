@@ -94,7 +94,9 @@ $result = $conn->query($query);
     <title>Manage Artifacts</title>
     
     <!-- CSS -->
-    <link rel="stylesheet" href="css/admin.css">
+<link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/manage_artifacts.css">
+
 </head>
 <body class="admin-page admin-body">
 

@@ -191,68 +191,180 @@ if (isset($_POST['guest_login'])) {
 
     <?php include 'header.php'; ?>
 
-    <div class="login-container">
+        <div class="login-container">
+            <!-- Visitor/Guest Section (Main Form) -->
+            <div class="login-visitor login-section">
+                <h2 class="login-title">Sign Digital Guestbook</h2>
+                <p class="login-subtitle">Welcome to Museo de Labo. Please sign our digital guestbook to access the catalog.</p>
+                <form method="POST" id="guest-form">
+                    <div class="login-input-full">
+                        <label for="visitor_type">Visitor Type *</label>
+                        <select name="visitor_type" id="visitor_type" class="login-select" onchange="toggleGroupFields()" required>
+                            <option value="Individual">👤 Individual / Family</option>
+                            <option value="Group">🏫 School / Organization / Tour Group</option>
+                        </select>
+                    </div>
 
-        <div class="login-visitor">
-            <?php if ($msg): ?>
-                <div class="login-message" style="border-left-color: <?php echo $msg_color; ?>;">
-                    <?php echo $msg; ?>
+                    <div id="group_fields" style="display: none;">
+                        <div class="login-section" style="background: #f8f9fa;">
+                            <h3 style="color: #c5a059; margin-top: 0;">Group Information</h3>
+                            <div class="login-input-full">
+                                <label>Organization / School</label>
+                                <input type="text" name="organization" class="login-input" placeholder="e.g., Labo National High School">
+                            </div>
+                            <div class="login-form-grid">
+                                <div>
+                                    <label>Number of Males</label>
+                                    <input type="number" name="male_count" class="login-input" min="0" value="0">
+                                </div>
+                                <div>
+                                    <label>Number of Females</label>
+                                    <input type="number" name="female_count" class="login-input" min="0" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="login-input-full">
+                        <label for="guest_name">Full Name *</label>
+                        <input type="text" name="guest_name" id="guest_name" class="login-input" placeholder="Enter your complete name" required>
+                    </div>
+
+                    <div class="login-form-grid">
+                        <div>
+                            <label for="gender">Gender *</label>
+                            <select name="gender" id="gender" class="login-select" required>
+                                <option value="">Select...</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other / Prefer not to say</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="contact_no">Contact Number *</label>
+                            <div class="phone-wrapper">
+                                <span class="phone-prefix">+63</span>
+                                <input type="tel" name="contact_no" id="contact_no" class="phone-input" placeholder="912 345 6789" pattern="[0-9]{10}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="login-form-grid">
+                        <div>
+                            <label for="residence">Residence (Town/City) *</label>
+                            <input type="text" name="residence" id="residence" class="login-input" placeholder="Labo, Camarines Norte" required>
+                        </div>
+                        <div>
+                            <label for="nationality">Nationality *</label>
+                            <input type="text" name="nationality" id="nationality" class="login-input" value="Filipino" required>
+                        </div>
+                    </div>
+
+                    <div class="login-form-grid">
+                        <div>
+                            <label for="purpose">Purpose of Visit *</label>
+                            <input type="text" name="purpose" id="purpose" class="login-input" placeholder="Research, Educational Tour, etc." required>
+                        </div>
+                        <div>
+                            <label for="num_days">Planned Stay (days) *</label>
+                            <input type="number" name="num_days" id="num_days" class="login-input" min="1" max="30" value="1" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" name="request_access" class="login-btn login-btn-full">
+                        <span>✨ Sign Guestbook & Enter Catalog</span>
+                    </button>
+                </form>
+
+                <!-- Quick Guest Login -->
+                <div class="login-section" style="margin-top: 25px;">
+                    <h3>Already Registered?</h3>
+                    <form method="POST" class="login-input-full">
+                        <div class="login-input-full">
+                            <input type="text" name="login_name" class="login-input" placeholder="Enter your exact name to login" style="text-align: center; font-size: 1.1rem;" required>
+                        </div>
+                        <button type="submit" name="guest_login" class="login-btn-secondary login-btn-full">🚀 Quick Access</button>
+                    </form>
                 </div>
-            <?php endif; ?>
+            </div>
 
-            <h3 class="login-title">New Visitor? Register Here</h3>
-            <form method="POST" class="login-form-grid">
-
-                <input type="text" name="guest_name" placeholder="Full Name" required class="login-input-full">
-
-                <select name="gender" required class="login-select">
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                </select>
-
-                <select name="nationality" required class="login-select">
-                    <option value="">Select Nationality</option>
-                    <option value="Filipino">Filipino</option>
-                    <option value="American">American</option>
-                    <option value="Japanese">Japanese</option>
-                    <option value="Chinese">Chinese</option>
-                    <option value="Korean">Korean</option>
-                    <option value="European">European</option>
-                    <option value="Other">Other</option>
-                </select>
-
-                <select name="residence" required class="login-input-full">
-                    <option value="">Select Place of Residence</option>
-                    <option value="Labo, Camarines Norte">Labo, Camarines Norte</option>
-                    <option value="Daet, Camarines Norte">Daet, Camarines Norte</option>
-                    <option value="Other Municipality (Camarines Norte)">Other Municipality (Camarines Norte)</option>
-                    <option value="Outside Camarines Norte (Philippines)">Outside Camarines Norte (Philippines)</option>
-                    <option value="Outside Philippines">Outside Philippines</option>
-                </select>
-
-                <input type="number" name="num_days" placeholder="No. of Days Visiting" min="1" required class="login-input">
-
-                <div class="phone-wrapper">
-                    <span class="phone-prefix">+63</span>
-                    <input type="tel" name="contact_no" placeholder="912 345 6789" required class="phone-input" pattern="[0-9]{10}" title="Please enter a valid 10-digit mobile number">
-                </div>
-
-                <input type="text" name="purpose" placeholder="Purpose of Visit (e.g., Tourism, Research)" required class="login-input-full">
-
-                <button type="submit" name="request_access" class="login-btn">Register & Access Catalog</button>
-            </form>
+            <!-- Admin Login Panel -->
+            <div class="login-admin login-section">
+                <h3 class="login-title admin-title">🔐 Admin Login</h3>
+                <p style="color: #95a5a6; font-size: 0.9rem; margin: 0 0 20px 0; font-style: italic;">Demo: <code>admin</code> / <code>password123</code></p>
+                <form method="POST">
+                    <div class="login-input-full">
+                        <label>Username</label>
+                        <input type="text" name="username" class="login-input" placeholder="admin" autocomplete="username" required>
+                    </div>
+                    <div class="login-input-full">
+                        <label>Password</label>
+                        <input type="password" name="password" class="login-input" placeholder="password123" autocomplete="current-password" required>
+                    </div>
+                    <button type="submit" name="admin_login" class="login-btn admin-login-btn">⚙️ Dashboard</button>
+                </form>
+            </div>
         </div>
 
-        <div class="login-admin">
-            <h3 class="admin-title">Admin Portal</h3>
-            <form method="POST">
-                <input type="text" name="username" placeholder="Admin Username" class="login-input" required>
-                <input type="password" name="password" placeholder="Password" class="login-input" required>
-                <button type="submit" name="admin_login" class="admin-login-btn">Login</button>
-            </form>
-        </div>
     </div>
 
-<?php include 'footer.php'; ?>
+    <?php include 'footer.php'; ?>
+
+    <script>
+        // Toggle group fields
+        function toggleGroupFields() {
+            const type = document.getElementById('visitor_type')?.value;
+            const groupFields = document.getElementById('group_fields');
+            if (groupFields) {
+                groupFields.style.display = type === 'Group' ? 'block' : 'none';
+            }
+        }
+
+        // Enhanced form validation and UX
+        document.addEventListener('DOMContentLoaded', function() {
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    let valid = true;
+                    this.querySelectorAll('[required]').forEach(field => {
+                        if (!field.value.trim()) {
+                            field.style.borderColor = '#e74c3c';
+                            field.style.boxShadow = '0 0 0 2px rgba(231, 76, 60, 0.2)';
+                            valid = false;
+                        } else {
+                            field.style.borderColor = '';
+                            field.style.boxShadow = '';
+                        }
+                    });
+                    if (!valid) {
+                        e.preventDefault();
+                        this.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+
+                // Real-time phone validation
+                const phoneInput = this.querySelector('.phone-input');
+                if (phoneInput) {
+                    phoneInput.addEventListener('input', function() {
+                        this.value = this.value.replace(/[^0-9]/g, '').slice(0,10);
+                    });
+                }
+            });
+
+            // Input focus animations
+            document.querySelectorAll('.login-input, .login-select').forEach(input => {
+                input.addEventListener('focus', () => input.parentElement.style.transform = 'scale(1.02)');
+                input.addEventListener('blur', () => input.parentElement.style.transform = '');
+            });
+
+            // Auto-hide message after 5s
+            const message = document.querySelector('.login-message');
+            if (message) {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    message.style.transition = 'opacity 0.5s';
+                }, 5000);
+            }
+        });
+    </script>
+
