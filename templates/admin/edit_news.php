@@ -1,0 +1,116 @@
+<?php
+session_start();
+require_once dirname(__DIR__, 2) . '/includes/db.php';
+if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit(); }
+
+// Redirect back if no ID is selected
+if (!isset($_GET['id'])) {
+    header("Location: manage_news.php");
+    exit();
+}
+
+$id = $_GET['id'];
+$msg = "";
+$msg_color = "red";
+
+// Fetch the existing news post
+$stmt = $conn->prepare("SELECT * FROM news_events WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$news_item = $result->fetch_assoc();
+
+if (!$news_item) {
+    header("Location: manage_news.php");
+    exit();
+}
+
+// --- HANDLE UPDATE ---
+if (isset($_POST['update_news'])) {
+    $title = $_POST['title'];
+    $type = $_POST['type'];
+    $content = $_POST['content'];
+    
+    $update_stmt = $conn->prepare("UPDATE news_events SET title = ?, type = ?, content = ? WHERE id = ?");
+    if ($update_stmt) {
+        $update_stmt->bind_param("sssi", $title, $type, $content, $id);
+        if ($update_stmt->execute()) {
+            // Success! Send them back to the manage page.
+            header("Location: manage_news.php?success=1");
+            exit();
+        } else {
+            $msg = "Error updating database: " . $conn->error;
+        }
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit News | Admin</title>
+    <style>
+        .card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid #e67e22; max-width: 800px; }
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; font-weight: bold; color: #2c3e50; margin-bottom: 8px; font-size: 0.95rem; }
+        .form-control { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; font-size: 1rem; }
+        
+        /* Orange Theme Buttons */
+        .btn-submit-form { padding: 12px 20px; background: #e67e22; color: white; border: none; font-weight: bold; border-radius: 4px; font-size: 1.1rem; cursor: pointer; transition: 0.3s; }
+        .btn-submit-form:hover { background: #cf711f; }
+        
+        /* Grey Cancel Button */
+        .btn-cancel { background: #95a5a6; padding: 12px 20px; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block; transition: 0.3s; line-height: 20px; }
+        .btn-cancel:hover { background: #7f8c8d; }
+    </style>
+</head>
+<body style="margin: 0; background: #f4f7f6;">
+
+    <?php include dirname(__DIR__, 2) . '/templates/components/header.php'; ?>
+    <?php include dirname(__DIR__, 2) . '/templates/components/admin_sidebar.php'; ?>
+
+    <h2 class="table-title">✏️ Edit News & Events</h2>
+
+    <?php if ($msg): ?>
+        <div style="background: #f8f9fa; border-left: 4px solid <?php echo $msg_color; ?>; padding: 15px; margin-bottom: 20px; color: <?php echo $msg_color; ?>; font-weight: bold; max-width: 800px;">
+            <?php echo $msg; ?>
+        </div>
+    <?php endif; ?>
+
+    <div class="card">
+        <form method="POST">
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                
+                <div class="form-group" style="flex: 2; min-width: 250px;">
+                    <label class="form-label">Headline Title</label>
+                    <input type="text" name="title" class="form-control" value="<?php echo htmlspecialchars($news_item['title']); ?>" required>
+                </div>
+                
+                <div class="form-group" style="flex: 1; min-width: 200px;">
+                    <label class="form-label">Post Type</label>
+                    <select name="type" class="form-control" required style="background: white;">
+                        <option value="news" <?php echo ($news_item['type'] == 'news') ? 'selected' : ''; ?>>Museum News</option>
+                        <option value="event" <?php echo ($news_item['type'] == 'event') ? 'selected' : ''; ?>>Upcoming Event</option>
+                    </select>
+                </div>
+                
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Full Content</label>
+                <textarea name="content" class="form-control" rows="8" required><?php echo htmlspecialchars($news_item['content']); ?></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" name="update_news" class="btn-submit-form">Update Post</button>
+                <a href="manage_news.php" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    </main>
+</div>
+
+</body>
+</html>
